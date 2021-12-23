@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+	<!--This page prompts a user to select a highway and then directs the user to the right page for estimations-->
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js">
+	</script>
+	<link href="semantic/dist/semantic.min.css" rel="stylesheet" type="text/css">
+	<script src="semantic/dist/semantic.min.js">
+	</script>
+	<title>highway type</title>
+	<link href="semantic/dist/components/reset.css" rel="stylesheet" type="text/css">
+	<link href="semantic/dist/components/site.css" rel="stylesheet" type="text/css">
+	<link href="semantic/dist/components/container.css" rel="stylesheet" type="text/css">
+	<link href="semantic/dist/components/divider.css" rel="stylesheet" type="text/css">
+	<link href="semantic/dist/components/header.css" rel="stylesheet" type="text/css">
+	<link href="semantic/dist/components/grid.css" rel="stylesheet" type="text/css">
+	<link href="css/clusters.css" rel="stylesheet" type="text/css">
+</head>
+
+<style>
+	body{
+		background-color: #d1d2d3;
+	}
+	
+	#summary {
+		color: #ff0800;
+	}
+	#container {
+		width: 800px;
+		height: 600px;
+
+		border-style: solid;
+		border-color: #6186aa;
+		border-width: 25px 5px 5px 5px;		   
+	}
+
+	#highway_pic img {
+		  width: auto;
+		  height: 100%;
+	}
+	#row1-size {
+		width: 790x;
+		height: 40px;
+		background-color: white;
+	}
+	#row2-size {
+		width: 790px;
+		height: 450px;
+	
+		background: url("images/maryland.png") no-repeat scroll center top/ 100% 100%; 
+	}
+	#column-size {
+		width: 400px;
+		height: 40px;
+	}
+	#row3-size {
+		width: 400px;
+		height: 50px;
+	}
+	#row4-size {
+		width: 400px;
+		height: 50px;
+	}
+	#grid-size {
+		width: 790px;
+		height: 570px;
+	}
+	#label {
+		padding: 175px 20px 35px 20px;
+	}
+	#choice {
+		padding: 200px 20px 35px 10px;
+	}
+	#choice2 {
+		padding: 10px 20px 35px 10px;
+	}
+	#button-row {
+		width:790px;
+		height: 80px;
+		background-color: white;
+	}
+
+	.cluster_column {
+		vertical-align: top;
+		display: inline-block;
+		width: 390px;
+		height: 450px;
+	}
+
+
+	/* TODO */
+	#div-selected {position: relative; top: 100px; width: 175px; z-index: 200;} 
+</style>
+
+<script>
+	function selectRoad(road_selected){
+		let roads = ['md122', 'md168', 'md702', 'md85', 'us1', 'md200', 'md295', 'md648', 'i895', 'i83', 'i395', 'i81', 'us15', 'us301', 'us40', 'us50', 'i270', 'i795', 'i97', 'i195', 'i295', 'md10', 'md100', 'md3', 'others'];
+		
+		var img = document.getElementById(road_selected);
+		
+		if(img.getAttribute('selected') == 'false'){
+
+			//Ensures all other highways are unselected when a new one is selected
+			roads.forEach((hwy) => {
+				document.getElementById(hwy).src='images/' + hwy + '.png';
+				document.getElementById(hwy).setAttribute('selected', 'false');
+			});
+
+			img.src='images/' + road_selected + '_selected.png';
+			img.setAttribute('selected', 'true');
+
+			document.getElementById('selected_img').src='images/' + road_selected + '.png';
+			document.getElementById('Next').disabled = false;
+		}
+		else{
+			img.src='images/' + road_selected + '.png';
+			img.setAttribute('selected', 'false');
+			document.getElementById('selected_img').src='';
+			document.getElementById('Next').disabled = true;
+		}
+	}
+</script>
+
+<body>
+<div class="ui container" id="container">
+	<div class="ui gird" id="grid-size">
+		<div class="one column row"  id="row1-size">
+			<p style="font-size:25px; font-weight:bold">Please select a highway by clicking on one of the buttons below:</p>
+		</div>
+		<div class="one column row" id="row2-size">
+			<div class='cluster_column' display="inline-block">
+				<div class='cluster1'>
+					<div>
+						<p style="font-size:21px; font-weight:bold">Cluster 1:</p>
+					</div>
+					<div>
+						<!-- show Interstates first, followed by US road, and MD road -->
+						<img src="images/us1.png" id='us1' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/md85.png" id='md85' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/md122.png" id='md122' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/md168.png" id='md168' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/md702.png" id='md702' height='40px' onclick="selectRoad(this.id)" selected='false'>
+					</div>
+				</div>
+				<div class='cluster3'>
+					<div>
+						<p style="font-size:21px; font-weight:bold">Cluster 3:</p>
+					</div>
+					<div>
+						<img src="images/i81.png" id='i81' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/us15.png" id='us15' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/us40.png" id='us40' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/us50.png" id='us50' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/us301.png" id='us301' height='40px' onclick="selectRoad(this.id)" selected='false'>
+					</div>
+				</div>
+				<div class='cluster5'>
+					<div>
+						<p style="font-size:21px; font-weight:bold">Cluster 5:</p>
+					</div>
+					<div>
+						<img src="images/i195.png" id='i195' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/i295.png" id='i295' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/md3.png" id='md3' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/md10.png" id='md10' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/md100.png" id='md100' height='40px' onclick="selectRoad(this.id)" selected='false'>
+					</div>
+				</div>
+			</div>
+			<div class='cluster_column' display="inline-block">
+				<div class='cluster2'>
+					<div>
+						<p style="font-size:21px; font-weight:bold">Cluster 2:</p>
+					</div>
+					<div>
+						<img src="images/i83.png" id='i83' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/i395.png" id='i395' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/i895.png" id='i895' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/md200.png" id='md200' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/md295.png" id='md295' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/md648.png" id='md648' height='40px' onclick="selectRoad(this.id)" selected='false'>
+					</div>
+				</div>
+				<div class='cluster4'>
+					<div>
+						<p style="font-size:21px; font-weight:bold">Cluster 4:</p>
+					</div>
+					<div>
+						<img src="images/i97.png" id='i97' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/i270.png" id='i270' height='40px' onclick="selectRoad(this.id)" selected='false'>
+						<img src="images/i795.png" id='i795' height='40px' onclick="selectRoad(this.id)" selected='false'>
+					</div>
+				</div>
+				<div class='others'>
+					<div>
+						<p style="font-size:21px; font-weight:bold">Other Highways:</p>
+					</div>
+					<div>
+						<img src="images/others.png" id='others' height='40px' onclick="selectRoad(this.id)" selected='false'>
+					</div>
+				</div>
+				<div id='div-selected'>
+					<div>
+						<p style="font-size:21px; font-weight:bold">Selected Highway:</p>
+					</div>
+					<img src='' id='selected_img' height='40px' selected='false'>
+				</div>
+			</div>
+		</div>
+
+		<div class="column" id="button-row">
+			<div class="one column row" id="button-row">
+				<button class="ui right floated blue button" id="Next" onclick='nextPage()' disabled>Next</button>
+				<script type="text/javascript">
+					function nextPage() {
+						let roads = ['md122', 'md168', 'md702', 'md85', 'us1', 'md200', 'md295', 'md648', 'i895', 'i83', 'i395', 'i81', 'us15', 'us301', 'us40', 'us50', 'i270', 'i795', 'i97', 'i195', 'i295', 'md10', 'md100', 'md3', 'others'];
+						var selected_road;
+						roads.forEach((hwy) => {
+							if(document.getElementById(hwy).getAttribute('selected') == 'true'){
+								selected_road = hwy;
+							}
+						});
+						
+						if (roads.includes(selected_road)) {
+							parent.location = 'tab.html?' + selected_road;
+						}
+						else{
+							alert("Please select a highway.");
+						}
+					}
+				</script>
+			</div>	
+		</div>				
+	</div>
+</div>
+</body>
+</html>

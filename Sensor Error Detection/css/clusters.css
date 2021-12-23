@@ -1,0 +1,10 @@
+
+#summary {
+	color : #ff0800;
+}
+#container {
+	         /*Styling for any element with the id="container" */{
+           background:url('images/highway.gif') center center no-repeat;
+           background-size:800px 600px;
+
+		  }

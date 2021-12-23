@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+	<!--This page prompts a user to select a highway and then directs the user to the right page for estimations-->
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js">
+	</script>
+	<link href="semantic/dist/semantic.min.css" rel="stylesheet" type="text/css">
+	<script src="semantic/dist/semantic.min.js">
+	</script>
+	<title>Upload Sensor File</title>
+	<link href="semantic/dist/components/reset.css" rel="stylesheet" type="text/css">
+	<link href="semantic/dist/components/site.css" rel="stylesheet" type="text/css">
+	<link href="semantic/dist/components/container.css" rel="stylesheet" type="text/css">
+	<link href="semantic/dist/components/divider.css" rel="stylesheet" type="text/css">
+	<link href="semantic/dist/components/header.css" rel="stylesheet" type="text/css">
+	<link href="semantic/dist/components/grid.css" rel="stylesheet" type="text/css">
+	<link href="css/upload_file.css" rel="stylesheet" type="text/css">
+</head>
+
+<style>
+	body{
+		background-color: #d1d2d3;
+	}
+	
+	#summary {
+		color: #ff0800;
+	}
+	#container {
+		width: 800px;
+		height: 600px;
+
+		border-style: solid;
+		border-color: #6186aa;
+		border-width: 25px 5px 5px 5px;		   
+	}
+
+	#highway_pic img {
+		  width: auto;
+		  height: 100%;
+	}
+	#row1-size {
+		width: 790x;
+		height: 40px;
+		background-color: white;
+	}
+	#row2-size {
+		width: 790px;
+		height: 450px;
+	
+		/*background: url("images/highway.gif") no-repeat scroll center top/ 100% 100%;*/
+	}
+	#column-size {
+		width: 400px;
+		height: 40px;
+	}
+	#row3-size {
+		width: 400px;
+		height: 50px;
+	}
+	#row4-size {
+		width: 400px;
+		height: 50px;
+	}
+	#grid-size {
+		width: 790px;
+		height: 570px;
+	}
+	#label {
+		padding: 175px 20px 35px 20px;
+	}
+	#choice {
+		padding: 200px 20px 35px 10px;
+	}
+	#choice2 {
+		padding: 10px 20px 35px 10px;
+	}
+	#button-row {
+		width:790px;
+		height: 80px;
+		background-color: white;
+	}
+</style>
+
+<script>
+</script>
+
+<body>
+<div class="ui container" id="container">
+	<div class="ui gird" id="grid-size">
+		<div class="one column row"  id="row1-size">
+			<p style="font-size:25px; font-weight:bold">Please upload a sensor data file to begin analysis:</p>
+		</div>
+		<div class="one column row" id="row2-size">
+			<!-- 
+			<form action="/action_page.php">
+				<label for="myfile">Select files:</label>
+				<input type="file" id="myfile" name="myfile" multiple><br><br>
+				<input type="submit">
+			</form>-->
+
+			<label for="uploadedfile">Select files:</label>
+			<input type="file" id="uploadedfile" name="uploadedfile" multiple> <!-- accept CSV only???-->
+			
+			<p class="content"></p>
+		</div>
+
+		<div class="column" id="button-row">
+			<div class="one column row" id="button-row">
+				<button class="ui right floated blue button" id="Next" onclick='nextPage()'>Analyze</button>
+				<script type="text/javascript">
+					function nextPage() {
+						document.querySelector('#Next').textContent  = "Next File";
+						const content = document.querySelector('.content');
+						const fileList = document.getElementById('uploadedfile').files;
+
+						for (let i = 0; i < fileList.length; i++) {
+							const reader = new FileReader();
+							const file = fileList[i];
+
+							reader.addEventListener("load", () => {
+								// this will then display a text file
+								content.innerText += reader.result;
+
+								//var lines = reader.result.split("\n");
+								//while( typeof lines[0] !== "undefined" ){
+								//	var line = lines.shift();
+								//	var split = line.split(',');
+								//	document.querySelector("#content").innerHTML += split[0]+"<br/>";
+								//}
+
+
+
+							}, false);
+
+							reader.readAsText(file);
+						}
+					}
+				</script>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
