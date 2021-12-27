@@ -120,12 +120,23 @@
 							const file = fileList[i];
 
 							let fileInfo = new Object();
+							// Constants
 							fileInfo.numDataPoints = 0;
+							fileInfo.zoneId = 0;
+							fileInfo.laneNumber = 0;
+							fileInfo.laneId = 0;
+
+							// Measurements
+							fileInfo.measurementTime = 0;
+							fileInfo.speed = 0;
+							fileInfo.volume = 0;
+							fileInfo.occupancy = 0;
+							fileInfo.quality = 0;
 							
 							reader.onload = (event) => {
 								// Reading line by line
 								const fileLines = reader.result.split(/\r\n|\n/);
-
+								
 								fileLines.forEach((line) => {
 									processLine(line, fileInfo);
 								});
@@ -141,9 +152,12 @@
 
 					/**
 					 * Function to take input of a sensor data point line, and process.
+					 * @params: line (str), fileInfo (Object)
 					 */ 
 					function processLine(line, fileInfo) {
 						fileInfo.numDataPoints += 1;
+
+						// prevent zoneId, lanenumber, laneId from changing
 					}
 				</script>
 			</div>
