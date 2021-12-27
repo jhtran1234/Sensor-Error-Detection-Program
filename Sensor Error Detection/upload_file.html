@@ -113,28 +113,37 @@
 						document.querySelector('#Next').textContent  = "Next File";
 						const content = document.querySelector('.content');
 						const fileList = document.getElementById('uploadedfile').files;
+						content.innerText = "";
 
 						for (let i = 0; i < fileList.length; i++) {
 							const reader = new FileReader();
 							const file = fileList[i];
 
-							reader.addEventListener("load", () => {
+							let fileInfo = new Object();
+							fileInfo.numDataPoints = 0;
+							
+							reader.onload = (event) => {
 								// this will then display a text file
-								content.innerText += reader.result;
 
-								//var lines = reader.result.split("\n");
-								//while( typeof lines[0] !== "undefined" ){
-								//	var line = lines.shift();
-								//	var split = line.split(',');
-								//	document.querySelector("#content").innerHTML += split[0]+"<br/>";
-								//}
+								const allLines = reader.result.split(/\r\n|\n/);
+								// Reading line by line
 
+								alert(allLines);
+								allLines.forEach((line) => {
+									processLine(line, fileInfo);
+								});
 
-
-							}, false);
+								alert(fileInfo.numDataPoints);
+							};
 
 							reader.readAsText(file);
+							alert(fileInfo.numDataPoints);
+							content.innerText += fileInfo.numDataPoints;
 						}
+					}
+
+					function processLine(line, fileInfo) {
+						fileInfo.numDataPoints += 1;
 					}
 				</script>
 			</div>
