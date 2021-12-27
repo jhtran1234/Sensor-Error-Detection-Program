@@ -100,7 +100,7 @@
 			</form>-->
 
 			<label for="uploadedfile">Select files:</label>
-			<input type="file" id="uploadedfile" name="uploadedfile" multiple> <!-- accept CSV only???-->
+			<input type="file" id="uploadedfile" name="uploadedfile"> <!-- accept CSV only???-->
 			
 			<p class="content"></p>
 		</div>
@@ -113,7 +113,7 @@
 						document.querySelector('#Next').textContent  = "Next File";
 						const content = document.querySelector('.content');
 						const fileList = document.getElementById('uploadedfile').files;
-						content.innerText = "";
+						content.innerText = "Analyzing File...\n";
 
 						for (let i = 0; i < fileList.length; i++) {
 							const reader = new FileReader();
@@ -123,25 +123,25 @@
 							fileInfo.numDataPoints = 0;
 							
 							reader.onload = (event) => {
-								// this will then display a text file
-
-								const allLines = reader.result.split(/\r\n|\n/);
 								// Reading line by line
+								const fileLines = reader.result.split(/\r\n|\n/);
 
-								alert(allLines);
-								allLines.forEach((line) => {
+								fileLines.forEach((line) => {
 									processLine(line, fileInfo);
 								});
 
-								alert(fileInfo.numDataPoints);
+								content.innerText += "Number of Lines: " + fileInfo.numDataPoints;
 							};
 
-							reader.readAsText(file);
-							alert(fileInfo.numDataPoints);
-							content.innerText += fileInfo.numDataPoints;
+							if (file) {
+								reader.readAsText(file);
+							}
 						}
 					}
 
+					/**
+					 * Function to take input of a sensor data point line, and process.
+					 */ 
 					function processLine(line, fileInfo) {
 						fileInfo.numDataPoints += 1;
 					}
