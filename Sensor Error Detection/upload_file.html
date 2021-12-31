@@ -132,16 +132,36 @@
 							fileInfo.volume = 0;
 							fileInfo.occupancy = 0;
 							fileInfo.quality = 0;
-							
+
+							/* Three possible outcomes:
+							* 1: Faulty
+							* 2: Questionable
+							* 3: Non-faulty
+							*/
+							fileInfo.outcome = 0;
+
 							reader.onload = (event) => {
 								// Reading line by line
 								const fileLines = reader.result.split(/\r\n|\n/);
 								
-								fileLines.forEach((line) => {
-									processLine(line, fileInfo);
+								// Need to skip first line header
+								fileLines.splice(0, 1);
+
+								fileLines.every(line => {
+									if(line != "") {
+										alert(fileInfo.error);
+										processLine(line, fileInfo)
+										if(fileInfo.error != undefined){
+											content.innerText += fileInfo.error + "\n";
+											return false;
+										}
+
+										return true;
+									}
+									return false;
 								});
 
-								content.innerText += "Number of Lines: " + fileInfo.numDataPoints;
+								//content.innerText += "Number of Sensor Data Points: " + fileInfo.numDataPoints;
 							};
 
 							if (file) {
@@ -157,7 +177,52 @@
 					function processLine(line, fileInfo) {
 						fileInfo.numDataPoints += 1;
 
-						// prevent zoneId, lanenumber, laneId from changing
+						const lineSplit = line.split(",");
+						
+						// prevent zoneId, laneNumber, laneId from changing
+						const proceed = checkIdError(fileInfo, lineSplit[0], lineSplit[1], lineSplit[2]);
+						if(!proceed) {
+							return false;
+						}
+
+						// Line order: zone_id, lane_number, lane_id, measurement_start, speed, volume, occupancy, quality
+						const date = new Date(lineSplit[3]);
+						//alert(date);
+
+					}
+
+					function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
+						if(fileInfo.zoneId == 0) {
+							fileInfo.zoneId = lineZoneId;
+						}
+						else if(fileInfo.zoneId != lineZoneId){
+							fileInfo.error = "zone_id changed mid-file";
+							return false;
+						}
+						if(fileInfo.laneNumber == 0) {
+							fileInfo.laneNumber = lineLaneNumber;
+						}
+						else if(fileInfo.laneNumber != lineLaneNumber){
+							fileInfo.error = "lane_number changed mid-file";
+							return false;
+						}
+						if(fileInfo.laneId == 0) {
+							fileInfo.laneId = lineLaneId;
+						}
+						else if(fileInfo.laneId != lineLaneId){
+							fileInfo.error = "lane_id changed mid-file";
+							return false;
+						}
+
+						return true;
+					}
+
+					function isRushDay(date) {
+
+					}
+
+					function isPeakHour(hour) {
+
 					}
 				</script>
 			</div>
