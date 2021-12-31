@@ -161,7 +161,7 @@
 									return false;
 								});
 
-								//content.innerText += "Number of Sensor Data Points: " + fileInfo.numDataPoints;
+								content.innerText += "Number of Sensor Data Points Analyzed: " + fileInfo.numDataPoints;
 							};
 
 							if (file) {
@@ -180,9 +180,8 @@
 						const lineSplit = line.split(",");
 						
 						// prevent zoneId, laneNumber, laneId from changing
-						const proceed = checkIdError(fileInfo, lineSplit[0], lineSplit[1], lineSplit[2]);
-						if(!proceed) {
-							return false;
+						if(!checkIdError(fileInfo, lineSplit[0], lineSplit[1], lineSplit[2])) {
+							return;
 						}
 
 						// Line order: zone_id, lane_number, lane_id, measurement_start, speed, volume, occupancy, quality
