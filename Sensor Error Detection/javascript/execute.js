@@ -229,12 +229,9 @@ function isHoliday(date) {
 
 function isPeakHour(date) {
     const hour = date.getHours();
-    const weekday = date.getDay();
-
-    if(weekday != 0 && weekday != 6 && !isHoliday(date)) {
-        if((hour >= 7 && hour < 10) || (hour >= 16 && hour < 19)) {
-            return true;
-        }
+    
+    if((hour >= 7 && hour < 10) || (hour >= 16 && hour < 19)) {
+        return true;
     }
 
     return false;
