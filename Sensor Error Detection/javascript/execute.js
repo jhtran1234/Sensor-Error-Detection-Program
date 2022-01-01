@@ -28,17 +28,18 @@ function execute() {
     const fileList = document.getElementById('uploadedfile').files;
     content.innerText = "Analyzing File(s)...\n";
 
-    readFileList(fileList, content);
+    const fileInfoArr = readFileList(fileList, content, function (fileInfoArr) {
+        // start here
+    });
 }
 
-function readFileList(fileList, content) {
+function readFileList(fileList, content, _callback) {
     var reader = new FileReader();
     var fileInfoArr = new Array();
 
     function readFile(index) {
         if(index >= fileList.length) {
-            //alert(fileInfoArr.length);
-            return;
+            _callback(fileInfoArr);
         }
 
         var file = fileList[index];
@@ -75,7 +76,7 @@ function readFileList(fileList, content) {
 
 /**
  * Function to take input of a sensor data point line, and process.
- * @params: line (str), fileInfo (Object)
+ * @params: line (string), fileInfo (FileInfo Object)
  */ 
  function processLine(line, fileInfo) {
     fileInfo.numDataPoints += 1;
