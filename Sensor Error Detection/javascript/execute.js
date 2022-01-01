@@ -1,6 +1,7 @@
 class FileInfo {
     constructor() {
         // Constants
+        this.fileName =  undefined;
         this.numDataPoints = 0;
         this.zoneId = 0;
         this.laneNumber = 0;
@@ -44,16 +45,16 @@ function readFileList(fileList, content, _callback) {
 
         var file = fileList[index];
 
-        reader.onloadend = function(e) {
+        reader.onloadend = function(event) {
             var fileInfo = new FileInfo();
 
-            var text = e.target.result;
+            var text = event.target.result;
             var fileLines = text.split(/\r\n|\n/);
             fileLines.splice(0, 1);
 
             fileLines.every(line => {
                 if(line != "") {
-                    processLine(line, fileInfo)
+                    processLine(line, fileInfo);
                     if(fileInfo.error != undefined){
                         content.innerText += fileInfo.error + "\n";
                         return false;
@@ -63,7 +64,7 @@ function readFileList(fileList, content, _callback) {
                 }
                 return false;
             });
-            content.innerText += fileInfo.laneId + ": " + fileInfo.numDataPoints + "\n";
+            content.innerText += fileInfo.laneId + ": " + fileInfo.numDataPoints + " datapoints.\n";
             fileInfoArr[index] = fileInfo;
 
             readFile(index + 1);
@@ -76,7 +77,8 @@ function readFileList(fileList, content, _callback) {
 
 /**
  * Function to take input of a sensor data point line, and process.
- * @params: line (string), fileInfo (FileInfo Object)
+ * @param {string} line The CSV line to be processed
+ * @param {FileInfo} fileInfo The object holding the current file's info
  */ 
  function processLine(line, fileInfo) {
     fileInfo.numDataPoints += 1;
@@ -97,21 +99,21 @@ function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
         fileInfo.zoneId = lineZoneId;
     }
     else if(fileInfo.zoneId != lineZoneId){
-        fileInfo.error = "zone_id changed mid-file";
+        fileInfo.error = "Error: zone_id changed mid-file";
         return false;
     }
     if(fileInfo.laneNumber == 0) {
         fileInfo.laneNumber = lineLaneNumber;
     }
     else if(fileInfo.laneNumber != lineLaneNumber){
-        fileInfo.error = "lane_number changed mid-file";
+        fileInfo.error = "Error: lane_number changed mid-file";
         return false;
     }
     if(fileInfo.laneId == 0) {
         fileInfo.laneId = lineLaneId;
     }
     else if(fileInfo.laneId != lineLaneId){
-        fileInfo.error = "lane_id changed mid-file";
+        fileInfo.error = "Error: lane_id changed mid-file";
         return false;
     }
 
