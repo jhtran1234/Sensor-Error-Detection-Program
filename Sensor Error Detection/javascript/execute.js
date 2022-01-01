@@ -1,40 +1,52 @@
-function nextPage() {
-    document.querySelector('#Next').textContent  = "Next File";
-    const content = document.querySelector('.content');
-    const fileList = document.getElementById('uploadedfile').files;
-    content.innerText = "Analyzing File...\n";
-
-    for (let i = 0; i < fileList.length; i++) {
-        const reader = new FileReader();
-        const file = fileList[i];
-
-        let fileInfo = new Object();
+class FileInfo {
+    constructor() {
         // Constants
-        fileInfo.numDataPoints = 0;
-        fileInfo.zoneId = 0;
-        fileInfo.laneNumber = 0;
-        fileInfo.laneId = 0;
-
+        this.numDataPoints = 0;
+        this.zoneId = 0;
+        this.laneNumber = 0;
+        this.laneId = 0;
+    
         // Measurements
-        fileInfo.measurementTime = 0;
-        fileInfo.speed = 0;
-        fileInfo.volume = 0;
-        fileInfo.occupancy = 0;
-        fileInfo.quality = 0;
-
+        this.measurementTime = 0;
+        this.speed = 0;
+        this.volume = 0;
+        this.occupancy = 0;
+        this.quality = 0;
+    
         /* Three possible outcomes:
         * 1: Faulty
         * 2: Questionable
         * 3: Non-faulty
         */
-        fileInfo.outcome = 0;
-        fileInfo.error = undefined;
+        this.outcome = 0;
+        this.error = undefined;
+    }
+}
 
-        reader.onload = (event) => {
-            // Reading line by line
-            const fileLines = reader.result.split(/\r\n|\n/);
-            
-            // Need to skip first line header
+function nextPage() {
+    const content = document.querySelector('.content');
+    const fileList = document.getElementById('uploadedfile').files;
+    content.innerText = "Analyzing File(s)...\n";
+
+    readFileList(fileList, content);
+}
+
+function readFileList(fileList, content) {
+    var reader = new FileReader();
+    var fileInfoArr = new Array();
+    function readFile(index) {
+        if(index >= fileList.length) {
+            //alert(fileInfoArr.length);
+            return;
+        }
+
+        var file = fileList[index];
+
+        reader.onloadend = function(e) {
+            var fileInfo = new FileInfo();
+
+            var text = e.target.result;
+            var fileLines = text.split(/\r\n|\n/);
             fileLines.splice(0, 1);
 
             fileLines.every(line => {
@@ -49,21 +61,20 @@ function nextPage() {
                 }
                 return false;
             });
-
-            content.innerText += "Number of Sensor Data Points Analyzed: " + fileInfo.numDataPoints;
-        };
-
-        if (file) {
-            reader.readAsText(file);
+            content.innerText += fileInfo.laneId + ": " + fileInfo.numDataPoints + "\n";
+            fileInfoArr[index] = fileInfo;
+            readFile(index + 1);
         }
+        reader.readAsText(file);
     }
+    readFile(0);
 }
 
 /**
  * Function to take input of a sensor data point line, and process.
  * @params: line (str), fileInfo (Object)
  */ 
-function processLine(line, fileInfo) {
+ function processLine(line, fileInfo) {
     fileInfo.numDataPoints += 1;
 
     const lineSplit = line.split(",");
@@ -75,8 +86,6 @@ function processLine(line, fileInfo) {
 
     // Line order: zone_id, lane_number, lane_id, measurement_start, speed, volume, occupancy, quality
     const date = new Date(lineSplit[3]);
-
-    isRushDay(date);
 }
 
 function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
