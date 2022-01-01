@@ -100,8 +100,14 @@
 
 		<div class="column" id="button-row">
 			<div class="one column row" id="button-row">
-				<button class="ui right floated blue button" id="Next" onclick='nextPage()'>Analyze</button>
+				<button class="ui right floated blue button" id="Execute" onclick='execute()'>Analyze</button>
 				<script src="javascript/execute.js">
+				</script>
+				<button class="ui left floated blue button" id="Refresh" onclick='refresh()'>Refresh</button>
+				<script>
+					function refresh() {
+						location.reload(true);
+					}
 				</script>
 			</div>
 		</div>

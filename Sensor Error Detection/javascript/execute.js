@@ -23,7 +23,7 @@ class FileInfo {
     }
 }
 
-function nextPage() {
+function execute() {
     const content = document.querySelector('.content');
     const fileList = document.getElementById('uploadedfile').files;
     content.innerText = "Analyzing File(s)...\n";
@@ -34,6 +34,7 @@ function nextPage() {
 function readFileList(fileList, content) {
     var reader = new FileReader();
     var fileInfoArr = new Array();
+
     function readFile(index) {
         if(index >= fileList.length) {
             //alert(fileInfoArr.length);
@@ -63,10 +64,12 @@ function readFileList(fileList, content) {
             });
             content.innerText += fileInfo.laneId + ": " + fileInfo.numDataPoints + "\n";
             fileInfoArr[index] = fileInfo;
+
             readFile(index + 1);
         }
         reader.readAsText(file);
     }
+
     readFile(0);
 }
 
