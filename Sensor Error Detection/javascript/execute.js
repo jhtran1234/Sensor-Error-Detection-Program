@@ -84,14 +84,37 @@ function readFileList(fileList, content, _callback) {
     fileInfo.numDataPoints += 1;
 
     const lineSplit = line.split(",");
+
+    // Line order: zone_id, lane_number, lane_id, measurement_start, speed, volume, occupancy, quality
+    const zone_id = lineSplit[0];
+    const lane_number = lineSplit[1];
+    const lane_id = lineSplit[2];
+    const date = new Date(lineSplit[3]);
+    const speed = lineSplit[4];
+    const volume = lineSplit[5];
+    const occupancy = lineSplit[6];
+    const quality = lineSplit[7];
     
     // prevent zoneId, laneNumber, laneId from changing
-    if(!checkIdError(fileInfo, lineSplit[0], lineSplit[1], lineSplit[2])) {
+    if(!checkIdError(fileInfo, zone_id, lane_number, lane_id)) {
         return;
     }
 
-    // Line order: zone_id, lane_number, lane_id, measurement_start, speed, volume, occupancy, quality
-    const date = new Date(lineSplit[3]);
+    const rushDay = isRushDay(date);
+    const peakHour = isPeakHour(date);
+
+    if(rushDay && peakHour) { // Rule 1
+
+    }
+    else if(rushDay && !peakHour) { // Rule 2
+
+    }
+    else if(!rushDay && peakHour) { // Rule 3
+
+    }
+    else { // Rule 4
+
+    }
 }
 
 function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
@@ -120,13 +143,23 @@ function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
     return true;
 }
 
+function isPeakHour(date) {
+    const hour = date.getHours();
+    
+    if(hour >= 10 && hour < 21) {
+        return true;
+    }
+
+    return false;
+}
+
 function isRushDay(date) {
     const weekday = date.getDay();
 
-    if(weekday == 0 || weekday == 6 || isHoliday(date)) {
-        return false;
+    if([5, 6, 0].includes(weekday)) {
+        return true;
     }
-    return true;
+    return false;
 }
 
 function isHoliday(date) {
@@ -240,14 +273,4 @@ function isHoliday(date) {
         // to be continued
         return false;
     }
-}
-
-function isPeakHour(date) {
-    const hour = date.getHours();
-    
-    if((hour >= 7 && hour < 10) || (hour >= 16 && hour < 19)) {
-        return true;
-    }
-
-    return false;
 }
