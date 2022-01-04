@@ -4,48 +4,8 @@
 <html>
 	<head>
 		<title>Upload Sensor File</title>
-		<link href="semantic/dist/semantic.min.css" rel="stylesheet" type="text/css">
+		<link href="css/upload_file.css" rel="stylesheet" type="text/css">
 	</head>
-
-	<style>
-		body{
-			background-color: #d1d2d3;
-		}
-
-		#container {
-			width: 800px;
-			height: 600px;
-
-			border-style: solid;
-			border-color: #6186aa;
-			border-width: 25px 5px 5px 5px;		   
-		}
-
-		#row1-size {
-			width: 790x;
-			height: 40px;
-			background-color: white;
-		}
-		#row2-size {
-			width: 790px;
-			height: 450px;
-			background: url("images/maryland.png") no-repeat scroll center top/ 100% 100%;
-		}
-		#column-size {
-			width: 400px;
-			height: 40px;
-		}
-		#grid-size {
-			width: 790px;
-			height: 570px;
-		}
-		#button-row {
-			width:790px;
-			height: 80px;
-			background-color: white;
-		}
-	</style>
-
 	<body>
 		<div class="ui container" id="container">
 			<div class="ui gird" id="grid-size">
@@ -60,18 +20,16 @@
 					<p class="content"></p>
 				</div>
 
-				<div class="column" id="button-row">
-					<div class="one column row" id="button-row">
-						<button class="ui right floated blue button" id="Execute" onclick='execute()'>Analyze</button>
-						<script src="javascript/execute.js">
-						</script>
-						<button class="ui left floated blue button" id="Refresh" onclick='refresh()'>Refresh</button>
-						<script>
-							function refresh() {
-								location.reload(true);
-							}
-						</script>
-					</div>
+				<div class="one column row" id="button-row">
+					<button class="ui right floated blue button" id="Execute" onclick='execute()'>Analyze</button>
+					<script src="javascript/execute.js">
+					</script>
+					<button class="ui left floated blue button" id="Refresh" onclick='refresh()'>Refresh</button>
+					<script>
+						function refresh() {
+							location.reload(true);
+						}
+					</script>
 				</div>
 			</div>
 		</div>
