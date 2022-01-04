@@ -14,12 +14,15 @@ class FileInfo {
         this.occupancy = 0;
         this.quality = 0;
     
-        /* Three possible outcomes:
-        * 1: Faulty
-        * 2: Questionable
-        * 3: Non-faulty
-        */
-        this.outcome = 0;
+        // ∆s
+        this.prevTime = undefined; // stores t so that if there is an error found when processing t+1, the error can be logged at t
+        this.prevQ = undefined; // stores Q_t to caulculate the Q∆ at the next item t+1
+        this.prevV = undefined; // Stores V_t to caulculate the V∆ at the next item t+1
+        this.qDiff = undefined; // updated at every line to reflect Q_(t-1) - Q_(t-2) for polling interval t_1
+        this.vDiff = undefined; // updated at every line to reflect V_(t-1) - V_(t-2) for polling interval t_1
+
+        // Outcomes
+        this.faultyCount = 0;
         this.error = undefined;
     }
 }
@@ -65,6 +68,7 @@ function readFileList(fileList, content, _callback) {
                 return false;
             });
             content.innerText += fileInfo.laneId + ": " + fileInfo.numDataPoints + " datapoints.\n";
+            content.innerText += fileInfo.laneId + ": " + fileInfo.faultyCount + " faulty datapoints.\n";
             fileInfoArr[index] = fileInfo;
 
             readFile(index + 1);
@@ -103,18 +107,91 @@ function readFileList(fileList, content, _callback) {
     const rushDay = isRushDay(date);
     const peakHour = isPeakHour(date);
 
+    const flowRate = volume * 60.0;
+    var fauty = false;
+    var reason = "";
+    
     if(rushDay && peakHour) { // Rule 1
-
+        if(flowRate > 2290 || flowRate < 345) {
+            fauty = true;
+            reason = "rule1";
+        }
     }
     else if(rushDay && !peakHour) { // Rule 2
-
+        if(flowRate > 1120) {
+            fauty = true;
+            reason = "rule2";
+        }
     }
     else if(!rushDay && peakHour) { // Rule 3
-
+        if(flowRate > 1910) {
+            fauty = true;
+            reason = "rule3";
+        }
     }
     else { // Rule 4
-
+        if(flowRate > 975) {
+            fauty = true;
+            reason = "rule4";
+        }
     }
+
+    if(speed > 110) { // Rule 5
+        fauty = true;
+        reason = "rule5";
+    }
+
+    if(flowRate > 1750 && speed > 75) { // Rule 6
+        fauty = true;
+        reason = "rule6";
+    }
+
+    if(fauty) {
+        fileInfo.faultyCount += 1;
+        //alert(lineSplit[3] + " " + reason);
+    }
+
+    // Rule 7 missing
+
+    /* Note: all errors in rule 8 and 9 are caught retroactively
+    * (caught in the next line's processing), which is why values 
+    * such as qDiff and prevQ are stored and used in the next process.*/
+
+    // Should process before rules 1-7
+
+    // Polling interval t1
+    let q_t1 = fileInfo.qDiff;
+    let v_t1 = fileInfo.vDiff;
+
+    // Polling interval t2
+    let q_t2 = flowRate - fileInfo.prevQ;
+    let v_t2 = speed - fileInfo.prevV;
+
+    var prevFauty = false;
+    
+    if(peakHour && -(q_t1 * q_t2) > 1400000 && Math.abs(v_t1 * v_t2) < 25) { // Rule 8
+        prevFauty = true;
+        reason = "rule8";
+    }
+    
+    if(peakHour && -(v_t1 * v_t2) > 140 && Math.abs(q_t1 * q_t2) < 125125) { // Rule 9
+        prevFauty = true;
+        reason = "rule9";
+    }
+
+    
+    if(prevFauty) {
+        fileInfo.faultyCount += 1;
+        //alert(fileInfo.faultyCount);
+        //alert(fileInfo.prevTime + " " + reason);
+    }
+
+    fileInfo.prevTime = lineSplit[3];
+    fileInfo.qDiff = flowRate - fileInfo.prevQ;
+    fileInfo.vDiff = speed - fileInfo.prevV;
+    fileInfo.prevQ = flowRate;
+    fileInfo.prevV = speed;
+
 }
 
 function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
