@@ -1,31 +1,15 @@
 <!DOCTYPE html>
+<!--This page prompts a user to upload a sensor data file for analysis-->
+
 <html>
-	<!--This page prompts a user to select a highway and then directs the user to the right page for estimations-->
-<head>
-	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-	<script src="https://code.jquery.com/jquery-3.1.1.min.js">
-	</script>
-	<link href="semantic/dist/semantic.min.css" rel="stylesheet" type="text/css">
-	<script src="semantic/dist/semantic.min.js">
-	</script>
-	<title>Upload Sensor File</title>
-	<link href="semantic/dist/components/reset.css" rel="stylesheet" type="text/css">
-	<link href="semantic/dist/components/site.css" rel="stylesheet" type="text/css">
-	<link href="semantic/dist/components/container.css" rel="stylesheet" type="text/css">
-	<link href="semantic/dist/components/divider.css" rel="stylesheet" type="text/css">
-	<link href="semantic/dist/components/header.css" rel="stylesheet" type="text/css">
-	<link href="semantic/dist/components/grid.css" rel="stylesheet" type="text/css">
-	<link href="css/upload_file.css" rel="stylesheet" type="text/css">
-</head>
+<title>Upload Sensor File</title>
+<link href="semantic/dist/semantic.min.css" rel="stylesheet" type="text/css">
 
 <style>
 	body{
 		background-color: #d1d2d3;
 	}
-	
-	#summary {
-		color: #ff0800;
-	}
+
 	#container {
 		width: 800px;
 		height: 600px;
@@ -35,10 +19,6 @@
 		border-width: 25px 5px 5px 5px;		   
 	}
 
-	#highway_pic img {
-		  width: auto;
-		  height: 100%;
-	}
 	#row1-size {
 		width: 790x;
 		height: 40px;
@@ -53,26 +33,9 @@
 		width: 400px;
 		height: 40px;
 	}
-	#row3-size {
-		width: 400px;
-		height: 50px;
-	}
-	#row4-size {
-		width: 400px;
-		height: 50px;
-	}
 	#grid-size {
 		width: 790px;
 		height: 570px;
-	}
-	#label {
-		padding: 175px 20px 35px 20px;
-	}
-	#choice {
-		padding: 200px 20px 35px 10px;
-	}
-	#choice2 {
-		padding: 10px 20px 35px 10px;
 	}
 	#button-row {
 		width:790px;
@@ -80,9 +43,6 @@
 		background-color: white;
 	}
 </style>
-
-<script>
-</script>
 
 <body>
 <div class="ui container" id="container">
@@ -94,7 +54,7 @@
 			<label for="uploadedfile">Select sensor data CSV files:</label>
 			<input type="file" id="uploadedfile" name="uploadedfile" accept=".csv" multiple>
 			
-			<!-- Analysis information is added here -->
+			<!-- Analysis information is added here after processing -->
 			<p class="content"></p>
 		</div>
 
