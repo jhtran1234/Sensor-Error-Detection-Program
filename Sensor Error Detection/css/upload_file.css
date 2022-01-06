@@ -32,8 +32,8 @@ body {
 }
 
 #column-size {
-    width: 400px;
-    height: 40px;
+	width: 400px;
+	height: 40px;
 }
 
 #container {
@@ -102,9 +102,9 @@ body {
 }
 
 #row2-size {
-    width: 790px;
-    height: 450px;
-    background: url("../images/maryland.png") no-repeat scroll center top/ 100% 100%;
+	width: 790px;
+	height: 450px;
+	background: url("../images/maryland.png") no-repeat scroll center top/ 100% 100%;
 }
 
 #button-row {
