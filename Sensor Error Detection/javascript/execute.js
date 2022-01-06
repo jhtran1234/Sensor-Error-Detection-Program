@@ -32,51 +32,61 @@ function execute() {
     const fileList = document.getElementById('uploadedfile').files;
     content.innerText = "Analyzing File(s)...\n";
 
-    const fileInfoArr = readFileList(fileList, content, function (fileInfoArr) {
-        // start here
-    });
+    readFileList(fileList, content, processText);
 }
 
 function readFileList(fileList, content, _callback) {
     var reader = new FileReader();
-    var fileInfoArr = new Array();
+    var fileText = new Array();
 
     function readFile(index) {
         if(index >= fileList.length) {
-            _callback(fileInfoArr);
+            _callback(fileText);
         }
 
         var file = fileList[index];
 
         reader.onloadend = function(event) {
-            var fileInfo = new FileInfo();
-
-            var text = event.target.result;
-            var fileLines = text.split(/\r\n|\n/);
-            fileLines.splice(0, 1);
-
-            fileLines.every(line => {
-                if(line != "") {
-                    processLine(line, fileInfo);
-                    if(fileInfo.error != undefined){
-                        content.innerText += fileInfo.error + "\n";
-                        return false;
-                    }
-
-                    return true;
-                }
-                return false;
-            });
-            content.innerText += fileInfo.laneId + ": " + fileInfo.numDataPoints + " datapoints.\n";
-            content.innerText += fileInfo.laneId + ": " + fileInfo.faultyCount + " faulty datapoints.\n";
-            fileInfoArr[index] = fileInfo;
-
-            readFile(index + 1);
+            fileText[index] = event.target.result;
         }
         reader.readAsText(file);
     }
 
     readFile(0);
+}
+
+/**
+ * Function used as a callback to process text after extraction from files.
+ * @param {Array} fileText Array of file text from CSV files after text read-in
+ */ 
+function processText(fileText) {
+    var fileInfoArr = new Array();
+    var fileInfo = new FileInfo();
+
+    //loop file
+
+    var fileLines = text.split(/\r\n|\n/);
+        fileLines.splice(0, 1);
+
+        fileLines.every(line => {
+            if(line != "") {
+                processLine(line, fileInfo);
+                if(fileInfo.error != undefined){
+                    content.innerText += fileInfo.error + "\n";
+                    return false;
+                }
+
+                return true;
+            }
+            return false;
+        });
+        content.innerText += fileInfo.laneId + ": " + fileInfo.numDataPoints + " datapoints.\n";
+        content.innerText += fileInfo.laneId + ": " + fileInfo.faultyCount + " faulty datapoints.\n";
+        fileInfoArr[index] = fileInfo;
+
+        readFile(index + 1);
+
+
 }
 
 /**
@@ -99,7 +109,7 @@ function readFileList(fileList, content, _callback) {
     const occupancy = lineSplit[6];
     const quality = lineSplit[7];
     
-    // prevent zoneId, laneNumber, laneId from changing
+    // prevent zoneId, laneNumber, laneId from changing mid-file
     if(!checkIdError(fileInfo, zone_id, lane_number, lane_id)) {
         return;
     }
