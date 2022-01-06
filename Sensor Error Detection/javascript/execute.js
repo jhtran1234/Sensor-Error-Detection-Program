@@ -27,12 +27,36 @@ class FileInfo {
     }
 }
 
+class Line {
+    constructor(lineSplit) {
+        if(typeof(lineSplit) === 'string') {
+            lineSplit = lineSplit.split(",");
+        }
+
+        this.zoneId = lineSplit[0];
+        this.laneNumber = lineSplit[1];
+        this.laneId = lineSplit[2];
+        this.measurementStart = lineSplit[3];
+        this.date = new Date(lineSplit[3]);
+        this.speed = lineSplit[4];
+        this.volume = lineSplit[5];
+        this.occupancy = lineSplit[6];
+        this.quality = lineSplit[7];
+    }
+}
+
 function execute() {
     const content = document.querySelector('.content');
     const fileList = document.getElementById('uploadedfile').files;
-    content.innerText = "Analyzing File(s)...\n";
-
-    readFileList(fileList, content, processText);
+    
+    if (parseInt(fileList.length) > 2){
+        alert("You are only allowed to upload a maximum of 2 files.");
+        content.innerText = "You are only allowed to upload a maximum of 2 files.";
+    }
+    else {
+        content.innerText = "Analyzing File(s)...\n";
+        readFileList(fileList, content, processText);
+    }
 }
 
 function readFileList(fileList, content, _callback) {
@@ -47,7 +71,20 @@ function readFileList(fileList, content, _callback) {
         var file = fileList[index];
 
         reader.onloadend = function(event) {
-            fileText[index] = event.target.result;
+            var text = event.target.result;
+            var linesArr = new Array();
+            
+            fileLines = text.split(/\r\n|\n/).splice(0, 1);
+
+            fileLines.every(line => {
+                if(line != "") {
+                    linesArr.push(new Line(line));
+                    return true;
+                }
+                return false;
+            });
+
+            fileText[index] = linesArr;
         }
         reader.readAsText(file);
     }
@@ -57,67 +94,86 @@ function readFileList(fileList, content, _callback) {
 
 /**
  * Function used as a callback to process text after extraction from files.
- * @param {Array} fileText Array of file text from CSV files after text read-in
+ * @param {Array} fileText Array of Line Arrays representing the CSV files
  */ 
 function processText(fileText) {
     var fileInfoArr = new Array();
-    var fileInfo = new FileInfo();
+    var currLine = new Array();
+    let numFiles = fileText.length;
 
-    //loop file
+    for(let i = 0; i < numFiles; i ++) {
+        fileInfoArr[i] = new FileInfo();
+        currLine[i] = 0;
+    }
 
-    var fileLines = text.split(/\r\n|\n/);
-        fileLines.splice(0, 1);
+    function finished() {
+        let finished = true;
+        for(let j = 0; j < numFiles; j ++) {
+            finished = finished && (currLine[j]+1 >= fileText[j].length ? true : false);
+        }
+        return finished;
+    }
 
-        fileLines.every(line => {
-            if(line != "") {
-                processLine(line, fileInfo);
-                if(fileInfo.error != undefined){
-                    content.innerText += fileInfo.error + "\n";
-                    return false;
-                }
+    function earliestDate() {
+        let earliestDate = fileText[0].date;
+        let earliestIndex = 0;
+        let allMatch = true;
 
-                return true;
+        for(let j = 0; j < numFiles; j ++) {
+            if(currLine[j] < fileText[j].length && fileText[j][currLine[j]].date < earliestDate) {
+                earliestDate = fileText[j].date;
+                earliestIndex = j;
+                allMatch = false;
             }
-            return false;
-        });
-        content.innerText += fileInfo.laneId + ": " + fileInfo.numDataPoints + " datapoints.\n";
-        content.innerText += fileInfo.laneId + ": " + fileInfo.faultyCount + " faulty datapoints.\n";
-        fileInfoArr[index] = fileInfo;
+            else if (currLine[j] < fileText[j].length && fileText[j][currLine[j]].date != earliestDate) {
+                allMatch = false;
+            }
+        }
 
-        readFile(index + 1);
+        return allMatch ? -1 : earliestIndex;
+    }
 
+    while(!finished(currLine)) {
+        let earliestIndex = earliestDate();
 
+        if(earliestIndex == -1) {
+            // Go through all files and run all comparisons
+
+            
+
+            /*BUILD*/
+        }
+        else{
+            // Go through 1 file and run all single-lane comparisons
+
+            let line = fileText[earliestIndex][currLine[earliestIndex]];
+
+            processLine(line, fileInfoArr[earliestIndex]);
+
+            currLine[earliestIndex] += 1;
+        }
+    }
 }
 
 /**
  * Function to take input of a sensor data point line, and process.
- * @param {string} line The CSV line to be processed
+ * @param {Line} line The Line object to be processed
  * @param {FileInfo} fileInfo The object holding the current file's info
  */ 
  function processLine(line, fileInfo) {
     fileInfo.numDataPoints += 1;
 
-    const lineSplit = line.split(",");
-
     // Line order: zone_id, lane_number, lane_id, measurement_start, speed, volume, occupancy, quality
-    const zone_id = lineSplit[0];
-    const lane_number = lineSplit[1];
-    const lane_id = lineSplit[2];
-    const date = new Date(lineSplit[3]);
-    const speed = lineSplit[4];
-    const volume = lineSplit[5];
-    const occupancy = lineSplit[6];
-    const quality = lineSplit[7];
     
     // prevent zoneId, laneNumber, laneId from changing mid-file
-    if(!checkIdError(fileInfo, zone_id, lane_number, lane_id)) {
+    if(!checkIdError(fileInfo, line.zoneId, line.laneNumber, line.laneId)) {
         return;
     }
 
-    const rushDay = isRushDay(date);
-    const peakHour = isPeakHour(date);
+    const rushDay = isRushDay(line.date);
+    const peakHour = isPeakHour(line.date);
 
-    const flowRate = volume * 60.0;
+    const flowRate = line.volume * 60.0;
     var fauty = false;
     var reason = "";
     
@@ -175,7 +231,7 @@ function processText(fileText) {
 
     // Polling interval t2
     let q_t2 = flowRate - fileInfo.prevQ;
-    let v_t2 = speed - fileInfo.prevV;
+    let v_t2 = line.speed - fileInfo.prevV;
 
     var prevFauty = false;
     
@@ -196,12 +252,11 @@ function processText(fileText) {
         //alert(fileInfo.prevTime + " " + reason);
     }
 
-    fileInfo.prevTime = lineSplit[3];
+    fileInfo.prevTime = line.measurementStart;
     fileInfo.qDiff = flowRate - fileInfo.prevQ;
-    fileInfo.vDiff = speed - fileInfo.prevV;
+    fileInfo.vDiff = line.speed - fileInfo.prevV;
     fileInfo.prevQ = flowRate;
-    fileInfo.prevV = speed;
-
+    fileInfo.prevV = line.speed;
 }
 
 function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
