@@ -48,15 +48,8 @@ class Line {
 function execute() {
     const content = document.querySelector('.content');
     const fileList = document.getElementById('uploadedfile').files;
-    
-    if (parseInt(fileList.length) > 2){
-        alert("You are only allowed to upload a maximum of 2 files.");
-        content.innerText = "You are only allowed to upload a maximum of 2 files.";
-    }
-    else {
-        content.innerText = "Analyzing File(s)...\n";
-        readFileList(fileList, content, processText);
-    }
+
+    readFileList(fileList, content, processText);
 }
 
 function readFileList(fileList, content, _callback) {
@@ -65,7 +58,7 @@ function readFileList(fileList, content, _callback) {
 
     function readFile(index) {
         if(index >= fileList.length) {
-            _callback(fileText);
+            //_callback(fileText);
         }
 
         var file = fileList[index];
@@ -79,7 +72,8 @@ function readFileList(fileList, content, _callback) {
 
             fileLines.every(line => {
                 if(line != "") {
-                    linesArr.push(new Line(line));
+                    let l = new Line(line);
+                    alert(line);
                     return true;
                 }
                 return false;
@@ -258,162 +252,4 @@ function processText(fileText) {
     fileInfo.vDiff = line.speed - fileInfo.prevV;
     fileInfo.prevQ = flowRate;
     fileInfo.prevV = line.speed;
-}
-
-function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
-    if(fileInfo.zoneId == 0) {
-        fileInfo.zoneId = lineZoneId;
-    }
-    else if(fileInfo.zoneId != lineZoneId){
-        fileInfo.error = "Error: zone_id changed mid-file";
-        return false;
-    }
-    if(fileInfo.laneNumber == 0) {
-        fileInfo.laneNumber = lineLaneNumber;
-    }
-    else if(fileInfo.laneNumber != lineLaneNumber){
-        fileInfo.error = "Error: lane_number changed mid-file";
-        return false;
-    }
-    if(fileInfo.laneId == 0) {
-        fileInfo.laneId = lineLaneId;
-    }
-    else if(fileInfo.laneId != lineLaneId){
-        fileInfo.error = "Error: lane_id changed mid-file";
-        return false;
-    }
-
-    return true;
-}
-
-function isPeakHour(date) {
-    const hour = date.getHours();
-    
-    if(hour >= 10 && hour < 21) {
-        return true;
-    }
-
-    return false;
-}
-
-function isRushDay(date) {
-    const weekday = date.getDay();
-
-    if([5, 6, 0].includes(weekday)) {
-        return true;
-    }
-    return false;
-}
-
-function isHoliday(date) {
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    if(year == 2022){
-        if(month == 1 && day == 17){
-            return true;
-        }
-        else if(month == 2 && day == 21){
-            return true;
-        }
-        else if(month == 5 && day == 30){
-            return true;
-        }
-        else if(month == 6 && day == 20){
-            return true;
-        }
-        else if(month == 7 && day == 4){
-            return true;
-        }
-        else if(month == 9 && day == 5){
-            return true;
-        }
-        else if(month == 10 && day == 10){
-            return true;
-        }
-        else if(month == 11 && day == 11){
-            return true;
-        }
-        else if(month == 11 && day == 24){
-            return true;
-        }
-        else if(month == 12 && day == 26){
-            return true;
-        }
-    }
-    else if (year == 2023) {
-        if(month == 1 && day == 2){
-            return true;
-        }
-        else if(month == 1 && day == 16){
-            return true;
-        }
-        else if(month == 2 && day == 20){
-            return true;
-        }
-        else if(month == 5 && day == 29){
-            return true;
-        }
-        else if(month == 6 && day == 19){
-            return true;
-        }
-        else if(month == 7 && day == 4){
-            return true;
-        }
-        else if(month == 9 && day == 4){
-            return true;
-        }
-        else if(month == 10 && day == 9){
-            return true;
-        }
-        else if(month == 11 && day == 10){
-            return true;
-        }
-        else if(month == 11 && day == 23){
-            return true;
-        }
-        else if(month == 12 && day == 25){
-            return true;
-        }
-    }
-    else if (year == 2023) {
-        if(month == 1 && day == 1){
-            return true;
-        }
-        else if(month == 1 && day == 15){
-            return true;
-        }
-        else if(month == 2 && day == 19){
-            return true;
-        }
-        else if(month == 5 && day == 27){
-            return true;
-        }
-        else if(month == 6 && day == 19){
-            return true;
-        }
-        else if(month == 7 && day == 4){
-            return true;
-        }
-        else if(month == 9 && day == 2){
-            return true;
-        }
-        else if(month == 10 && day == 14){
-            return true;
-        }
-        else if(month == 11 && day == 11){
-            return true;
-        }
-        else if(month == 11 && day == 28){
-            return true;
-        }
-        else if(month == 12 && day == 25){
-            return true;
-        }
-    }
-    else {
-        // to be continued
-        return false;
-    }
 }
