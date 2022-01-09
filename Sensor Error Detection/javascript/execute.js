@@ -8,7 +8,7 @@ class FileInfo {
         this.laneId = 0;
     
         // Measurements
-        this.measurementTime = 0;
+        this.fileStartTime = 0;
         this.speed = 0;
         this.volume = 0;
         this.occupancy = 0;
@@ -71,7 +71,7 @@ function readFileList(fileList, content, _callback) {
 
     function readFile(index) {
         if(index >= fileList.length) {
-            _callback(fileText, fileInfoArr);
+            _callback(fileText, fileInfoArr, content);
         }
 
         var file = fileList[index];
@@ -96,6 +96,9 @@ function readFileList(fileList, content, _callback) {
                     if(prevTime != 0 && date - prevTime > 60000 && l.measurementStart != "2021-11-07T01:00:00-05:00") {
                         fileInfoArr[index].missingData += ((date - prevTime) / 60000);
                     }
+                    else if(prevTime == 0) {
+                        fileInfoArr[index].fileStartTime = date;
+                    }
 
                     return true;
                 }
@@ -103,6 +106,8 @@ function readFileList(fileList, content, _callback) {
             });
 
             fileText[index] = linesArr;
+
+            readFile(index + 1);
         }
         reader.readAsText(file);
     }
@@ -114,7 +119,7 @@ function readFileList(fileList, content, _callback) {
  * Function used as a callback to process text after extraction from files.
  * @param {Array} fileText Array of Line Arrays representing the CSV files
  */ 
-function processText(fileText, fileInfoArr) {
+function processText(fileText, fileInfoArr, content) {
     var currLine = new Array();
     let numFiles = fileText.length;
 
@@ -131,7 +136,7 @@ function processText(fileText, fileInfoArr) {
     }
 
     function earliestDate() {
-        let earliestDate = fileText[0].date;
+        let earliestDate = fileText[0][currLine[0]].date;
         let earliestIndex = 0;
         let allMatch = true;
 
@@ -149,9 +154,9 @@ function processText(fileText, fileInfoArr) {
         return allMatch ? -1 : earliestIndex;
     }
 
-    while(!finished(currLine)) {
+    while(!finished()) {
         let earliestIndex = earliestDate();
-
+        
         if(earliestIndex == -1) {
             // Go through all files and run all comparisons
             
@@ -159,7 +164,6 @@ function processText(fileText, fileInfoArr) {
                 let line = fileText[i][currLine[i]];
 
                 processLine(line, fileInfoArr[i]);
-
                 currLine[i] += 1;
             }
 
@@ -175,6 +179,14 @@ function processText(fileText, fileInfoArr) {
             processLine(line, fileInfoArr[earliestIndex]);
             currLine[earliestIndex] += 1;
         }
+    }
+
+    content.innerText += "Analysis on " + numFiles + " files finished!\n";
+    for(let i = 0; i < numFiles; i ++) {
+        content.innerText += "File " + (i+1) + " results:\n";
+        content.innerText += "Number of lines: " + fileInfoArr[i].numDataPoints + "\n";
+        content.innerText += "Number missing: " + fileInfoArr[i].missingData + "\n";
+        content.innerText += "Number faulty: " + fileInfoArr[i].faultyCount + "\n";
     }
 }
 
@@ -225,23 +237,27 @@ function processText(fileText, fileInfoArr) {
     }
 
     // Rule 5
-    if(speed > 110) { 
+    if(line.speed > 110) { 
         fauty = true;
         reason = "rule5";
     }
 
     // Rule 6
-    if(line.flowRate > 1750 && speed > 75) {
+    if(line.flowRate > 1750 && line.speed > 75) {
         fauty = true;
         reason = "rule6";
+    }
+
+    // Rule 7
+    if(line.speed > 80 && line.flowRate > 1200) {
+        fauty = true;
+        reason = "rule7";
     }
 
     if(fauty) {
         fileInfo.faultyCount += 1;
         //alert(lineSplit[3] + " " + reason);
     }
-
-    // Rule 7 missing
 
     /* Note: all errors in rule 8 and 9 are caught retroactively
     * (caught in the next line's processing), which is why values 
@@ -260,13 +276,13 @@ function processText(fileText, fileInfoArr) {
     var prevFauty = false;
     
     // Rule 8
-    if(peakHour && -(q_t1 * q_t2) > 1400000 && Math.abs(v_t1 * v_t2) < 25) { // Rule 8
+    if(peakHour && -(q_t1 * q_t2) > 1400000 && Math.abs(v_t1 * v_t2) < 25) {
         prevFauty = true;
         reason = "rule8";
     }
     
     // Rule 9
-    if(peakHour && -(v_t1 * v_t2) > 140 && Math.abs(q_t1 * q_t2) < 125125) { // Rule 9
+    if(peakHour && -(v_t1 * v_t2) > 140 && Math.abs(q_t1 * q_t2) < 125125) {
         prevFauty = true;
         reason = "rule9";
     }
@@ -299,67 +315,78 @@ function processTwoLineRules(line1, fileInfo1, line2, fileInfo2) {
     let speedDifference = Math.abs(line1.speed - line2.speed);
     let speedAverage = (line1.speed * line1.volume + line2.speed * line2.volume) / (line1.volume + line2.volume);
 
+    var fauty = false;
+    var reason = "";
+
     // Rule 10
-    if(isPeakHour(line1.date) && Math.abs(line1.flowRate - line2.flowRate) > 1440) {
-        fileInfo1.faultyCount ++;
-        fileInfo2.faultyCount ++;
+    if(isPeakHour(line1.date) && flowDifference > 1440) {
+        prevFauty = true;
+        reason = "rule10";
     }
 
     // Rule 11
     if(isPeakHour(line1.date) && speedDifference > 55) {
-        fileInfo1.faultyCount ++;
-        fileInfo2.faultyCount ++;
+        prevFauty = true;
+        reason = "rule11";
     }
 
     // Rule 12
     if(totalFlow <= 2400 && flowDifference > 1960) {
-        fileInfo1.faultyCount ++;
-        fileInfo2.faultyCount ++;
+        prevFauty = true;
+        reason = "rule12a";
     }
     if(totalFlow > 2400 && totalFlow <= 3600 && flowDifference > 1425) {
-        fileInfo1.faultyCount ++;
-        fileInfo2.faultyCount ++;
+        prevFauty = true;
+        reason = "rule12b";
     }
     if(totalFlow > 3600 && flowDifference > 1300) {
-        fileInfo1.faultyCount ++;
-        fileInfo2.faultyCount ++;
+        prevFauty = true;
+        reason = "rule12c";
     }
 
     // Rule 13
     if(totalFlow <= 1200 && speedDifference > 60) {
-        fileInfo1.faultyCount ++;
-        fileInfo2.faultyCount ++;
+        prevFauty = true;
+        reason = "rule13a";
     }
     if(totalFlow > 1200 && totalFlow <= 2400 && speedDifference > 40) {
-        fileInfo1.faultyCount ++;
-        fileInfo2.faultyCount ++;
+        prevFauty = true;
+        reason = "rule13b";
     }
     if(totalFlow > 2400 && totalFlow <= 3600 && speedDifference > 15) {
-        fileInfo1.faultyCount ++;
-        fileInfo2.faultyCount ++;
+        prevFauty = true;
+        reason = "rule13c";
     }
     if(totalFlow > 3600 && speedDifference > 10) {
-        fileInfo1.faultyCount ++;
-        fileInfo2.faultyCount ++;
+        prevFauty = true;
+        reason = "rule13d";
     }
 
     // Rule 14
     if(totalFlow <= 1200 && speedAverage > 100) {
-        fileInfo1.faultyCount ++;
-        fileInfo2.faultyCount ++;
+        prevFauty = true;
+        reason = "rule14a";
     }
     if(totalFlow > 1200 && totalFlow <= 2400 && speedAverage > 90) {
-        fileInfo1.faultyCount ++;
-        fileInfo2.faultyCount ++;
+        prevFauty = true;
+        reason = "rule14b";
     }
     if(totalFlow > 2400 && totalFlow <= 3600 && speedAverage > 75) {
-        fileInfo1.faultyCount ++;
-        fileInfo2.faultyCount ++;
+        prevFauty = true;
+        reason = "rule14c";
     }
     if(totalFlow > 3600 && speedAverage > 70) {
+        prevFauty = true;
+        reason = "rule14d";
+    }
+
+    
+    if(fauty) {
         fileInfo1.faultyCount ++;
         fileInfo2.faultyCount ++;
+        alert(line1.measurementStart + " " + reason);
     }
+
 }
 
 function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
