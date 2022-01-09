@@ -69,11 +69,20 @@ function readFileList(fileList, content, _callback) {
             
             fileLines = text.split(/\r\n|\n/);
             fileLines.splice(0, 1);
-
+            
+            let m = 0;
+            let flag = false;
             fileLines.every(line => {
                 if(line != "") {
                     let l = new Line(line);
-                    alert(line);
+                    if(l.measurementStart == "2021-11-07T00:57:00-04:00"){
+                        flag = true;
+                    }
+                    if(flag) {
+                        let curr = new Date(l.measurementStart);
+                        alert(curr-m);
+                        m = curr;
+                    }
                     return true;
                 }
                 return false;

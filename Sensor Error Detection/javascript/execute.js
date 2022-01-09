@@ -22,6 +22,9 @@ class FileInfo {
         this.vDiff = undefined; // updated at every line to reflect V_(t-1) - V_(t-2) for polling interval t_1
 
         // Outcomes
+        this.missingData = 0;
+        this.missingSpeed = 0;
+        this.missingVol = 0;
         this.faultyCount = 0;
         this.error = undefined;
     }
@@ -62,13 +65,16 @@ function execute() {
 function readFileList(fileList, content, _callback) {
     var reader = new FileReader();
     var fileText = new Array();
+    var fileInfoArr = new Array();
 
     function readFile(index) {
         if(index >= fileList.length) {
-            _callback(fileText);
+            _callback(fileText, fileInfoArr);
         }
 
         var file = fileList[index];
+        fileInfoArr[index] = new FileInfo();
+        var prevTime = 0;
 
         reader.onloadend = function(event) {
             var text = event.target.result;
@@ -79,7 +85,16 @@ function readFileList(fileList, content, _callback) {
 
             fileLines.every(line => {
                 if(line != "") {
-                    linesArr.push(new Line(line));
+                    let l = new Line(line);
+                    linesArr.push(l);
+
+                    let date = new Date(l.measurementStart);
+                    
+                    // Records number of missing data blocks
+                    if(prevTime != 0 && date - prevTime > 60000 && l.measurementStart != "2021-11-07T01:00:00-05:00") {
+                        fileInfoArr[index].missingData += ((date - prevTime) / 60000);
+                    }
+
                     return true;
                 }
                 return false;
@@ -97,13 +112,11 @@ function readFileList(fileList, content, _callback) {
  * Function used as a callback to process text after extraction from files.
  * @param {Array} fileText Array of Line Arrays representing the CSV files
  */ 
-function processText(fileText) {
-    var fileInfoArr = new Array();
+function processText(fileText, fileInfoArr) {
     var currLine = new Array();
     let numFiles = fileText.length;
 
     for(let i = 0; i < numFiles; i ++) {
-        fileInfoArr[i] = new FileInfo();
         currLine[i] = 0;
     }
 
@@ -140,17 +153,30 @@ function processText(fileText) {
         if(earliestIndex == -1) {
             // Go through all files and run all comparisons
 
-            
+            for(let i = 0; i < numFiles; i ++) {
+                let line = fileText[i][currLine[i]];
 
-            /*BUILD*/
+                processLine(line, fileInfoArr[i]);
+
+                currLine[i] += 1;
+            }
+
+            
+            // Two lane rules
+
+            if(numFiles == 2) {
+
+
+
+
+
+            }
         }
         else{
             // Go through 1 file and run all single-lane comparisons
 
             let line = fileText[earliestIndex][currLine[earliestIndex]];
-
             processLine(line, fileInfoArr[earliestIndex]);
-
             currLine[earliestIndex] += 1;
         }
     }
