@@ -45,6 +45,8 @@ class Line {
         this.volume = lineSplit[5];
         this.occupancy = lineSplit[6];
         this.quality = lineSplit[7];
+
+        this.flowRate = this.volume * 60.0;
     }
 }
 
@@ -52,7 +54,7 @@ function execute() {
     const content = document.querySelector('.content');
     const fileList = document.getElementById('uploadedfile').files;
     
-    if (parseInt(fileList.length) > 2){
+    if(parseInt(fileList.length) > 2){
         alert("You are only allowed to upload a maximum of 2 files.");
         content.innerText = "You are only allowed to upload a maximum of 2 files.";
     }
@@ -139,7 +141,7 @@ function processText(fileText, fileInfoArr) {
                 earliestIndex = j;
                 allMatch = false;
             }
-            else if (currLine[j] < fileText[j].length && fileText[j][currLine[j]].date != earliestDate) {
+            else if(currLine[j] < fileText[j].length && fileText[j][currLine[j]].date != earliestDate) {
                 allMatch = false;
             }
         }
@@ -152,7 +154,7 @@ function processText(fileText, fileInfoArr) {
 
         if(earliestIndex == -1) {
             // Go through all files and run all comparisons
-
+            
             for(let i = 0; i < numFiles; i ++) {
                 let line = fileText[i][currLine[i]];
 
@@ -161,15 +163,9 @@ function processText(fileText, fileInfoArr) {
                 currLine[i] += 1;
             }
 
-            
             // Two lane rules
-
             if(numFiles == 2) {
-
-
-
-
-
+                processTwoLineRules(fileText[0][currLine[0]-1], fileInfoArr[0], fileText[1][currLine[1]-1], fileInfoArr[1])
             }
         }
         else{
@@ -200,41 +196,42 @@ function processText(fileText, fileInfoArr) {
     const rushDay = isRushDay(line.date);
     const peakHour = isPeakHour(line.date);
 
-    const flowRate = line.volume * 60.0;
     var fauty = false;
     var reason = "";
     
     if(rushDay && peakHour) { // Rule 1
-        if(flowRate > 2290 || flowRate < 345) {
+        if(line.flowRate > 2290 || line.flowRate < 345) {
             fauty = true;
             reason = "rule1";
         }
     }
     else if(rushDay && !peakHour) { // Rule 2
-        if(flowRate > 1120) {
+        if(line.flowRate > 1120) {
             fauty = true;
             reason = "rule2";
         }
     }
     else if(!rushDay && peakHour) { // Rule 3
-        if(flowRate > 1910) {
+        if(line.flowRate > 1910) {
             fauty = true;
             reason = "rule3";
         }
     }
     else { // Rule 4
-        if(flowRate > 975) {
+        if(line.flowRate > 975) {
             fauty = true;
             reason = "rule4";
         }
     }
 
-    if(speed > 110) { // Rule 5
+    // Rule 5
+    if(speed > 110) { 
         fauty = true;
         reason = "rule5";
     }
 
-    if(flowRate > 1750 && speed > 75) { // Rule 6
+    // Rule 6
+    if(line.flowRate > 1750 && speed > 75) {
         fauty = true;
         reason = "rule6";
     }
@@ -257,16 +254,18 @@ function processText(fileText, fileInfoArr) {
     let v_t1 = fileInfo.vDiff;
 
     // Polling interval t2
-    let q_t2 = flowRate - fileInfo.prevQ;
+    let q_t2 = line.flowRate - fileInfo.prevQ;
     let v_t2 = line.speed - fileInfo.prevV;
 
     var prevFauty = false;
     
+    // Rule 8
     if(peakHour && -(q_t1 * q_t2) > 1400000 && Math.abs(v_t1 * v_t2) < 25) { // Rule 8
         prevFauty = true;
         reason = "rule8";
     }
     
+    // Rule 9
     if(peakHour && -(v_t1 * v_t2) > 140 && Math.abs(q_t1 * q_t2) < 125125) { // Rule 9
         prevFauty = true;
         reason = "rule9";
@@ -280,10 +279,87 @@ function processText(fileText, fileInfoArr) {
     }
 
     fileInfo.prevTime = line.measurementStart;
-    fileInfo.qDiff = flowRate - fileInfo.prevQ;
+    fileInfo.qDiff = line.flowRate - fileInfo.prevQ;
     fileInfo.vDiff = line.speed - fileInfo.prevV;
-    fileInfo.prevQ = flowRate;
+    fileInfo.prevQ = line.flowRate;
     fileInfo.prevV = line.speed;
+}
+
+/**
+ * Function to calculate the total highway flow issues across two lanes.
+ * @param {Line} line1 The Line object to be processed
+ * @param {FileInfo} fileInfo1 The object holding the current file's info
+ * @param {Line} line2 The Line object to be processed
+ * @param {FileInfo} fileInfo2 The object holding the current file's info
+ */ 
+function processTwoLineRules(line1, fileInfo1, line2, fileInfo2) {
+    
+    let totalFlow = line1.flowRate + line2.flowRate;
+    let flowDifference = Math.abs(line1.flowRate - line2.flowRate);
+    let speedDifference = Math.abs(line1.speed - line2.speed);
+    let speedAverage = (line1.speed * line1.volume + line2.speed * line2.volume) / (line1.volume + line2.volume);
+
+    // Rule 10
+    if(isPeakHour(line1.date) && Math.abs(line1.flowRate - line2.flowRate) > 1440) {
+        fileInfo1.faultyCount ++;
+        fileInfo2.faultyCount ++;
+    }
+
+    // Rule 11
+    if(isPeakHour(line1.date) && speedDifference > 55) {
+        fileInfo1.faultyCount ++;
+        fileInfo2.faultyCount ++;
+    }
+
+    // Rule 12
+    if(totalFlow <= 2400 && flowDifference > 1960) {
+        fileInfo1.faultyCount ++;
+        fileInfo2.faultyCount ++;
+    }
+    if(totalFlow > 2400 && totalFlow <= 3600 && flowDifference > 1425) {
+        fileInfo1.faultyCount ++;
+        fileInfo2.faultyCount ++;
+    }
+    if(totalFlow > 3600 && flowDifference > 1300) {
+        fileInfo1.faultyCount ++;
+        fileInfo2.faultyCount ++;
+    }
+
+    // Rule 13
+    if(totalFlow <= 1200 && speedDifference > 60) {
+        fileInfo1.faultyCount ++;
+        fileInfo2.faultyCount ++;
+    }
+    if(totalFlow > 1200 && totalFlow <= 2400 && speedDifference > 40) {
+        fileInfo1.faultyCount ++;
+        fileInfo2.faultyCount ++;
+    }
+    if(totalFlow > 2400 && totalFlow <= 3600 && speedDifference > 15) {
+        fileInfo1.faultyCount ++;
+        fileInfo2.faultyCount ++;
+    }
+    if(totalFlow > 3600 && speedDifference > 10) {
+        fileInfo1.faultyCount ++;
+        fileInfo2.faultyCount ++;
+    }
+
+    // Rule 14
+    if(totalFlow <= 1200 && speedAverage > 100) {
+        fileInfo1.faultyCount ++;
+        fileInfo2.faultyCount ++;
+    }
+    if(totalFlow > 1200 && totalFlow <= 2400 && speedAverage > 90) {
+        fileInfo1.faultyCount ++;
+        fileInfo2.faultyCount ++;
+    }
+    if(totalFlow > 2400 && totalFlow <= 3600 && speedAverage > 75) {
+        fileInfo1.faultyCount ++;
+        fileInfo2.faultyCount ++;
+    }
+    if(totalFlow > 3600 && speedAverage > 70) {
+        fileInfo1.faultyCount ++;
+        fileInfo2.faultyCount ++;
+    }
 }
 
 function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
@@ -368,7 +444,7 @@ function isHoliday(date) {
             return true;
         }
     }
-    else if (year == 2023) {
+    else if(year == 2023) {
         if(month == 1 && day == 2){
             return true;
         }
@@ -403,7 +479,7 @@ function isHoliday(date) {
             return true;
         }
     }
-    else if (year == 2023) {
+    else if(year == 2023) {
         if(month == 1 && day == 1){
             return true;
         }
