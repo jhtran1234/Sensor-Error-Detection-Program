@@ -26,6 +26,7 @@ class FileInfo {
         this.missingSpeed = 0;
         this.missingVol = 0;
         this.faultyCount = 0;
+        this.faults = new Array();
         this.error = undefined;
     }
 }
@@ -47,6 +48,13 @@ class Line {
         this.quality = lineSplit[7];
 
         this.flowRate = this.volume * 60.0;
+    }
+}
+
+class Fault {
+    constructor(timeStamp, reason) {
+        this.timeStamp = timeStamp;
+        this.reason = reason;
     }
 }
 
@@ -187,7 +195,18 @@ function processText(fileText, fileInfoArr, content) {
         content.innerText += "Number of lines: " + fileInfoArr[i].numDataPoints + "\n";
         content.innerText += "Number missing: " + fileInfoArr[i].missingData + "\n";
         content.innerText += "Number faulty: " + fileInfoArr[i].faultyCount + "\n";
+
+        displayFaults(content, fileInfoArr[i].faults, 0);
     }
+}
+
+function displayFaults(content, faultArray, index) {
+    if(index >= faultArray.length) {
+        return;
+    }
+    
+    content.innerText += faultArray[index].timeStamp + " " + faultArray[index].reason + "\n";
+    displayFaults(content, faultArray, index+1);
 }
 
 /**
@@ -197,8 +216,6 @@ function processText(fileText, fileInfoArr, content) {
  */ 
  function processLine(line, fileInfo) {
     fileInfo.numDataPoints += 1;
-
-    // Line order: zone_id, lane_number, lane_id, measurement_start, speed, volume, occupancy, quality
     
     // prevent zoneId, laneNumber, laneId from changing mid-file
     if(!checkIdError(fileInfo, line.zoneId, line.laneNumber, line.laneId)) {
@@ -208,28 +225,62 @@ function processText(fileText, fileInfoArr, content) {
     const rushDay = isRushDay(line.date);
     const peakHour = isPeakHour(line.date);
 
+    /* Note: all errors in rule 8 and 9 are caught retroactively
+    * (caught in the next line's processing), which is why values 
+    * such as qDiff and prevQ are stored and used in the next process.*/
+
+    // Polling interval t1
+    let q_t1 = fileInfo.qDiff;
+    let v_t1 = fileInfo.vDiff;
+
+    // Polling interval t2
+    let q_t2 = line.flowRate - fileInfo.prevQ;
+    let v_t2 = line.speed - fileInfo.prevV;
+
+    var prevFauty = false;
     var fauty = false;
     var reason = "";
     
-    if(rushDay && peakHour) { // Rule 1
+    // Rule 8
+    if(peakHour && -(q_t1 * q_t2) > 1400000 && Math.abs(v_t1 * v_t2) < 25) {
+        prevFauty = true;
+        reason = "rule8";
+    }
+    
+    // Rule 9
+    if(peakHour && -(v_t1 * v_t2) > 140 && Math.abs(q_t1 * q_t2) < 125125) {
+        prevFauty = true;
+        reason = "rule9";
+    }
+
+    if(prevFauty) {
+        fileInfo.faultyCount += 1;
+        fileInfo.faults.push(new Fault(fileInfo.prevTime, reason));
+    }
+
+    // Rule 1
+    if(rushDay && peakHour) { 
         if(line.flowRate > 2290 || line.flowRate < 345) {
             fauty = true;
             reason = "rule1";
         }
     }
-    else if(rushDay && !peakHour) { // Rule 2
+    // Rule 2
+    else if(rushDay && !peakHour) { 
         if(line.flowRate > 1120) {
             fauty = true;
             reason = "rule2";
         }
     }
-    else if(!rushDay && peakHour) { // Rule 3
+    // Rule 3
+    else if(!rushDay && peakHour) { 
         if(line.flowRate > 1910) {
             fauty = true;
             reason = "rule3";
         }
     }
-    else { // Rule 4
+    // Rule 4
+    else { 
         if(line.flowRate > 975) {
             fauty = true;
             reason = "rule4";
@@ -256,42 +307,7 @@ function processText(fileText, fileInfoArr, content) {
 
     if(fauty) {
         fileInfo.faultyCount += 1;
-        //alert(lineSplit[3] + " " + reason);
-    }
-
-    /* Note: all errors in rule 8 and 9 are caught retroactively
-    * (caught in the next line's processing), which is why values 
-    * such as qDiff and prevQ are stored and used in the next process.*/
-
-    // Should process before rules 1-7
-
-    // Polling interval t1
-    let q_t1 = fileInfo.qDiff;
-    let v_t1 = fileInfo.vDiff;
-
-    // Polling interval t2
-    let q_t2 = line.flowRate - fileInfo.prevQ;
-    let v_t2 = line.speed - fileInfo.prevV;
-
-    var prevFauty = false;
-    
-    // Rule 8
-    if(peakHour && -(q_t1 * q_t2) > 1400000 && Math.abs(v_t1 * v_t2) < 25) {
-        prevFauty = true;
-        reason = "rule8";
-    }
-    
-    // Rule 9
-    if(peakHour && -(v_t1 * v_t2) > 140 && Math.abs(q_t1 * q_t2) < 125125) {
-        prevFauty = true;
-        reason = "rule9";
-    }
-
-    
-    if(prevFauty) {
-        fileInfo.faultyCount += 1;
-        //alert(fileInfo.faultyCount);
-        //alert(fileInfo.prevTime + " " + reason);
+        fileInfo.faults.push(new Fault(line.measurementStart, reason));
     }
 
     fileInfo.prevTime = line.measurementStart;
@@ -384,7 +400,8 @@ function processTwoLineRules(line1, fileInfo1, line2, fileInfo2) {
     if(fauty) {
         fileInfo1.faultyCount ++;
         fileInfo2.faultyCount ++;
-        alert(line1.measurementStart + " " + reason);
+        fileInfo1.faults.push(new Fault(line1.measurementStart, reason));
+        fileInfo2.faults.push(new Fault(line2.measurementStart, reason));
     }
 
 }
