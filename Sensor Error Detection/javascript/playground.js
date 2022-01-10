@@ -49,114 +49,58 @@ function execute() {
     const content = document.querySelector('.content');
     const fileList = document.getElementById('uploadedfile').files;
 
+    function readFileList(fileList, content, _callback) {
+        var reader = new FileReader();
+        var fileText = new Array();
+    
+
+
+        function readFile(index) {
+            if(index >= fileList.length) {
+                _callback(fileText);
+            }
+    
+            const file = fileList[index];
+            alert(file instanceof Blob);
+    
+            reader.onloadend = function(event) {
+                var text = event.target.result;
+                var linesArr = new Array();
+                
+                fileLines = text.split(/\r\n|\n/);
+                fileLines.splice(0, 1);
+                
+                fileLines.every(line => {
+                    if(line != "") {
+                        let l = new Line(line);
+                        linesArr.push(l);
+                        return true;
+                    }
+                    return false;
+                });
+    
+                fileText[index] = linesArr;
+                readFile(index + 1);
+            }
+            if(file){
+                reader.readAsBinaryString(file);
+            }
+        }
+    
+        readFile(0);
+    }
+
+
     readFileList(fileList, content, processText);
 }
 
-function readFileList(fileList, content, _callback) {
-    var reader = new FileReader();
-    var fileText = new Array();
 
-    function readFile(index) {
-        if(index >= fileList.length) {
-            //_callback(fileText);
-        }
-
-        var file = fileList[index];
-
-        reader.onloadend = function(event) {
-            var text = event.target.result;
-            var linesArr = new Array();
-            
-            fileLines = text.split(/\r\n|\n/);
-            fileLines.splice(0, 1);
-            
-            let m = 0;
-            let flag = false;
-            fileLines.every(line => {
-                if(line != "") {
-                    let l = new Line(line);
-                    if(l.measurementStart == "2021-11-07T00:57:00-04:00"){
-                        flag = true;
-                    }
-                    if(flag) {
-                        let curr = new Date(l.measurementStart);
-                        alert(curr-m);
-                        m = curr;
-                    }
-                    return true;
-                }
-                return false;
-            });
-
-            fileText[index] = linesArr;
-        }
-        reader.readAsText(file);
-    }
-
-    readFile(0);
-}
 
 /**
  * Function used as a callback to process text after extraction from files.
  * @param {Array} fileText Array of Line Arrays representing the CSV files
  */ 
 function processText(fileText) {
-    var fileInfoArr = new Array();
-    var currLine = new Array();
-    let numFiles = fileText.length;
-
-    for(let i = 0; i < numFiles; i ++) {
-        fileInfoArr[i] = new FileInfo();
-        currLine[i] = 0;
-    }
-
-    function finished() {
-        let finished = true;
-        for(let j = 0; j < numFiles; j ++) {
-            finished = finished && (currLine[j]+1 >= fileText[j].length ? true : false);
-        }
-        return finished;
-    }
-
-    function earliestDate() {
-        let earliestDate = fileText[0].date;
-        let earliestIndex = 0;
-        let allMatch = true;
-
-        for(let j = 0; j < numFiles; j ++) {
-            if(currLine[j] < fileText[j].length && fileText[j][currLine[j]].date < earliestDate) {
-                earliestDate = fileText[j].date;
-                earliestIndex = j;
-                allMatch = false;
-            }
-            else if (currLine[j] < fileText[j].length && fileText[j][currLine[j]].date != earliestDate) {
-                allMatch = false;
-            }
-        }
-
-        return allMatch ? -1 : earliestIndex;
-    }
-
-    while(!finished(currLine)) {
-        let earliestIndex = earliestDate();
-
-        if(earliestIndex == -1) {
-            // Go through all files and run all comparisons
-
-            
-
-            /*BUILD*/
-        }
-        else{
-            // Go through 1 file and run all single-lane comparisons
-
-            let line = fileText[earliestIndex][currLine[earliestIndex]];
-
-            processLine(line, fileInfoArr[earliestIndex]);
-
-            currLine[earliestIndex] += 1;
-        }
-    }
 }
 
 /**

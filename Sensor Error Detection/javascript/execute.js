@@ -117,7 +117,9 @@ function readFileList(fileList, content, _callback) {
 
             readFile(index + 1);
         }
-        reader.readAsText(file);
+        if(file){
+            reader.readAsText(file);
+        }
     }
 
     readFile(0);
