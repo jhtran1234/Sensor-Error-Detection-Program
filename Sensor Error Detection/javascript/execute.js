@@ -145,12 +145,24 @@ function processText(fileText, fileInfoArr, content) {
         return finished;
     }
 
+
+    // needs a complete rewrite to send back all array indices of elements with a matching date
+    
     function earliestDate() {
-        let earliestDate = fileText[0][currLine[0]].date;
+        let earliestDate = undefined;
         let earliestIndex = 0;
+        while(earliestIndex < numFiles && fileText[earliestIndex][currLine[earliestIndex]].date == undefined) {
+            earliestIndex ++;
+        }
+
+        if(earliestIndex > numFiles) {
+            alert("Error! Data time slot error.");
+        }
+
+        let earliestDate = fileText[earliestIndex][currLine[earliestIndex]].date;
         let allMatch = true;
 
-        for(let j = 0; j < numFiles; j ++) {
+        for(let j = earliestIndex; j < numFiles; j ++) {
             if(currLine[j] < fileText[j].length && fileText[j][currLine[j]].date < earliestDate) {
                 earliestDate = fileText[j].date;
                 earliestIndex = j;
@@ -168,7 +180,7 @@ function processText(fileText, fileInfoArr, content) {
         let earliestIndex = earliestDate();
         
         if(earliestIndex == -1) {
-            // Go through all files and run all comparisons
+            // Go through all remaining!!! files and run all comparisons
             
             for(let i = 0; i < numFiles; i ++) {
                 let line = fileText[i][currLine[i]];
@@ -203,7 +215,7 @@ function processText(fileText, fileInfoArr, content) {
 }
 
 function displayFaults(content, faultArray, index) {
-    if(index >= faultArray.length) {
+    if(index >= faultArray.length || index >= 10) {
         return;
     }
     
