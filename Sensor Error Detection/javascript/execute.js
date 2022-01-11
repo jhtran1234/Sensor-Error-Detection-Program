@@ -1,3 +1,6 @@
+/**
+ * Class to represent the entire CSV file.
+ */
 class FileInfo {
     constructor() {
         // Constants
@@ -9,11 +12,7 @@ class FileInfo {
     
         // Measurements
         this.fileStartTime = 0;
-        this.speed = 0;
-        this.volume = 0;
-        this.occupancy = 0;
-        this.quality = 0;
-    
+
         // ∆s
         this.prevTime = undefined; // stores t so that if there is an error found when processing t+1, the error can be logged at t
         this.prevQ = undefined; // stores Q_t to caulculate the Q∆ at the next item t+1
@@ -31,6 +30,9 @@ class FileInfo {
     }
 }
 
+/**
+ * Class to represent a CSV line, which is also an individual lane sensor data point.
+ */
 class Line {
     constructor(lineSplit) {
         if(typeof(lineSplit) === 'string') {
@@ -51,6 +53,9 @@ class Line {
     }
 }
 
+/**
+ * Class to store faults.
+ */
 class Fault {
     constructor(timeStamp, reason) {
         this.timeStamp = timeStamp;
@@ -58,6 +63,9 @@ class Fault {
     }
 }
 
+/**
+ * Function that is executed upon "Analyze" HTML button click.
+ */
 function execute() {
     const content = document.querySelector('.content');
     const fileList = document.getElementById('uploadedfile').files;
@@ -72,6 +80,12 @@ function execute() {
     }
 }
 
+/**
+ * 
+ * @param {Array} fileList Array of files from the HTML uploadedfile element 
+ * @param {Element} content HTML Element to write results to
+ * @param {Function} _callback processText function is passed here to continue after async file read
+ */
 function readFileList(fileList, content, _callback) {
     var reader = new FileReader();
     var fileText = new Array();
@@ -128,6 +142,8 @@ function readFileList(fileList, content, _callback) {
 /**
  * Function used as a callback to process text after extraction from files.
  * @param {Array} fileText Array of Line Arrays representing the CSV files
+ * @param {Array} fileInfoArr Array of FileInfo objects storing document data
+ * @param {Element} content HTML Element to write results to
  */ 
 function processText(fileText, fileInfoArr, content) {
     var currLine = new Array();
@@ -137,6 +153,9 @@ function processText(fileText, fileInfoArr, content) {
         currLine[i] = 0;
     }
 
+    /* 
+    * Function to determine if all file lines have been processed and the line-by-line processing can terminate.
+    */
     function finished() {
         let finished = true;
         for(let j = 0; j < numFiles; j ++) {
@@ -146,8 +165,9 @@ function processText(fileText, fileInfoArr, content) {
     }
 
 
-    // needs a complete rewrite to send back all array indices of elements with a matching date
-    
+    /**
+    * Function to return an Array of the indices of the files with the earliest measurement times for immediate processing.
+    */     
     function earliestDate() {
         let earliestDate = undefined;
         let earliestIndex = 0;
@@ -155,7 +175,7 @@ function processText(fileText, fileInfoArr, content) {
         // Array to store all file indices with the earliest measurement time
         let indicesArray = new Array();
 
-        while(earliestIndex < numFiles && fileText[earliestIndex][currLine[earliestIndex]].date == undefined) {
+        while(earliestIndex < numFiles && fileText[earliestIndex][currLine[earliestIndex]] == undefined) {
             earliestIndex ++;
         }
 
@@ -164,10 +184,10 @@ function processText(fileText, fileInfoArr, content) {
         }
 
         indicesArray = [earliestIndex];
-        let earliestDate = fileText[earliestIndex][currLine[earliestIndex]].date;
+        earliestDate = fileText[earliestIndex][currLine[earliestIndex]].date;
 
         // Finding the earliest measurement time out of the remaining files, j represents file index
-        for(let j = earliestIndex; j < numFiles; j ++) {
+        for(let j = earliestIndex + 1; j < numFiles; j ++) {
             if(currLine[j] < fileText[j].length && fileText[j][currLine[j]].date < earliestDate) {
                 earliestDate = fileText[j].date;
                 indicesArray = [j];
@@ -182,17 +202,20 @@ function processText(fileText, fileInfoArr, content) {
 
     while(!finished()) {
         let indicesArray = earliestDate();
-                
-        for(let i = 0; i < indicesArray.length; i ++) {
-            let line = fileText[i][currLine[i]];
 
-            processLine(line, fileInfoArr[i]);
-            currLine[i] += 1;
+        for(let i = 0; i < indicesArray.length; i ++) {
+            let fileIndex = indicesArray[i];
+            let line = fileText[fileIndex][currLine[fileIndex]];
+
+            processLine(line, fileInfoArr[fileIndex]);
+            currLine[fileIndex] += 1;
         }
 
         // Two lane rules
         if(indicesArray.length == 2) {
-            processTwoLineRules(fileText[indicesArray[0]][currLine[indicesArray[0]]-1], fileInfoArr[indicesArray[0]], fileText[indicesArray[1]][currLine[indicesArray[1]]-1], fileInfoArr[indicesArray[1]]);
+            let fileIndex1 = indicesArray[0];
+            let fileIndex2 = indicesArray[1];
+            processTwoLineRules(fileText[fileIndex1][currLine[fileIndex1]-1], fileInfoArr[fileIndex1], fileText[fileIndex2][currLine[fileIndex2]-1], fileInfoArr[fileIndex2]);
         }
     }
 
@@ -207,6 +230,12 @@ function processText(fileText, fileInfoArr, content) {
     }
 }
 
+/**
+ * Recursive runction to display file faults to the HTML Element.
+ * @param {Element} content HTML Element to write results to
+ * @param {Array} faultArray Array of file faults to write to the HTML page
+ * @param {number} index Index of the faultArray currently being written to HTML Element
+ */
 function displayFaults(content, faultArray, index) {
     if(index >= faultArray.length || index >= 10) {
         return;
@@ -413,6 +442,13 @@ function processTwoLineRules(line1, fileInfo1, line2, fileInfo2) {
 
 }
 
+/**
+ * Function to detect a change in zone_id, lane_number, and lane_id midway through a file.
+ * @param {FileInfo} fileInfo The object holding the current file's info
+ * @param {number} lineZoneId The current line's zone_id to be compared against the file's zone_id
+ * @param {number} lineLaneNumber The current line's lane_number to be compared against the file's lane_number
+ * @param {number} lineLaneId The current line's lane_id to be compared against the file's lane_id
+ */
 function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
     if(fileInfo.zoneId == 0) {
         fileInfo.zoneId = lineZoneId;
@@ -439,6 +475,10 @@ function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
     return true;
 }
 
+/**
+ * @param {Date} date 
+ * @returns boolean for if it is a peak hour on the highway. 
+ */
 function isPeakHour(date) {
     const hour = date.getHours();
     
@@ -449,6 +489,10 @@ function isPeakHour(date) {
     return false;
 }
 
+/**
+ * @param {Date} date 
+ * @returns boolean for if it is a rush day on the highway. 
+ */
 function isRushDay(date) {
     const weekday = date.getDay();
 
@@ -458,6 +502,10 @@ function isRushDay(date) {
     return false;
 }
 
+/**
+ * @param {Date} date 
+ * @returns boolean for if it is a holiday on the highway. 
+ */
 function isHoliday(date) {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
