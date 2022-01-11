@@ -151,55 +151,48 @@ function processText(fileText, fileInfoArr, content) {
     function earliestDate() {
         let earliestDate = undefined;
         let earliestIndex = 0;
+
+        // Array to store all file indices with the earliest measurement time
+        let indicesArray = new Array();
+
         while(earliestIndex < numFiles && fileText[earliestIndex][currLine[earliestIndex]].date == undefined) {
             earliestIndex ++;
         }
 
         if(earliestIndex > numFiles) {
-            alert("Error! Data time slot error.");
+            alert("Error! Data was not found.");
         }
 
+        indicesArray = [earliestIndex];
         let earliestDate = fileText[earliestIndex][currLine[earliestIndex]].date;
-        let allMatch = true;
 
+        // Finding the earliest measurement time out of the remaining files, j represents file index
         for(let j = earliestIndex; j < numFiles; j ++) {
             if(currLine[j] < fileText[j].length && fileText[j][currLine[j]].date < earliestDate) {
                 earliestDate = fileText[j].date;
-                earliestIndex = j;
-                allMatch = false;
+                indicesArray = [j];
             }
-            else if(currLine[j] < fileText[j].length && fileText[j][currLine[j]].date != earliestDate) {
-                allMatch = false;
+            else if(currLine[j] < fileText[j].length && fileText[j][currLine[j]].date == earliestDate) {
+                indicesArray.push(j);
             }
         }
 
-        return allMatch ? -1 : earliestIndex;
+        return indicesArray;
     }
 
     while(!finished()) {
-        let earliestIndex = earliestDate();
-        
-        if(earliestIndex == -1) {
-            // Go through all remaining!!! files and run all comparisons
-            
-            for(let i = 0; i < numFiles; i ++) {
-                let line = fileText[i][currLine[i]];
+        let indicesArray = earliestDate();
+                
+        for(let i = 0; i < indicesArray.length; i ++) {
+            let line = fileText[i][currLine[i]];
 
-                processLine(line, fileInfoArr[i]);
-                currLine[i] += 1;
-            }
-
-            // Two lane rules
-            if(numFiles == 2) {
-                processTwoLineRules(fileText[0][currLine[0]-1], fileInfoArr[0], fileText[1][currLine[1]-1], fileInfoArr[1])
-            }
+            processLine(line, fileInfoArr[i]);
+            currLine[i] += 1;
         }
-        else{
-            // Go through 1 file and run all single-lane comparisons
 
-            let line = fileText[earliestIndex][currLine[earliestIndex]];
-            processLine(line, fileInfoArr[earliestIndex]);
-            currLine[earliestIndex] += 1;
+        // Two lane rules
+        if(indicesArray.length == 2) {
+            processTwoLineRules(fileText[indicesArray[0]][currLine[indicesArray[0]]-1], fileInfoArr[indicesArray[0]], fileText[indicesArray[1]][currLine[indicesArray[1]]-1], fileInfoArr[indicesArray[1]]);
         }
     }
 
