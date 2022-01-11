@@ -91,6 +91,10 @@ function readFileList(fileList, content, _callback) {
     var fileText = new Array();
     var fileInfoArr = new Array();
 
+    /**
+     * Recursive function to read in files in the file list one-by-one, before being processed async by the callback function.
+     * @param {Number} index Index of the file on the file array being read
+     */
     function readFile(index) {
         if(index >= fileList.length) {
             _callback(fileText, fileInfoArr, content);
@@ -98,6 +102,9 @@ function readFileList(fileList, content, _callback) {
 
         var file = fileList[index];
         fileInfoArr[index] = new FileInfo();
+        fileInfoArr[index].fileName = file.name;
+
+        // Used to keep track of the previous measurement on the data file to ensure no gaps are in the file
         var prevTime = 0;
 
         reader.onloadend = function(event) {
@@ -114,7 +121,7 @@ function readFileList(fileList, content, _callback) {
 
                     let date = new Date(l.measurementStart);
                     
-                    // Records number of missing data blocks
+                    // Finds and records number of missing data blocks
                     if(prevTime != 0 && date - prevTime > 60000 && l.measurementStart != "2021-11-07T01:00:00-05:00") {
                         fileInfoArr[index].missingData += ((date - prevTime) / 60000);
                     }
