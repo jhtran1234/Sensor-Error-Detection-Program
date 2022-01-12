@@ -54,7 +54,7 @@ class Line {
 }
 
 /**
- * Class to store faults.
+ * Class to store faults found in the sensor.
  */
 class Fault {
     constructor(timeStamp, reason) {
