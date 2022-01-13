@@ -14,17 +14,17 @@
 				</div>
 				<div class="one column row" id="row2-size">
 					<label for="uploadedfile">Select sensor data CSV files:</label>
-					<input type="file" id="uploadedfile" name="uploadedfile" accept=".csv" multiple>
+					<input type="file" id="uploadedfile" name="uploadedfile" accept=".csv" multiple tabindex="1">
 					
 					<!-- Analysis information is added here after processing -->
 					<p class="content"></p>
 				</div>
 
 				<div class="one column row" id="button-row">
-					<button class="ui right floated blue button" id="Execute" onclick='execute()'>Analyze</button>
+					<button class="ui right floated blue button" id="Execute" onclick='execute()' tabindex="2">Analyze</button>
 					<script src="javascript/execute.js">
 					</script>
-					<button class="ui left floated blue button" id="Refresh" onclick='refresh()'>Refresh</button>
+					<button class="ui left floated blue button" id="Refresh" onclick='refresh()' tabindex="3">Refresh</button>
 					<script>
 						function refresh() {
 							location.reload(true);
