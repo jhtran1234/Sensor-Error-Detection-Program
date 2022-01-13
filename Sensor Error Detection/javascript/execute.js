@@ -39,14 +39,14 @@ class Line {
             lineSplit = lineSplit.split(",");
         }
 
-        this.zoneId = lineSplit[0];
-        this.laneNumber = lineSplit[1];
-        this.laneId = lineSplit[2];
+        this.zoneId = Number(lineSplit[0]);
+        this.laneNumber = Number(lineSplit[1]);
+        this.laneId = Number(lineSplit[2]);
         this.measurementStart = lineSplit[3];
         this.date = new Date(lineSplit[3]);
-        this.speed = lineSplit[4];
-        this.volume = lineSplit[5];
-        this.occupancy = lineSplit[6];
+        this.volume = lineSplit[5] === "" ? undefined : Number(lineSplit[5]);
+        this.speed = lineSplit[4] === "" ? (this.volume == undefined ? 0 : undefined) : Number(lineSplit[4]);
+        this.occupancy = Number(lineSplit[6]);
         this.quality = lineSplit[7];
 
         this.flowRate = this.volume * 60.0;
@@ -81,7 +81,7 @@ function execute() {
 }
 
 /**
- * 
+ * Function to begin reading the list of files and converting them to Arrays of Line objects for processing.
  * @param {Array} fileList Array of files from the HTML uploadedfile element 
  * @param {Element} content HTML Element to write results to
  * @param {Function} _callback processText function is passed here to continue after async file read
@@ -101,8 +101,11 @@ function readFileList(fileList, content, _callback) {
         }
 
         var file = fileList[index];
-        fileInfoArr[index] = new FileInfo();
-        fileInfoArr[index].fileName = file.name;
+
+        if(file){
+            fileInfoArr[index] = new FileInfo();
+            fileInfoArr[index].fileName = file.name;
+        }
 
         // Used to keep track of the previous measurement on the data file to ensure no gaps are in the file
         var prevTime = 0;
@@ -135,9 +138,10 @@ function readFileList(fileList, content, _callback) {
             });
 
             fileText[index] = linesArr;
-
+            
             readFile(index + 1);
         }
+
         if(file){
             reader.readAsText(file);
         }
@@ -230,7 +234,9 @@ function processText(fileText, fileInfoArr, content) {
     for(let i = 0; i < numFiles; i ++) {
         content.innerText += "File " + (i+1) + " results:\n";
         content.innerText += "Number of lines: " + fileInfoArr[i].numDataPoints + "\n";
-        content.innerText += "Number missing: " + fileInfoArr[i].missingData + "\n";
+        content.innerText += "Number of timed measurements missing: " + fileInfoArr[i].missingData + "\n";
+        content.innerText += "Number of speed datapoints missing: " + fileInfoArr[i].missingSpeed + "\n";
+        content.innerText += "Number of volume datapoints missing: " + fileInfoArr[i].missingVol + "\n";
         content.innerText += "Number faulty: " + fileInfoArr[i].faultyCount + "\n";
 
         displayFaults(content, fileInfoArr[i].faults, 0);
@@ -258,7 +264,7 @@ function displayFaults(content, faultArray, index) {
  * @param {FileInfo} fileInfo The object holding the current file's info
  */ 
  function processLine(line, fileInfo) {
-    fileInfo.numDataPoints += 1;
+    fileInfo.numDataPoints ++;
     
     // prevent zoneId, laneNumber, laneId from changing mid-file
     if(!checkIdError(fileInfo, line.zoneId, line.laneNumber, line.laneId)) {
@@ -272,33 +278,55 @@ function displayFaults(content, faultArray, index) {
     * (caught in the next line's processing), which is why values 
     * such as qDiff and prevQ are stored and used in the next process.*/
 
-    // Polling interval t1
-    let q_t1 = fileInfo.qDiff;
-    let v_t1 = fileInfo.vDiff;
+    // polling interval t1
+    let q_t1 = (fileInfo.qDiff || 0);
+    let v_t1 = (fileInfo.vDiff || 0);
 
-    // Polling interval t2
-    let q_t2 = line.flowRate - fileInfo.prevQ;
-    let v_t2 = line.speed - fileInfo.prevV;
+    // polling interval t2
+    let q_t2 = line.flowRate - (fileInfo.prevQ || 0);
+    let v_t2 = line.speed - (fileInfo.prevV || 0);
 
     var prevFauty = false;
     var fauty = false;
     var reason = "";
-    
-    // Rule 8
-    if(peakHour && -(q_t1 * q_t2) > 1400000 && Math.abs(v_t1 * v_t2) < 25) {
-        prevFauty = true;
-        reason = "rule8";
-    }
-    
-    // Rule 9
-    if(peakHour && -(v_t1 * v_t2) > 140 && Math.abs(q_t1 * q_t2) < 125125) {
-        prevFauty = true;
-        reason = "rule9";
+
+    // process rules only if not the first line
+    if(fileInfo.prevTime != undefined){
+
+        // Rule 8
+        if(peakHour && -(q_t1 * q_t2) > 1400000 && Math.abs(v_t1 * v_t2) < 25) {
+            prevFauty = true;
+            reason = "rule8";
+        }
+        
+        // Rule 9
+        if(peakHour && -(v_t1 * v_t2) > 140 && Math.abs(q_t1 * q_t2) < 125125) {
+            prevFauty = true;
+            reason = "rule9";
+        }
     }
 
+    // update line fields for next line's error processing
+    fileInfo.prevTime = line.measurementStart;
+    fileInfo.qDiff = q_t2;
+    fileInfo.vDiff = v_t2;
+    fileInfo.prevQ = line.flowRate;
+    fileInfo.prevV = (line.speed || 0);
+
     if(prevFauty) {
-        fileInfo.faultyCount += 1;
+        fileInfo.faultyCount ++;
         fileInfo.faults.push(new Fault(fileInfo.prevTime, reason));
+    }
+
+
+    // check to ensure all sppeed and volume data is present
+    if(line.volume === undefined) {
+        fileInfo.missingVol ++;
+        fileInfo.faults.push(new Fault(line.measurementStart, "Missing Volume Data"));
+    }
+    else if(line.speed === undefined && line.volume != 0) {
+        fileInfo.missingSpeed ++;
+        fileInfo.faults.push(new Fault(line.measurementStart, "Missing Speed Data"));
     }
 
     // Rule 1
@@ -352,12 +380,6 @@ function displayFaults(content, faultArray, index) {
         fileInfo.faultyCount += 1;
         fileInfo.faults.push(new Fault(line.measurementStart, reason));
     }
-
-    fileInfo.prevTime = line.measurementStart;
-    fileInfo.qDiff = line.flowRate - fileInfo.prevQ;
-    fileInfo.vDiff = line.speed - fileInfo.prevV;
-    fileInfo.prevQ = line.flowRate;
-    fileInfo.prevV = line.speed;
 }
 
 /**
@@ -369,6 +391,11 @@ function displayFaults(content, faultArray, index) {
  */ 
 function processTwoLineRules(line1, fileInfo1, line2, fileInfo2) {
     
+    // data is missing from one of the lines and two line rules cannot be processed
+    if(line1.volume === undefined || line2.volume === undefined || (line1.speed === undefined && line1.volume != 0) || (line2.speed === undefined && line2.volume != 0)) {
+        return;
+    }
+
     let totalFlow = line1.flowRate + line2.flowRate;
     let flowDifference = Math.abs(line1.flowRate - line2.flowRate);
     let speedDifference = Math.abs(line1.speed - line2.speed);
