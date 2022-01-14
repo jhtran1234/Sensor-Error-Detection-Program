@@ -355,7 +355,7 @@ function displayFaults(content, faultArray, index) {
         // Rule 9
         if(peakHour && (-1 * (v_t1 * v_t2)) > 140 && Math.abs(q_t1 * q_t2) < 125125) {
             faulty = true;
-            reason = "rule9 " + v_t1 + " &&& " + v_t2;
+            reason = "rule9";
         }
 
         if(faulty) {
@@ -449,7 +449,6 @@ function processTwoLineRules(line1, fileInfo1, line2, fileInfo2) {
         reason = "rule14d";
     }
 
-    
     if(faulty) {
         fileInfo1.faultyCount ++;
         fileInfo2.faultyCount ++;
