@@ -61,14 +61,18 @@ class Fault {
  */
 function execute() {
     const content = document.querySelector('.content');
+    const banner = document.querySelector('.banner');
     const fileList = document.getElementById('uploadedfile').files;
     
     if(parseInt(fileList.length) > 2){
         alert("You are only allowed to upload a maximum of 2 files.");
         content.innerText = "You are only allowed to upload a maximum of 2 files.";
+        banner.innerText = "Please try again"
     }
     else {
         content.innerText = "Analyzing File(s)...\n";
+        banner.innerText = "Analysis in progress"
+        
         readFileList(fileList, content, processText);
     }
 }
