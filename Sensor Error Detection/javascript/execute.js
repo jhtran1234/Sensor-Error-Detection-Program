@@ -85,6 +85,8 @@ function execute() {
  */
 function readFileList(fileList, content, _callback) {
     var reader = new FileReader();
+    // fileText: Array of Line Arrays representing the CSV files
+    // fileInfoArr: Array of FileInfo objects storing document data
     var fileText = new Array();
     var fileInfoArr = new Array();
 
@@ -155,6 +157,7 @@ function readFileList(fileList, content, _callback) {
  * @param {Element} content HTML Element to write results to
  */ 
 function processText(fileText, fileInfoArr, content) {
+    // currLine: stores the line that is currently being processed in each file, used for concurrent time processing across multiple files
     var currLine = new Array();
     let numFiles = fileText.length;
 
@@ -175,13 +178,13 @@ function processText(fileText, fileInfoArr, content) {
 
 
     /**
-    * Function to return an Array of the indices of the files with the earliest measurement times for immediate processing.
+    * Function to return an Array with the indices of the files with the earliest measurement times for immediate processing.
     */     
     function earliestDate() {
         let earliestDate = undefined;
         let earliestIndex = 0;
 
-        // Array to store all file indices with the earliest measurement time
+        // indicesArray: Array to store all file indices with the earliest measurement time
         let indicesArray = new Array();
 
         while(earliestIndex < numFiles && fileText[earliestIndex][currLine[earliestIndex]] == undefined) {
@@ -209,6 +212,7 @@ function processText(fileText, fileInfoArr, content) {
         return indicesArray;
     }
 
+    // Line-by-line processing of the files starts here
     while(!finished()) {
         let indicesArray = earliestDate();
 
@@ -241,21 +245,10 @@ function processText(fileText, fileInfoArr, content) {
 }
 
 /**
- * Recursive runction to display file faults to the HTML Element.
- * @param {Element} content HTML Element to write results to
- * @param {Array} faultArray Array of file faults to write to the HTML page
- * @param {number} index Index of the faultArray currently being written to HTML Element
+ * @param {Array} lineArray Line Array representing the CSV file being analyzed
+ * @param {number} lineIndex int representing the line being analyzed in the lineArray
+ * @param {FileInfo} fileInfo FileInfo object storing document data
  */
-function displayFaults(content, faultArray, index) {
-    if(index >= faultArray.length || index >= 200) {
-        return;
-    }
-    
-    content.innerText += faultArray[index].timeStamp + " " + faultArray[index].reason + "\n";
-    displayFaults(content, faultArray, index+1);
-}
-
-
  function processLine(lineArray, lineIndex, fileInfo) {
     let line = lineArray[lineIndex];
 
@@ -494,6 +487,21 @@ function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
     }
 
     return true;
+}
+
+/**
+ * Recursive runction to display file faults to the HTML Element.
+ * @param {Element} content HTML Element to write results to
+ * @param {Array} faultArray Array of file faults to write to the HTML page
+ * @param {number} index Index of the faultArray currently being written to HTML Element
+ */
+ function displayFaults(content, faultArray, index) {
+    if(index >= faultArray.length || index >= 200) {
+        return;
+    }
+    
+    content.innerText += faultArray[index].timeStamp + " " + faultArray[index].reason + "\n";
+    displayFaults(content, faultArray, index+1);
 }
 
 /**
