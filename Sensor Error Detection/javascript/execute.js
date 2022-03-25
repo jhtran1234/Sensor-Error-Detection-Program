@@ -122,6 +122,7 @@ function readFileList(fileList, content, _callback) {
                     let date = new Date(l.measurementStart);
                     
                     // Finds and records number of missing data blocks
+                    // Does not count Daylight Savings Data Override as an error
                     if(prevTime != 0 && date - prevTime > 60000 && l.measurementStart != "2021-11-07T01:00:00-05:00") {
                         fileInfoArr[index].missingData += ((date - prevTime) / 60000);
                     }
