@@ -6,6 +6,10 @@ class FileInfo {
         // Constants
         this.fileName =  undefined;
         this.numDataPoints = 0;
+        this.numDataPointsRP = 0; // rush, peak hour
+        this.numDataPointsNP = 0; // non-rush, peak hour
+        this.numDataPointsRN = 0; // rush, non-peak hour
+        this.numDataPointsNN = 0; // non-rush, non-peak hour
         this.zoneId = 0;
         this.laneNumber = 0;
         this.laneId = 0;
@@ -17,7 +21,25 @@ class FileInfo {
         this.missingData = 0;
         this.missingSpeed = 0;
         this.missingVol = 0;
-        this.faultyCount = 0;
+        
+        this.faultyCount1 = 0;
+        this.faultyCount1RP = 0;
+        this.faultyCount1NP = 0;
+        this.faultyCount1RN = 0;
+        this.faultyCount1NN = 0;
+  
+        this.faultyCount2 = 0;
+        this.faultyCount2RP = 0;
+        this.faultyCount2NP = 0;
+        this.faultyCount2RN = 0;
+        this.faultyCount2NN = 0;
+        
+        this.faultyCount3 = 0;
+        this.faultyCount3RP = 0;
+        this.faultyCount3NP = 0;
+        this.faultyCount3RN = 0;
+        this.faultyCount3NN = 0;
+
         this.faults = new Array();
         this.error = undefined;
     }
@@ -106,9 +128,6 @@ function readFileList(fileList, content, _callback) {
             fileInfoArr[index].fileName = file.name;
         }
 
-        // Used to keep track of the previous measurement on the data file to ensure no gaps are in the file
-        var prevTime = 0;
-
         reader.onloadend = function(event) {
             var text = event.target.result;
             var linesArr = new Array();
@@ -120,18 +139,10 @@ function readFileList(fileList, content, _callback) {
                 if(line != "") {
                     let l = new Line(line);
                     linesArr.push(l);
-
-                    let date = new Date(l.measurementStart);
                     
-                    // Finds and records number of missing data blocks
-                    // Does not count Daylight Savings Data Override as an error
-                    if(prevTime != 0 && date - prevTime > 60000 && l.measurementStart != "2021-11-07T01:00:00-05:00") {
-                        fileInfoArr[index].missingData += ((date - prevTime) / 60000);
+                    if(fileInfoArr[index].fileStartTime == 0 || fileInfoArr[index].fileStartTime === undefined) {
+                        fileInfoArr[index].fileStartTime = l.date;
                     }
-                    else if(prevTime == 0) {
-                        fileInfoArr[index].fileStartTime = date;
-                    }
-
                     return true;
                 }
                 return false;
@@ -236,8 +247,13 @@ function processText(fileText, fileInfoArr, content) {
         content.innerText += "File " + fileInfoArr[i].fileName + " results:\n";
         content.innerText += "Number of lines: " + fileInfoArr[i].numDataPoints + "\n";
         content.innerText += "Number of timed measurements missing: " + fileInfoArr[i].missingData + "\n";
-        content.innerText += "Number of speed datapoints missing: " + fileInfoArr[i].missingSpeed + "\n";
-        content.innerText += "Number of volume datapoints missing: " + fileInfoArr[i].missingVol + "\n";
+        content.innerText += "Number of timed measurements missing: " + fileInfoArr[i].faultyCount1 + "\n";
+        content.innerText += "Number of timed measurements missing RP: " + fileInfoArr[i].faultyCount1RP + "\n";
+        content.innerText += "Number of timed measurements missing NP: " + fileInfoArr[i].faultyCount1NP + "\n";
+        content.innerText += "Number of timed measurements missing RN: " + fileInfoArr[i].faultyCount1RN + "\n";
+        content.innerText += "Number of timed measurements missing NN: " + fileInfoArr[i].faultyCount1NN + "\n";
+        //content.innerText += "Number of speed datapoints missing: " + fileInfoArr[i].missingSpeed + "\n";
+        //content.innerText += "Number of volume datapoints missing: " + fileInfoArr[i].missingVol + "\n";
         content.innerText += "Number faulty: " + fileInfoArr[i].faultyCount + "\n";
 
         displayFaults(content, fileInfoArr[i].faults, 0);
@@ -251,16 +267,67 @@ function processText(fileText, fileInfoArr, content) {
  */
  function processLine(lineArray, lineIndex, fileInfo) {
     let line = lineArray[lineIndex];
+    let date = new Date(line.date);
+    
+    prevTime = 0;
+    if(lineIndex > 0){
+        prevTime = lineArray[lineIndex - 1].date;
+    }
+
+    // Finds and records number of missing data blocks
+    // Does not count Daylight Savings Data Override as an error
+    if(prevTime != 0 && date - prevTime > 60000 && line.measurementStart != "2021-11-07T01:00:00-05:00") {
+        fileInfo.missingData += ((date - prevTime) / 60000) - 1;
+
+        i = new Date(prevTime);
+        i = new Date(i.setMinutes(i.getMinutes() + 1));
+
+        for(i; i < date; i = new Date(i.setMinutes(i.getMinutes() + 1))) {
+            const rushDay = isRushDay(i);
+            const peakHour = isPeakHour(i);
+
+            fileInfo.numDataPoints ++;
+            fileInfo.faultyCount1 ++;
+            if(rushDay && peakHour){
+                fileInfo.numDataPointsRP ++;
+                fileInfo.faultyCount1RP ++;
+            }
+            else if(rushDay){
+                fileInfo.numDataPointsRN ++;
+                fileInfo.faultyCount1RN ++;
+            }
+            else if(peakHour){
+                fileInfo.numDataPointsNP ++;
+                fileInfo.faultyCount1NP ++;
+            }
+            else{
+                fileInfo.numDataPointsNN ++;
+                fileInfo.faultyCount1NN ++;
+            }
+        }
+    }
+
+    const rushDay = isRushDay(date);
+    const peakHour = isPeakHour(date);
 
     fileInfo.numDataPoints ++;
+    if(rushDay && peakHour){
+        fileInfo.numDataPointsRP ++;
+    }
+    else if(rushDay){
+        fileInfo.numDataPointsRN ++;
+    }
+    else if(peakHour){
+        fileInfo.numDataPointsNP ++;
+    }
+    else{
+        fileInfo.numDataPointsNN ++;
+    }
     
     // prevent zoneId, laneNumber, laneId from changing mid-file
     if(!checkIdError(fileInfo, line.zoneId, line.laneNumber, line.laneId)) {
         return;
     }
-
-    const rushDay = isRushDay(line.date);
-    const peakHour = isPeakHour(line.date);
 
     var faulty = false;
     var reason = "";
@@ -268,16 +335,38 @@ function processText(fileText, fileInfoArr, content) {
     // check to ensure all sppeed and volume data is present
     if(line.volume === undefined) {
         fileInfo.missingVol ++;
-        fileInfo.faults.push(new Fault(line.measurementStart, "Missing Volume Data"));
+        faulty = true;
+        reason = "Missing Volume Data";
     }
     else if(line.speed === undefined && line.volume != 0) {
         fileInfo.missingSpeed ++;
-        fileInfo.faults.push(new Fault(line.measurementStart, "Missing Speed Data"));
+        faulty = true;
+        reason = "Missing Speed Data";
     }
+
+    if(faulty){
+        fileInfo.faults.push(new Fault(line.measurementStart, reason));
+        fileInfo.faultyCount1 ++;
+        if(rushDay && peakHour){
+            fileInfo.faultyCount1RP ++;
+        }
+        else if(rushDay){
+            fileInfo.faultyCount1RN ++;
+        }
+        else if(peakHour){
+            fileInfo.faultyCount1NP ++;
+        }
+        else{
+            fileInfo.faultyCount1NN ++;
+        }
+    }
+    
+    faulty = false;
+    reason = "";
 
     // Rule 1
     if(rushDay && peakHour) { 
-        if(line.flowRate > 2290 || line.flowRate < 345) {
+        if(line.flowRate > 2300) {
             faulty = true;
             reason = "rule1";
         }
@@ -304,17 +393,34 @@ function processText(fileText, fileInfoArr, content) {
         }
     }
 
-    if(faulty) {
-        fileInfo.faultyCount += 1;
-        fileInfo.faults.push(new Fault(line.measurementStart, reason));
-        faulty = false;
-    }
-
     // Rule 5
     if(line.speed > 110) { 
         faulty = true;
-        reason = "rule5";
+        reason += "rule5";
     }
+
+    if(faulty) {
+        fileInfo.faultyCount2 ++;
+        fileInfo.faults.push(new Fault(line.measurementStart, reason));
+
+        if(rushDay && peakHour){
+            fileInfo.faultyCount2RP ++;
+        }
+        else if(rushDay){
+            fileInfo.faultyCount2RN ++;
+        }
+        else if(peakHour){
+            fileInfo.faultyCount2NP ++;
+        }
+        else{
+            fileInfo.faultyCount2NN ++;
+        }
+    }
+    
+    faulty = false;
+    reason = "";
+
+    ///////////////////////////////////////////////////////////////////////////
 
     // Rule 6
     if(line.flowRate > 1750 && line.speed > 75) {
