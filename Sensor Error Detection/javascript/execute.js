@@ -235,27 +235,33 @@ function processText(fileText, fileInfoArr, content) {
         }
 
         // Two lane rules
-        if(indicesArray.length == 2) {
+        /*if(indicesArray.length == 2) {
             let fileIndex1 = indicesArray[0];
             let fileIndex2 = indicesArray[1];
             processTwoLineRules(fileText[fileIndex1][currLine[fileIndex1]-1], fileInfoArr[fileIndex1], fileText[fileIndex2][currLine[fileIndex2]-1], fileInfoArr[fileIndex2]);
-        }
+        }*/
     }
 
     content.innerText += "Analysis on " + numFiles + " files finished!\n";
     for(let i = 0; i < numFiles; i ++) {
         content.innerText += "File " + fileInfoArr[i].fileName + " results:\n";
-        content.innerText += "Number of lines: " + fileInfoArr[i].numDataPoints + "\n";
+        content.innerText += "Number of total time intervals: " + fileInfoArr[i].numDataPoints + "\n";
         content.innerText += "Number of timed measurements missing: " + fileInfoArr[i].missingData + "\n";
         content.innerText += "Number of timed measurements missing: " + fileInfoArr[i].faultyCount1 + "\n";
         content.innerText += "Number of timed measurements missing RP: " + fileInfoArr[i].faultyCount1RP + "\n";
         content.innerText += "Number of timed measurements missing NP: " + fileInfoArr[i].faultyCount1NP + "\n";
         content.innerText += "Number of timed measurements missing RN: " + fileInfoArr[i].faultyCount1RN + "\n";
         content.innerText += "Number of timed measurements missing NN: " + fileInfoArr[i].faultyCount1NN + "\n";
-        //content.innerText += "Number of speed datapoints missing: " + fileInfoArr[i].missingSpeed + "\n";
-        //content.innerText += "Number of volume datapoints missing: " + fileInfoArr[i].missingVol + "\n";
-        content.innerText += "Number faulty: " + fileInfoArr[i].faultyCount + "\n";
-
+        content.innerText += "Number of timed measurements faulty 2: " + fileInfoArr[i].faultyCount2 + "\n";
+        content.innerText += "Number of timed measurements faulty 2 RP: " + fileInfoArr[i].faultyCount2RP + "\n";
+        content.innerText += "Number of timed measurements faulty 2 NP: " + fileInfoArr[i].faultyCount2NP + "\n";
+        content.innerText += "Number of timed measurements faulty 2 RN: " + fileInfoArr[i].faultyCount2RN + "\n";
+        content.innerText += "Number of timed measurements faulty 2 NN: " + fileInfoArr[i].faultyCount2NN + "\n";
+        content.innerText += "Number of timed measurements faulty 3: " + fileInfoArr[i].faultyCount3 + "\n";
+        content.innerText += "Number of timed measurements faulty 3 RP: " + fileInfoArr[i].faultyCount3RP + "\n";
+        content.innerText += "Number of timed measurements faulty 3 NP: " + fileInfoArr[i].faultyCount3NP + "\n";
+        content.innerText += "Number of timed measurements faulty 3 RN: " + fileInfoArr[i].faultyCount3RN + "\n";
+        content.innerText += "Number of timed measurements faulty 3 NN: " + fileInfoArr[i].faultyCount3NN + "\n";
         displayFaults(content, fileInfoArr[i].faults, 0);
     }
 }
@@ -417,54 +423,29 @@ function processText(fileText, fileInfoArr, content) {
         }
     }
     
-    faulty = false;
-    reason = "";
+    const speed = line.speed;
+    const flowRate = line.flowRate;
 
-    ///////////////////////////////////////////////////////////////////////////
+    const zone1 = (15.2*speed-242-flowRate >= 0) && (-176.8*speed+12913.3-flowRate >= 0) && (-72*speed+4063.2-flowRate <= 0);
+    const zone2 = (15.8*speed+263.4-flowRate >= 0) && (-167.4*speed+12247.8-flowRate >= 0) && (14.9*speed-219.5-flowRate <= 0) && (-133*speed+7248-flowRate <= 0) && (247*speed-11386.9-flowRate >= 0);
+    const zone3 = (15.7*speed+1215.2-flowRate >= 0) && (-259.5*speed+12309.4-flowRate >= 0) && (17.2*speed+270-flowRate <= 0) && (59.1*speed+217.7-flowRate >= 0);
+    const zone4 = (33.6*speed+408.1-flowRate >= 0) && (-109.1*speed+8778.5-flowRate >= 0) && (17.8*speed+143.1-flowRate <= 0) && (-676.9*speed+29852.3-flowRate <= 0);
 
-    // Rule 6
-    if(line.flowRate > 1750 && line.speed > 75) {
-        faulty = true;
-        reason = "rule6";
-    }
+    if(!zone1 && !zone2 && !zone3 && !zone4) { // faulty data
+        fileInfo.faultyCount3 ++;
+        fileInfo.faults.push(new Fault(line.measurementStart, "Stage 3, data does not fit any zone"));
 
-    // Rule 7
-    if(line.speed > 80 && line.flowRate > 1200) {
-        faulty = true;
-        reason = "rule7";
-    }
-
-    if(faulty) {
-        fileInfo.faultyCount += 1;
-        fileInfo.faults.push(new Fault(line.measurementStart, reason));
-        faulty = false;
-    }
-
-    // processing rule 8 and 9 require that all speed data is present
-    if(line.speed != undefined && lineIndex-1 >= 0 && lineArray[lineIndex-1].speed != undefined && lineIndex+1 < lineArray.length && lineArray[lineIndex-1].speed != undefined) {
-        // polling interval t1
-        let q_t1 = line.flowRate - lineArray[lineIndex-1].flowRate;
-        let v_t1 = line.speed - lineArray[lineIndex-1].speed;
-
-        // polling interval t2
-        let q_t2 = lineArray[lineIndex+1].flowRate - line.flowRate;
-        let v_t2 = lineArray[lineIndex+1].speed - line.speed;
-
-        // Rule 8
-        if(peakHour && (-1 * (q_t1 * q_t2)) > 1400000 && Math.abs(v_t1 * v_t2) < 25) {
-            faulty = true;
-            reason = "rule8";
+        if(rushDay && peakHour){
+            fileInfo.faultyCount3RP ++;
         }
-        
-        // Rule 9
-        if(peakHour && (-1 * (v_t1 * v_t2)) > 140 && Math.abs(q_t1 * q_t2) < 125125) {
-            faulty = true;
-            reason = "rule9";
+        else if(rushDay){
+            fileInfo.faultyCount3RN ++;
         }
-
-        if(faulty) {
-            fileInfo.faultyCount ++;
-            fileInfo.faults.push(new Fault(line.measurementStart, reason));
+        else if(peakHour){
+            fileInfo.faultyCount3NP ++;
+        }
+        else{
+            fileInfo.faultyCount3NN ++;
         }
     }
 }
@@ -476,7 +457,7 @@ function processText(fileText, fileInfoArr, content) {
  * @param {Line} line2 The Line object to be processed
  * @param {FileInfo} fileInfo2 The object holding the current file's info
  */ 
-function processTwoLineRules(line1, fileInfo1, line2, fileInfo2) {
+/*function processTwoLineRules(line1, fileInfo1, line2, fileInfo2) {
     
     // data is missing from one of the lines and two line rules cannot be processed
     if(line1.volume === undefined || line2.volume === undefined || (line1.speed === undefined && line1.volume != 0) || (line2.speed === undefined && line2.volume != 0)) {
@@ -560,7 +541,7 @@ function processTwoLineRules(line1, fileInfo1, line2, fileInfo2) {
         fileInfo2.faults.push(new Fault(line2.measurementStart, reason));
     }
 
-}
+}*/
 
 /**
  * Function to detect a change in zone_id, lane_number, and lane_id midway through a file.
@@ -753,3 +734,51 @@ function isHoliday(date) {
         return false;
     }
 }
+
+/*function formerRules(){
+        // Rule 6
+    if(line.flowRate > 1750 && line.speed > 75) {
+        faulty = true;
+        reason = "rule6";
+    }
+
+    // Rule 7
+    if(line.speed > 80 && line.flowRate > 1200) {
+        faulty = true;
+        reason = "rule7";
+    }
+
+    if(faulty) {
+        fileInfo.faultyCount += 1;
+        fileInfo.faults.push(new Fault(line.measurementStart, reason));
+        faulty = false;
+    }
+
+    // processing rule 8 and 9 require that all speed data is present
+    if(line.speed != undefined && lineIndex-1 >= 0 && lineArray[lineIndex-1].speed != undefined && lineIndex+1 < lineArray.length && lineArray[lineIndex-1].speed != undefined) {
+        // polling interval t1
+        let q_t1 = line.flowRate - lineArray[lineIndex-1].flowRate;
+        let v_t1 = line.speed - lineArray[lineIndex-1].speed;
+
+        // polling interval t2
+        let q_t2 = lineArray[lineIndex+1].flowRate - line.flowRate;
+        let v_t2 = lineArray[lineIndex+1].speed - line.speed;
+
+        // Rule 8
+        if(peakHour && (-1 * (q_t1 * q_t2)) > 1400000 && Math.abs(v_t1 * v_t2) < 25) {
+            faulty = true;
+            reason = "rule8";
+        }
+        
+        // Rule 9
+        if(peakHour && (-1 * (v_t1 * v_t2)) > 140 && Math.abs(q_t1 * q_t2) < 125125) {
+            faulty = true;
+            reason = "rule9";
+        }
+
+        if(faulty) {
+            fileInfo.faultyCount ++;
+            fileInfo.faults.push(new Fault(line.measurementStart, reason));
+        }
+    }
+}*/
