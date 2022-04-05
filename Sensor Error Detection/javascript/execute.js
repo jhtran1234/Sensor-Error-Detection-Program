@@ -40,6 +40,18 @@ class FileInfo {
         this.faultyCount3RN = 0;
         this.faultyCount3NN = 0;
 
+        this.zeroCount3 = 0;
+        this.zeroCount3RP = 0;
+        this.zeroCount3NP = 0;
+        this.zeroCount3RN = 0;
+        this.zeroCount3NN = 0;
+        
+        this.oneCount3 = 0;
+        this.oneCount3RP = 0;
+        this.oneCount3NP = 0;
+        this.oneCount3RN = 0;
+        this.oneCount3NN = 0;
+
         this.faults = new Array();
         this.error = undefined;
     }
@@ -246,7 +258,6 @@ function processText(fileText, fileInfoArr, content) {
     for(let i = 0; i < numFiles; i ++) {
         content.innerText += "File " + fileInfoArr[i].fileName + " results:\n";
         content.innerText += "Number of total time intervals: " + fileInfoArr[i].numDataPoints + "\n";
-        content.innerText += "Number of timed measurements missing: " + fileInfoArr[i].missingData + "\n";
         content.innerText += "Number of timed measurements missing: " + fileInfoArr[i].faultyCount1 + "\n";
         content.innerText += "Number of timed measurements missing RP: " + fileInfoArr[i].faultyCount1RP + "\n";
         content.innerText += "Number of timed measurements missing NP: " + fileInfoArr[i].faultyCount1NP + "\n";
@@ -262,6 +273,16 @@ function processText(fileText, fileInfoArr, content) {
         content.innerText += "Number of timed measurements faulty 3 NP: " + fileInfoArr[i].faultyCount3NP + "\n";
         content.innerText += "Number of timed measurements faulty 3 RN: " + fileInfoArr[i].faultyCount3RN + "\n";
         content.innerText += "Number of timed measurements faulty 3 NN: " + fileInfoArr[i].faultyCount3NN + "\n";
+        content.innerText += "Number of timed measurements zero 3: " + fileInfoArr[i].zeroCount3 + "\n";
+        content.innerText += "Number of timed measurements zero 3 RP: " + fileInfoArr[i].zeroCount3RP + "\n";
+        content.innerText += "Number of timed measurements zero 3 NP: " + fileInfoArr[i].zeroCount3NP + "\n";
+        content.innerText += "Number of timed measurements zero 3 RN: " + fileInfoArr[i].zeroCount3RN + "\n";
+        content.innerText += "Number of timed measurements zero 3 NN: " + fileInfoArr[i].zeroCount3NN + "\n";
+        content.innerText += "Number of timed measurements one 3: " + fileInfoArr[i].oneCount3 + "\n";
+        content.innerText += "Number of timed measurements one 3 RP: " + fileInfoArr[i].oneCount3RP + "\n";
+        content.innerText += "Number of timed measurements one 3 NP: " + fileInfoArr[i].oneCount3NP + "\n";
+        content.innerText += "Number of timed measurements one 3 RN: " + fileInfoArr[i].oneCount3RN + "\n";
+        content.innerText += "Number of timed measurements one 3 NN: " + fileInfoArr[i].oneCount3NN + "\n";
         displayFaults(content, fileInfoArr[i].faults, 0);
     }
 }
@@ -283,7 +304,7 @@ function processText(fileText, fileInfoArr, content) {
     // Finds and records number of missing data blocks
     // Does not count Daylight Savings Data Override as an error
     if(prevTime != 0 && date - prevTime > 60000 && line.measurementStart != "2021-11-07T01:00:00-05:00") {
-        fileInfo.missingData += ((date - prevTime) / 60000) - 1;
+        //fileInfo.missingData += ((date - prevTime) / 60000) - 1;
 
         i = new Date(prevTime);
         i = new Date(i.setMinutes(i.getMinutes() + 1));
@@ -291,7 +312,9 @@ function processText(fileText, fileInfoArr, content) {
         for(i; i < date; i = new Date(i.setMinutes(i.getMinutes() + 1))) {
             const rushDay = isRushDay(i);
             const peakHour = isPeakHour(i);
-
+            console.log(i);
+            fileInfo.faults.push(new Fault(i.toString(), "Stage 1, Missing Interval"));
+            
             fileInfo.numDataPoints ++;
             fileInfo.faultyCount1 ++;
             if(rushDay && peakHour){
@@ -342,12 +365,12 @@ function processText(fileText, fileInfoArr, content) {
     if(line.volume === undefined) {
         fileInfo.missingVol ++;
         faulty = true;
-        reason = "Missing Volume Data";
+        reason = "Stage 1, Missing Volume Data";
     }
     else if(line.speed === undefined && line.volume != 0) {
         fileInfo.missingSpeed ++;
         faulty = true;
-        reason = "Missing Speed Data";
+        reason = "Stage 1, Missing Speed Data";
     }
 
     if(faulty){
@@ -374,35 +397,35 @@ function processText(fileText, fileInfoArr, content) {
     if(rushDay && peakHour) { 
         if(line.flowRate > 2300) {
             faulty = true;
-            reason = "rule1";
+            reason = "Stage 2, rule1";
         }
     }
     // Rule 2
     else if(rushDay && !peakHour) { 
         if(line.flowRate > 1120) {
             faulty = true;
-            reason = "rule2";
+            reason = "Stage 2, rule2";
         }
     }
     // Rule 3
     else if(!rushDay && peakHour) { 
         if(line.flowRate > 1910) {
             faulty = true;
-            reason = "rule3";
+            reason = "Stage 2, rule3";
         }
     }
     // Rule 4
     else { 
         if(line.flowRate > 975) {
             faulty = true;
-            reason = "rule4";
+            reason = "Stage 2, rule4";
         }
     }
 
     // Rule 5
     if(line.speed > 110) { 
         faulty = true;
-        reason += "rule5";
+        reason += "Stage 2, rule5";
     }
 
     if(faulty) {
@@ -425,13 +448,14 @@ function processText(fileText, fileInfoArr, content) {
     
     const speed = line.speed;
     const flowRate = line.flowRate;
-
+    const volume = line.volume;
+    const zone0 = (volume < 2);
     const zone1 = (15.2*speed-242-flowRate >= 0) && (-176.8*speed+12913.3-flowRate >= 0) && (-72*speed+4063.2-flowRate <= 0);
     const zone2 = (15.8*speed+263.4-flowRate >= 0) && (-167.4*speed+12247.8-flowRate >= 0) && (14.9*speed-219.5-flowRate <= 0) && (-133*speed+7248-flowRate <= 0) && (247*speed-11386.9-flowRate >= 0);
     const zone3 = (15.7*speed+1215.2-flowRate >= 0) && (-259.5*speed+12309.4-flowRate >= 0) && (17.2*speed+270-flowRate <= 0) && (59.1*speed+217.7-flowRate >= 0);
     const zone4 = (33.6*speed+408.1-flowRate >= 0) && (-109.1*speed+8778.5-flowRate >= 0) && (17.8*speed+143.1-flowRate <= 0) && (-676.9*speed+29852.3-flowRate <= 0);
 
-    if(!zone1 && !zone2 && !zone3 && !zone4) { // faulty data
+    if(!zone0 && !zone1 && !zone2 && !zone3 && !zone4) { // faulty data
         fileInfo.faultyCount3 ++;
         fileInfo.faults.push(new Fault(line.measurementStart, "Stage 3, data does not fit any zone"));
 
@@ -446,6 +470,40 @@ function processText(fileText, fileInfoArr, content) {
         }
         else{
             fileInfo.faultyCount3NN ++;
+        }
+    }
+    else if (zone0) {
+        if (volume == 0) {
+            fileInfo.zeroCount3 ++;
+
+            if(rushDay && peakHour){
+                fileInfo.zeroCount3RP ++;
+            }
+            else if(rushDay){
+                fileInfo.zeroCount3RN ++;
+            }
+            else if(peakHour){
+                fileInfo.zeroCount3NP ++;
+            }
+            else{
+                fileInfo.zeroCount3NN ++;
+            }
+        }
+        else if (volume == 1) {
+            fileInfo.oneCount3 ++;
+
+            if(rushDay && peakHour){
+                fileInfo.oneCount3RP ++;
+            }
+            else if(rushDay){
+                fileInfo.oneCount3RN ++;
+            }
+            else if(peakHour){
+                fileInfo.oneCount3NP ++;
+            }
+            else{
+                fileInfo.oneCount3NN ++;
+            }
         }
     }
 }
