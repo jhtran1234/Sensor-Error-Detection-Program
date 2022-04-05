@@ -253,7 +253,7 @@ function processText(fileText, fileInfoArr, document) {
             processTwoLineRules(fileText[fileIndex1][currLine[fileIndex1]-1], fileInfoArr[fileIndex1], fileText[fileIndex2][currLine[fileIndex2]-1], fileInfoArr[fileIndex2]);
         }*/
     }
-    document.querySelector('.banner').innerText = "Analysis on " + numFiles + " files finished!";
+    numFiles > 1? document.querySelector('.banner').innerText = "Analysis on " + numFiles + " files finished!" : document.querySelector('.banner').innerText = "Analysis on " + numFiles + " file finished!";
     document.querySelector('.content').innerText = "File " + fileInfoArr[0].fileName + " results:";
     
     document.getElementById("1").innerText = "Stage 1 fault rate: " + fileInfoArr[0].faultyCount1 + " / " + fileInfoArr[0].numDataPoints + " = " + (fileInfoArr[0].faultyCount1/fileInfoArr[0].numDataPoints);
