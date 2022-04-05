@@ -254,7 +254,7 @@ function processText(fileText, fileInfoArr, document) {
         }*/
     }
     numFiles > 1? document.querySelector('.banner').innerText = "Analysis on " + numFiles + " files finished!" : document.querySelector('.banner').innerText = "Analysis on " + numFiles + " file finished!";
-    document.querySelector('.content').innerText = "File " + fileInfoArr[0].fileName + " results:";
+    document.querySelector('.content').innerText = "File " + fileInfoArr[0].fileName + " recommendation:";
     
     document.getElementById("1").innerText = "Stage 1 fault rate: " + fileInfoArr[0].faultyCount1 + " / " + fileInfoArr[0].numDataPoints + " = " + (fileInfoArr[0].faultyCount1/fileInfoArr[0].numDataPoints);
     document.getElementById("1RP").innerText = fileInfoArr[0].faultyCount1RP + " / " + fileInfoArr[0].numDataPointsRP + " = " + (fileInfoArr[0].faultyCount1RP/fileInfoArr[0].numDataPointsRP)
