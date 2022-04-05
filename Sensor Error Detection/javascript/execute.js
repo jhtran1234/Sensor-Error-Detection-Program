@@ -107,17 +107,17 @@ function execute() {
         content.innerText = "Analyzing File(s)...\n";
         banner.innerText = "Analysis in progress"
         
-        readFileList(fileList, content, processText);
+        readFileList(fileList, document, processText);
     }
 }
 
 /**
  * Function to begin reading the list of files and converting them to Arrays of Line objects for processing.
  * @param {Array} fileList Array of files from the HTML uploadedfile element 
- * @param {Element} content HTML Element to write results to
+ * @param {Document} document HTML Document to write results to
  * @param {Function} _callback processText function is passed here to continue after async file read
  */
-function readFileList(fileList, content, _callback) {
+function readFileList(fileList, document, _callback) {
     var reader = new FileReader();
     // fileText: Array of Line Arrays representing the CSV files
     // fileInfoArr: Array of FileInfo objects storing document data
@@ -130,7 +130,7 @@ function readFileList(fileList, content, _callback) {
      */
     function readFile(index) {
         if(index >= fileList.length) {
-            _callback(fileText, fileInfoArr, content);
+            _callback(fileText, fileInfoArr, document);
         }
 
         var file = fileList[index];
@@ -177,9 +177,9 @@ function readFileList(fileList, content, _callback) {
  * Function used as a callback to process text after extraction from files.
  * @param {Array} fileText Array of Line Arrays representing the CSV files
  * @param {Array} fileInfoArr Array of FileInfo objects storing document data
- * @param {Element} content HTML Element to write results to
+ * @param {Document} document HTML Document to write results to
  */ 
-function processText(fileText, fileInfoArr, content) {
+function processText(fileText, fileInfoArr, document) {
     // currLine: stores the line that is currently being processed in each file, used for concurrent time processing across multiple files
     var currLine = new Array();
     let numFiles = fileText.length;
@@ -253,38 +253,29 @@ function processText(fileText, fileInfoArr, content) {
             processTwoLineRules(fileText[fileIndex1][currLine[fileIndex1]-1], fileInfoArr[fileIndex1], fileText[fileIndex2][currLine[fileIndex2]-1], fileInfoArr[fileIndex2]);
         }*/
     }
+    document.querySelector('.banner').innerText = "Analysis on " + numFiles + " files finished!";
+    document.querySelector('.content').innerText = "File " + fileInfoArr[0].fileName + " results:";
+    
+    document.getElementById("1").innerText = "Stage 1 fault rate: " + fileInfoArr[0].faultyCount1 + " / " + fileInfoArr[0].numDataPoints + " = " + (fileInfoArr[0].faultyCount1/fileInfoArr[0].numDataPoints);
+    document.getElementById("1RP").innerText = fileInfoArr[0].faultyCount1RP + " / " + fileInfoArr[0].numDataPointsRP + " = " + (fileInfoArr[0].faultyCount1RP/fileInfoArr[0].numDataPointsRP)
+    document.getElementById("1RN").innerText = fileInfoArr[0].faultyCount1RN + " / " + fileInfoArr[0].numDataPointsRN + " = " + (fileInfoArr[0].faultyCount1RN/fileInfoArr[0].numDataPointsRN)
+    document.getElementById("1NP").innerText = fileInfoArr[0].faultyCount1NP + " / " + fileInfoArr[0].numDataPointsNP + " = " + (fileInfoArr[0].faultyCount1NP/fileInfoArr[0].numDataPointsNP)
+    document.getElementById("1NN").innerText = fileInfoArr[0].faultyCount1NN + " / " + fileInfoArr[0].numDataPointsNN + " = " + (fileInfoArr[0].faultyCount1NN/fileInfoArr[0].numDataPointsNN)
+    
+    document.getElementById("2").innerText = "Stage 2 fault rate: " + fileInfoArr[0].faultyCount2 + " / " + fileInfoArr[0].numDataPoints + " = " + (fileInfoArr[0].faultyCount2/fileInfoArr[0].numDataPoints);
+    document.getElementById("2RP").innerText = fileInfoArr[0].faultyCount2RP + " / " + fileInfoArr[0].numDataPointsRP + " = " + (fileInfoArr[0].faultyCount2RP/fileInfoArr[0].numDataPointsRP)
+    document.getElementById("2RN").innerText = fileInfoArr[0].faultyCount2RN + " / " + fileInfoArr[0].numDataPointsRN + " = " + (fileInfoArr[0].faultyCount2RN/fileInfoArr[0].numDataPointsRN)
+    document.getElementById("2NP").innerText = fileInfoArr[0].faultyCount2NP + " / " + fileInfoArr[0].numDataPointsNP + " = " + (fileInfoArr[0].faultyCount2NP/fileInfoArr[0].numDataPointsNP)
+    document.getElementById("2NN").innerText = fileInfoArr[0].faultyCount2NN + " / " + fileInfoArr[0].numDataPointsNN + " = " + (fileInfoArr[0].faultyCount2NN/fileInfoArr[0].numDataPointsNN)
+    
+    document.getElementById("3").innerText = "Stage 3 fault rate: " + fileInfoArr[0].faultyCount3 + " / " + fileInfoArr[0].numDataPoints + " = " + (fileInfoArr[0].faultyCount3/fileInfoArr[0].numDataPoints);
+    document.getElementById("3RP").innerText = fileInfoArr[0].faultyCount3RP + " / " + fileInfoArr[0].numDataPointsRP + " = " + (fileInfoArr[0].faultyCount3RP/fileInfoArr[0].numDataPointsRP)
+    document.getElementById("3RN").innerText = fileInfoArr[0].faultyCount3RN + " / " + fileInfoArr[0].numDataPointsRN + " = " + (fileInfoArr[0].faultyCount3RN/fileInfoArr[0].numDataPointsRN)
+    document.getElementById("3NP").innerText = fileInfoArr[0].faultyCount3NP + " / " + fileInfoArr[0].numDataPointsNP + " = " + (fileInfoArr[0].faultyCount3NP/fileInfoArr[0].numDataPointsNP)
+    document.getElementById("3NN").innerText = fileInfoArr[0].faultyCount3NN + " / " + fileInfoArr[0].numDataPointsNN + " = " + (fileInfoArr[0].faultyCount3NN/fileInfoArr[0].numDataPointsNN)
+    let exclusionCount = (fileInfoArr[0].zeroCount3 + fileInfoArr[0].oneCount3);
+    document.getElementById("3e").innerText = "Stage 3 exclusion rate: " + exclusionCount + " / " + fileInfoArr[0].numDataPoints + " = " + (exclusionCount/fileInfoArr[0].numDataPoints);
 
-    content.innerText += "Analysis on " + numFiles + " files finished!\n";
-    for(let i = 0; i < numFiles; i ++) {
-        content.innerText += "File " + fileInfoArr[i].fileName + " results:\n";
-        content.innerText += "Number of total time intervals: " + fileInfoArr[i].numDataPoints + "\n";
-        content.innerText += "Number of timed measurements missing: " + fileInfoArr[i].faultyCount1 + "\n";
-        content.innerText += "Number of timed measurements missing RP: " + fileInfoArr[i].faultyCount1RP + "\n";
-        content.innerText += "Number of timed measurements missing NP: " + fileInfoArr[i].faultyCount1NP + "\n";
-        content.innerText += "Number of timed measurements missing RN: " + fileInfoArr[i].faultyCount1RN + "\n";
-        content.innerText += "Number of timed measurements missing NN: " + fileInfoArr[i].faultyCount1NN + "\n";
-        content.innerText += "Number of timed measurements faulty 2: " + fileInfoArr[i].faultyCount2 + "\n";
-        content.innerText += "Number of timed measurements faulty 2 RP: " + fileInfoArr[i].faultyCount2RP + "\n";
-        content.innerText += "Number of timed measurements faulty 2 NP: " + fileInfoArr[i].faultyCount2NP + "\n";
-        content.innerText += "Number of timed measurements faulty 2 RN: " + fileInfoArr[i].faultyCount2RN + "\n";
-        content.innerText += "Number of timed measurements faulty 2 NN: " + fileInfoArr[i].faultyCount2NN + "\n";
-        content.innerText += "Number of timed measurements faulty 3: " + fileInfoArr[i].faultyCount3 + "\n";
-        content.innerText += "Number of timed measurements faulty 3 RP: " + fileInfoArr[i].faultyCount3RP + "\n";
-        content.innerText += "Number of timed measurements faulty 3 NP: " + fileInfoArr[i].faultyCount3NP + "\n";
-        content.innerText += "Number of timed measurements faulty 3 RN: " + fileInfoArr[i].faultyCount3RN + "\n";
-        content.innerText += "Number of timed measurements faulty 3 NN: " + fileInfoArr[i].faultyCount3NN + "\n";
-        content.innerText += "Number of timed measurements zero 3: " + fileInfoArr[i].zeroCount3 + "\n";
-        content.innerText += "Number of timed measurements zero 3 RP: " + fileInfoArr[i].zeroCount3RP + "\n";
-        content.innerText += "Number of timed measurements zero 3 NP: " + fileInfoArr[i].zeroCount3NP + "\n";
-        content.innerText += "Number of timed measurements zero 3 RN: " + fileInfoArr[i].zeroCount3RN + "\n";
-        content.innerText += "Number of timed measurements zero 3 NN: " + fileInfoArr[i].zeroCount3NN + "\n";
-        content.innerText += "Number of timed measurements one 3: " + fileInfoArr[i].oneCount3 + "\n";
-        content.innerText += "Number of timed measurements one 3 RP: " + fileInfoArr[i].oneCount3RP + "\n";
-        content.innerText += "Number of timed measurements one 3 NP: " + fileInfoArr[i].oneCount3NP + "\n";
-        content.innerText += "Number of timed measurements one 3 RN: " + fileInfoArr[i].oneCount3RN + "\n";
-        content.innerText += "Number of timed measurements one 3 NN: " + fileInfoArr[i].oneCount3NN + "\n";
-        displayFaults(content, fileInfoArr[i].faults, 0);
-    }
 }
 
 /**
@@ -312,7 +303,6 @@ function processText(fileText, fileInfoArr, content) {
         for(i; i < date; i = new Date(i.setMinutes(i.getMinutes() + 1))) {
             const rushDay = isRushDay(i);
             const peakHour = isPeakHour(i);
-            console.log(i);
             fileInfo.faults.push(new Fault(i.toString(), "Stage 1, Missing Interval"));
             
             fileInfo.numDataPoints ++;
@@ -635,6 +625,7 @@ function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
 }
 
 /**
+ * Depreciated Method
  * Recursive runction to display file faults to the HTML Element.
  * @param {Element} content HTML Element to write results to
  * @param {Array} faultArray Array of file faults to write to the HTML page
@@ -677,6 +668,7 @@ function isRushDay(date) {
 }
 
 /**
+ * Depreciated Method
  * @param {Date} date 
  * @returns boolean for if it is a holiday on the highway. 
  */
