@@ -122,6 +122,10 @@ p:last-child {
 	margin-bottom: 0;
 }
 
+p {
+	font-size: 20px;
+}
+
 .banner {
 	margin-top: 0;
 	font-size: 25px;
