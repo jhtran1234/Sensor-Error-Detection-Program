@@ -253,29 +253,16 @@ function processText(fileText, fileInfoArr, document) {
             processTwoLineRules(fileText[fileIndex1][currLine[fileIndex1]-1], fileInfoArr[fileIndex1], fileText[fileIndex2][currLine[fileIndex2]-1], fileInfoArr[fileIndex2]);
         }*/
     }
+
+    let exclusionCount = (fileInfoArr[0].zeroCount3 + fileInfoArr[0].oneCount3);
+    
     numFiles > 1? document.querySelector('.banner').innerText = "Analysis on " + numFiles + " files finished!" : document.querySelector('.banner').innerText = "Analysis on " + numFiles + " file finished!";
     document.querySelector('.content').innerText = "File " + fileInfoArr[0].fileName + " recommendation:";
-    
-    document.getElementById("1").innerText = "Stage 1 fault rate: " + fileInfoArr[0].faultyCount1 + " / " + fileInfoArr[0].numDataPoints + " = " + (fileInfoArr[0].faultyCount1/fileInfoArr[0].numDataPoints);
-    document.getElementById("1RP").innerText = fileInfoArr[0].faultyCount1RP + " / " + fileInfoArr[0].numDataPointsRP + " = " + (fileInfoArr[0].faultyCount1RP/fileInfoArr[0].numDataPointsRP)
-    document.getElementById("1RN").innerText = fileInfoArr[0].faultyCount1RN + " / " + fileInfoArr[0].numDataPointsRN + " = " + (fileInfoArr[0].faultyCount1RN/fileInfoArr[0].numDataPointsRN)
-    document.getElementById("1NP").innerText = fileInfoArr[0].faultyCount1NP + " / " + fileInfoArr[0].numDataPointsNP + " = " + (fileInfoArr[0].faultyCount1NP/fileInfoArr[0].numDataPointsNP)
-    document.getElementById("1NN").innerText = fileInfoArr[0].faultyCount1NN + " / " + fileInfoArr[0].numDataPointsNN + " = " + (fileInfoArr[0].faultyCount1NN/fileInfoArr[0].numDataPointsNN)
-    
-    document.getElementById("2").innerText = "Stage 2 fault rate: " + fileInfoArr[0].faultyCount2 + " / " + fileInfoArr[0].numDataPoints + " = " + (fileInfoArr[0].faultyCount2/fileInfoArr[0].numDataPoints);
-    document.getElementById("2RP").innerText = fileInfoArr[0].faultyCount2RP + " / " + fileInfoArr[0].numDataPointsRP + " = " + (fileInfoArr[0].faultyCount2RP/fileInfoArr[0].numDataPointsRP)
-    document.getElementById("2RN").innerText = fileInfoArr[0].faultyCount2RN + " / " + fileInfoArr[0].numDataPointsRN + " = " + (fileInfoArr[0].faultyCount2RN/fileInfoArr[0].numDataPointsRN)
-    document.getElementById("2NP").innerText = fileInfoArr[0].faultyCount2NP + " / " + fileInfoArr[0].numDataPointsNP + " = " + (fileInfoArr[0].faultyCount2NP/fileInfoArr[0].numDataPointsNP)
-    document.getElementById("2NN").innerText = fileInfoArr[0].faultyCount2NN + " / " + fileInfoArr[0].numDataPointsNN + " = " + (fileInfoArr[0].faultyCount2NN/fileInfoArr[0].numDataPointsNN)
-    
-    document.getElementById("3").innerText = "Stage 3 fault rate: " + fileInfoArr[0].faultyCount3 + " / " + fileInfoArr[0].numDataPoints + " = " + (fileInfoArr[0].faultyCount3/fileInfoArr[0].numDataPoints);
-    document.getElementById("3RP").innerText = fileInfoArr[0].faultyCount3RP + " / " + fileInfoArr[0].numDataPointsRP + " = " + (fileInfoArr[0].faultyCount3RP/fileInfoArr[0].numDataPointsRP)
-    document.getElementById("3RN").innerText = fileInfoArr[0].faultyCount3RN + " / " + fileInfoArr[0].numDataPointsRN + " = " + (fileInfoArr[0].faultyCount3RN/fileInfoArr[0].numDataPointsRN)
-    document.getElementById("3NP").innerText = fileInfoArr[0].faultyCount3NP + " / " + fileInfoArr[0].numDataPointsNP + " = " + (fileInfoArr[0].faultyCount3NP/fileInfoArr[0].numDataPointsNP)
-    document.getElementById("3NN").innerText = fileInfoArr[0].faultyCount3NN + " / " + fileInfoArr[0].numDataPointsNN + " = " + (fileInfoArr[0].faultyCount3NN/fileInfoArr[0].numDataPointsNN)
-    let exclusionCount = (fileInfoArr[0].zeroCount3 + fileInfoArr[0].oneCount3);
-    document.getElementById("3e").innerText = "Stage 3 exclusion rate: " + exclusionCount + " / " + fileInfoArr[0].numDataPoints + " = " + (exclusionCount/fileInfoArr[0].numDataPoints);
-
+    document.querySelector('.content').innerText = "# of intervals: " + fileInfoArr[0].numDataPoints;
+    document.querySelector('.content').innerText = "# of missing data: " + fileInfoArr[0].faultyCount1;
+    document.querySelector('.content').innerText = "Rate of missing data: " + (fileInfoArr[0].faultyCount1/fileInfoArr[0].numDataPoints);
+    document.querySelector('.content').innerText = "# of faulty data: " + (fileInfoArr[0].faultyCount2 + fileInfoArr[0].faultyCount3);
+    document.querySelector('.content').innerText = "Rate of faulty data: " + ((fileInfoArr[0].faultyCount2 + fileInfoArr[0].faultyCount3)/(fileInfoArr[0].numDataPoints - fileInfoArr[0].faultyCount1 - exclusionCount));
 }
 
 /**
