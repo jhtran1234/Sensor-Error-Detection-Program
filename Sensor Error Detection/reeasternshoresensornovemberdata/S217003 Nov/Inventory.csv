@@ -1,5 +1,0 @@
-zone_id,display_name,state,rtmc,timezone,road,direction,location_description,lane_type,organization,detector_type,latitude,longitude,bearing,default_speed,interval,length
-192006,S217003,Maryland,,America/New_York,US-301,North,US 301 AT MD 305,Unknown,MDOT_CHART,Unknown,39.0465240,-76.0085420,56,55,,
-192007,S217003,Maryland,,America/New_York,US-301,North,US 301 AT MD 305,Unknown,MDOT_CHART,Unknown,39.0465240,-76.0085420,56,55,,
-192038,S217003,Maryland,,America/New_York,US-301,North,US 301 AT MD 305,Unknown,MDOT_CHART,Unknown,39.0465240,-76.0085420,56,55,,
-192005,S217003,Maryland,,America/New_York,US-301,South,US 301 AT MD 305,Unknown,MDOT_CHART,Unknown,39.0465240,-76.0085420,56,55,,

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+		<script src="lib/jquery.min.js"></script>
+		<script src="semantic/dist/semantic.min.js"></script>
+		<link href="semantic/dist/semantic.min.css" rel="stylesheet" type="text/css">
+		<link href="css/sensor_error.css" rel="stylesheet" type="text/css">
+		<title>Start</title>
+	</head>
+	<body>
+		<div class="ui container" id="container">
+			<div class="ui grid">
+
+				<div class="specialrow">
+					<div class="left column">
+						<img src="images/md_flag.png" id="md-flag">
+					</div>
+					<div class="middle column">
+						<div class="row row-1">Sensor Quality Detection Program</div>
+						<div class="row row-2">for</div>
+						<div class="row row-3">Eastern Shore Area</div>
+						<img src="images/md color bar.png" id="color-bar">
+					</div>
+					<div class="right column">
+						<img class="two column" src="images/umd_logo.png" id="umd-logo">
+					</div>
+				</div>
+				
+				<div class="sixteen wide column btn-start">
+					<!--This button redirects to file upload page-->
+					<button class="blue ui massive button" id="start_button" onclick="">Start</button> 
+					<script type="text/javascript">
+						document.getElementById("start_button").onclick = function () {
+							location.href = "upload_file.html";
+						};
+					</script>
+				</div>
+				
+				<div class="sixteen wide column row-wrapper" id="bottom-image">
+					<image src="images/f2.png" id="f2">
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

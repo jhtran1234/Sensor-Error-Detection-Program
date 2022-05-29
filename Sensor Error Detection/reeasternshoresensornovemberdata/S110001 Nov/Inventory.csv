@@ -1,3 +1,0 @@
-zone_id,display_name,state,rtmc,timezone,road,direction,location_description,lane_type,organization,detector_type,latitude,longitude,bearing,default_speed,interval,length
-192011,S110001,Maryland,,America/New_York,MD-90,East,MD 90 WEST OF COASTAL HWY,Unknown,MDOT_CHART,Unknown,38.3855800,-75.0689810,349,55,,
-192010,S110001,Maryland,,America/New_York,MD-90,West,MD 90 WEST OF COASTAL HWY,Unknown,MDOT_CHART,Unknown,38.3855800,-75.0689810,349,55,,
