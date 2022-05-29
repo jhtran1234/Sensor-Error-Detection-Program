@@ -1,0 +1,3 @@
+zone_id,display_name,state,rtmc,timezone,road,direction,location_description,lane_type,organization,detector_type,latitude,longitude,bearing,default_speed,interval,length
+192008,S217004,Maryland,,America/New_York,Unknown,East,US 50 At Choptank River Bridge,Unknown,MDOT_CHART,Unknown,38.5920420,-76.0472850,57,55,,
+192009,S217004,Maryland,,America/New_York,Unknown,West,US 50 At Choptank River Bridge,Unknown,MDOT_CHART,Unknown,38.5920420,-76.0472850,57,55,,
