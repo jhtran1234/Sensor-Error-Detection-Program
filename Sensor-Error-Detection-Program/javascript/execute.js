@@ -142,6 +142,7 @@ function execute() {
     const fileList = document.getElementById('uploadedfile').files;
 	readFileList(fileList, document, processText);
 }
+
 /**
  * Function to begin reading the list of files and converting them to Arrays of Line objects for processing.
  * @param {Array} fileList Array of files from the HTML uploadedfile element 
@@ -371,6 +372,11 @@ function processText(fileText, fileInfoArr, document) {
 function processLine(lineArray, lineIndex, fileInfo) {
     let line = lineArray[lineIndex];
     let date = new Date(line.date);
+
+    // Quits line processing if it is not in the date range
+    if(!dateInRange(date)){
+        return;
+    }
     
     var prevTime = 0;
     if(lineIndex > 0){
@@ -643,4 +649,32 @@ function isRushDay(date) {
         return true;
     }
     return false;
+}
+
+/**
+ * @param {Date} date 
+ * @returns boolean for if the date is within specified time range
+ */
+function dateInRange(date) {
+    if(start_time == null && end_time == null){
+        return true;
+    }
+    else if(start_time == null){
+        if(date <= end_time){
+            return true;
+        }
+        return false;
+    }
+    else if(end_time == null){
+        if(date >= start_time){
+            return true;
+        }
+        return false;
+    }
+    else{
+        if(date >= start_time && date <= end_time){
+            return true;
+        }
+        return false;
+    }
 }
