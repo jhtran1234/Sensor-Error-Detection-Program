@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<script type="text/javascript" src="lib/wickedpicker.min.js"></script>
+	
+	<link href="semantic/dist/semantic.min.css" rel="stylesheet" type="text/css">
+	<script src="semantic/dist/semantic.min.js"></script>
+	<script src="javascript/execute.js"></script> <!--tab.js is the script that runs in the background-->
+	
+	<link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel = "stylesheet">
+	<link href = "css/upload_file.css" rel="stylesheet" type="text/css">
+	<title>Sensor Quality Detection Program</title>
+</head>
+<body>
+	<div class="ui container" id="container">
+		<div class="ui top attached segment incident-info" id="form-size">
+			<div class="ui top attached tabular menu">
+				<div class="item active" data-tab="1" id="data_tab_1" style="padding-left: 110.530px;padding-right: 110.530px;"><b>
+					Data Source Selection
+				</b></div>
+				<div class="item" data-tab="2" id="data_tab_2" style="padding-left: 162.68px;padding-right: 162.68px;"><b>
+					Results
+				</b></div>
+			</div>
+			<div class="ui bottom attached tab segment active" data-tab="1">
+				<div class="ui grid">
+					<div class="one column row" id="checkbox-size">
+						<div class="ui form">
+							<p class="tab_label">Data Source Selection</p>
+							<img src="images/md color bar.png" id="color-bar">
+							<p class="text">Select a sensor data CSV file to begin analysis:</p>
+							<input type="file" id="uploadedfile" name="uploadedfile" accept=".csv" multiple tabindex="1">
+							<p class="text">Optional: Select a start time<p>
+							<input type="datetime-local" id="start_time" name="start_time">
+							<p class="text">Optional: Select an end time</p>
+							<input type="datetime-local" id="end_time" name="end_time">
+						</div>
+					</div>
+				</div>	
+				<div class="ui grid">
+					<div class="column" id="button-size">
+						<div class="one column row" id="button-row">
+							<button class="ui right floated blue button" id="Next-1" disabled name="next" tabindex="3">Next</button>
+							<button class="ui right floated blue button" id="Save-1" name="save" tabindex="2">Save</button>
+							<button class="ui right floated blue button" id="Home" onClick="parent.location='sensor_error.html'" tabindex="4">Home</button> 
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="ui bottom attached tab segment" data-tab="2">
+				<div class="ui grid">
+					<div class="one column row" id="checkbox-size">
+						<div class="ui form" style="padding: 5px;">
+							<div id="upper_div">
+								<p class="tab_label" id="evaluation">Evaluation Results</p>
+								<p class="text" id="file_info">File Info: No File Selected</p>
+							</div>
+							<br>
+							<img src="images/md color bar.png" id="color-bar">
+							<br>
+							<div id="left_div">
+								<div id="left_div_upper">
+									<p class="text" id="m"><b>Missing data:</b></p>
+									<table>
+										<tr>
+											<th></th>
+											<th>Peak hour</th>
+											<th>Off-peak hour</th>
+										</tr>
+										<tr>
+											<td><b>Congested day</b></td>
+											<td id="mpc"></td>
+											<td id="mnc"></td>
+										</tr>
+										<tr>
+											<td><b>Non-congested day</b></td>
+											<td id="mpn"></td>
+											<td id="mnn"></td>
+										</tr>
+									</table>
+								</div>
+								<div id="left_div_lower">
+									<p class="text" id="f"><b>Faulty data:</b></p>
+									<table>
+										<tr>
+											<th></th>
+											<th>Peak hour</th>
+											<th>Off-peak hour</th>
+										</tr>
+										<tr>
+											<td><b>Congested day</b></td>
+											<td id="fpc"></td>
+											<td id="fnc"></td>
+										</tr>
+										<tr>
+											<td><b>Non-congested day</b></td>
+											<td id="fpn"></td>
+											<td id="fnn"></td>
+										</tr>
+									</table>
+								</div>
+							</div>
+							<div id="right_div">
+								<p class="text" style="margin-bottom: 0px;"><b>Intervals with missing or faulty data:</b></p>
+								<p id="faults"></p>
+							</div>
+						</div>
+					</div>
+				</div>	
+				<div class="ui grid">
+					<div class="column" id="button-size">
+						<div class="one column row" id="button-row">
+							<button class="ui right floated blue button" id="Back-2">Back</button>
+							<button class="ui right floated blue button" id="Home" onClick="parent.location='sensor_error.html'">Home</button> 
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

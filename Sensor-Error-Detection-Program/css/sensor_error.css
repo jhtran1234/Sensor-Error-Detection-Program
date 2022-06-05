@@ -1,0 +1,99 @@
+body{
+	background-color: #d1d2d3;
+}
+
+#container {
+	width:800px; 
+	height:600px;
+	border-style: solid;
+	border-color: #6186aa;
+	border-width: 25px 5px 5px 5px;
+	background-color: white;
+}
+
+.f2{
+
+}
+
+.row-wrapper img {
+	width: 100%;
+	/* height: auto; */
+}
+
+#md-flag {
+	padding: 35px 25px 25px 25px;
+	width: 100%;
+}
+
+#umd-logo {
+	padding: 15px;
+	margin-left: 15%;
+	width: 70%;
+}
+
+#color-bar {
+	width: 100%;
+}
+
+.row-wrapper div.row {
+	text-align: center;
+	height: 40px;
+}
+
+.blue.ui.massive.button {
+	margin-top: 20px;
+}
+
+.row-1 {
+	padding-top: 14%;
+    text-shadow: 3px 3px #dce2df;
+    font-size: 25px;
+    margin-bottom: 2%;
+    font-weight: bold;
+    text-align: center;
+    font-family: Cambria;
+}
+
+.row-2 {
+	font-size: 22px;
+	margin-top: 10px;
+    text-shadow: 3px 3px #dce2df;
+    margin-bottom: 2%;
+    font-weight: bold;
+    text-align: center;
+    font-family: Cambria;
+}
+
+.row-3 {
+	font-size: 25px;
+	margin-top: 10px;
+    text-shadow: 3px 3px #dce2df;
+    margin-bottom: 2%;
+    font-weight: bold;
+    text-align: center;
+    font-family: Cambria;
+}
+
+
+.btn-start {
+	text-align: center;
+}
+
+.specialrow:after {
+	content: "";
+	display: table;
+	clear: both;
+    box-sizing: inherit;
+}
+
+.column {
+	float: left;
+}
+
+.left, .right {
+	width: 25%;
+}
+
+.middle {
+	width: 50%;
+}

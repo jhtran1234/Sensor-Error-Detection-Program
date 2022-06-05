@@ -1,0 +1,89 @@
+body{
+    background-color: #d1d2d3;
+}
+#container {
+    width:800px;
+    height:600px; 
+    border-style: solid;
+    border-color: #6186aa;
+    border-width: 25px 5px 5px 5px;
+}
+#form-size {
+    width: 790px;
+    height: 570px;
+}
+#checkbox-size {
+    width: 780px;
+    height: 425px;
+    background-image: url("./images/maryland.png");
+}
+#tab-size {
+    width: 365px;
+    height: 225px;
+}
+label.type {
+    width: 180px;
+}
+.item {
+    font-size: 16px;
+}
+.tab_label {
+    font-size: 24px;
+    text-align: center;
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+    font-weight: bold;
+}
+#color-bar {
+    width: 50%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.text {
+    font-size: 18px;
+    text-align: center;
+}
+input{
+    display: block;
+    margin: auto !important;
+    font-size: 18px;
+    width: 250px !important;
+    background: transparent !important;
+}
+#uploadedfile{
+    width: 400px !important;
+}
+#upper_div {
+    background-color: rgba(255, 251, 0, 0.25);
+    border: 2px solid black;
+}
+#left_div {
+    width: 60%;
+    height: 100%;
+    float: left;
+    padding-right: 5px;
+}
+#right_div {
+    background-color: rgba(255, 162, 0, 0.25);
+    border: 2px solid black;
+    width: 40%;
+    height: 240px;
+    float: left;
+    padding: 5px;
+    overflow-y: scroll;
+    padding-left: 5px;
+}
+#left_div_upper, #left_div_lower {
+    background-color: rgba(26, 255, 0, 0.25);
+    border: 2px solid black;
+    padding: 5px;
+}
+table, th, td {
+    font-size: 16px;
+    border:1px solid black;
+    text-align: center;
+}
+table{
+    width: 100%;
+}
