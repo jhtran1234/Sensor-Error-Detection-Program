@@ -28,7 +28,7 @@ label.type {
     font-size: 16px;
 }
 .tab_label {
-    font-size: 24px;
+    font-size: 22px;
     text-align: center;
     margin-top: 0px !important;
     margin-bottom: 0px !important;
@@ -43,6 +43,9 @@ label.type {
 .text {
     font-size: 18px;
     text-align: center;
+}
+#file_info {
+    font-size: 16px;
 }
 input{
     display: block;

@@ -29,7 +29,7 @@ $(document).ready(function(){
 	});
 
 	$("#Next-1").click(function(){
-		document.getElementById("file_info").innerText = "File Info: Analysis in progress..."
+		document.getElementById("file_info").innerHTML = "<b>File Info</b>: Analysis in progress..."
 		execute();
 		$('.ui.menu').find('.item').tab('change tab', '2');
 	});
@@ -288,8 +288,6 @@ function processText(fileText, fileInfoArr, document) {
     let faults = document.querySelector('#faults');
 
     eval_res.innerText = "Evaluation Results: ";
-	file_info.innerText = "Zone ID: " + info.zoneId + ", Lane number: " + info.laneNumber + ", " + info.numDataPoints + " recorded datapoints";
-
 	// Display percentage of missing datapoints
 	document.querySelector('#m').innerText = "Missing data: " + Math.round(info.faultyCount1 / info.numDataPoints * 10000)/100 + "% (" + info.faultyCount1 + " / " + info.numDataPoints + " recorded datapoints)";
 	document.querySelector('#mpc').innerText = Math.round(info.faultyCount1RP / info.numDataPointsRP * 10000)/100 + '%';
@@ -304,14 +302,15 @@ function processText(fileText, fileInfoArr, document) {
 	document.querySelector('#fpn').innerText = Math.round((info.faultyCount2NP + info.faultyCount3NP) / (info.numDataPointsNP - info.faultyCount1NP) * 10000)/100 + '%';
 	document.querySelector('#fnn').innerText = Math.round((info.faultyCount2NN + info.faultyCount3NN) / (info.numDataPointsNN - info.faultyCount1NN) * 10000)/100 + '%';
 
+	file_info.innerHTML = "<b>Zone ID</b>: " + info.zoneId + ", <b>Lane number</b>: " + info.laneNumber + ", <b>Datapoints</b>: " + info.numDataPoints;
 	if (start_time != null && end_time != null){
-		file_info.innerText = "Zone ID: " + info.zoneId + ", Lane number: " + info.laneNumber + ", Time frame: from " + start_time + ' to ' + end_time + ", " + info.numDataPoints + " recorded datapoints";
+		file_info.innerHTML = "<b>Zone ID</b>: " + info.zoneId + ", <b>Lane number</b>: " + info.laneNumber + ", <b>Time frame</b>: from " + start_time + ' to ' + end_time + ", <b>Datapoints</b>: " + info.numDataPoints;
 	}
 	else if (start_time != null){
-		file_info.innerText = "Zone ID: " + info.zoneId + ", Lane number: " + info.laneNumber + ", Time frame: from " + start_time + ", " + info.numDataPoints + " recorded datapoints";
+		file_info.innerHTML = "<b>Zone ID</b>: " + info.zoneId + ", <b>Lane number</b>: " + info.laneNumber + ", <b>Time frame</b>: from " + start_time + ", <b>Datapoints</b>: " + info.numDataPoints;
 	}
 	else if (end_time != null){
-		file_info.innerText = "Zone ID: " + info.zoneId + ", Lane number: " + info.laneNumber + ", Time frame: to " + end_time + ", " + info.numDataPoints + " recorded datapoints";
+		file_info.innerHTML = "<b>Zone ID</b>: " + info.zoneId + ", <b>Lane number</b>: " + info.laneNumber + ", <b>Time frame</b>: to " + end_time + ", <b>Datapoints</b>: " + info.numDataPoints;
 	}
 
     if(missingRate >= 0.25 || faultyRate >= 0.3){
