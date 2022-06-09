@@ -85,12 +85,19 @@ input{
     background-color: rgba(26, 255, 0, 0.25);
     border: 2px solid black;
     padding: 5px;
+    height: 130px;
+    position: relative;
 }
 table, th, td {
     font-size: 16px;
     border:1px solid black;
     text-align: center;
 }
-table{
-    width: 100%;
+table {
+    width: 429.8px;
+    position: absolute;
+    bottom: 5px;
+}
+#m, #f {
+    margin: 0px;
 }
