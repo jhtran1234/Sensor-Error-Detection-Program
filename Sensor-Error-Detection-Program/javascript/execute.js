@@ -357,10 +357,11 @@ function processText(fileText, fileInfoArr, document) {
     else{
         eval_res.innerText += " Field calibration for detector accuracy and precision.\n";
     }
-
-	for(let i = 0; i < Math.min(info.faults.length, 200); i ++) {
-		faults.innerText += info.faults[i].toString() + "\n";
+    let faults_out = "";
+	for(let i = 0; i < Math.min(info.faults.length, 999999); i ++) { // Not capping the number of displayed errors significantly increases the runtime of the program
+		faults_out += info.faults[i].toString() + "\n";
 	}
+    faults.innerText += faults_out;
 }
 
 /**
