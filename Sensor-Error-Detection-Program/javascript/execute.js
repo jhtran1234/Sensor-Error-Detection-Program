@@ -314,7 +314,7 @@ function processText(fileText, fileInfoArr, document) {
 	}
 
     if(missingRate >= 0.25 || faultyRate >= 0.3){
-		eval_res.innerText += " the sensor should be replaced/maintained\n";
+		eval_res.innerText += " the sensor should be replaced.\n";
     }
     else if (missingRate >= 0.05 || faultyRate >= 0.05) {
         let flag = true;
@@ -351,14 +351,17 @@ function processText(fileText, fileInfoArr, document) {
             flag = false;
         }
         if(flag) {
-            eval_res.innerText += "the sensor should be replaced/maintained\n";
+            eval_res.innerText += " the sensor should be replaced.\n";
+        }
+        else{
+            eval_res.innerText += " the sensor is in good condition.\n";
         }
     }
     else{
-        eval_res.innerText += " Field calibration for detector accuracy and precision.\n";
+        eval_res.innerText += " the sensor is in good condition.\n";
     }
     let faults_out = "";
-	for(let i = 0; i < Math.min(info.faults.length, 5000); i ++) { // Not capping the number of displayed errors significantly increases the runtime of the program
+	for(let i = 0; i < Math.min(info.faults.length, 2000); i ++) { // Not capping the number of displayed errors significantly increases the runtime of the program
 		faults_out += info.faults[i].toString() + "\n";
 	}
     faults.innerText += faults_out;
