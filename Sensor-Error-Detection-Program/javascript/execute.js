@@ -358,7 +358,7 @@ function processText(fileText, fileInfoArr, document) {
         eval_res.innerText += " Field calibration for detector accuracy and precision.\n";
     }
     let faults_out = "";
-	for(let i = 0; i < Math.min(info.faults.length, 999999); i ++) { // Not capping the number of displayed errors significantly increases the runtime of the program
+	for(let i = 0; i < Math.min(info.faults.length, 5000); i ++) { // Not capping the number of displayed errors significantly increases the runtime of the program
 		faults_out += info.faults[i].toString() + "\n";
 	}
     faults.innerText += faults_out;
@@ -455,7 +455,7 @@ function processLine(lineArray, lineIndex, fileInfo) {
     }
 
     if(faulty){
-        fileInfo.faults.push(new Fault(line.measurementStart, reason));
+        fileInfo.faults.push(new Fault(new Date(line.measurementStart), reason));
         fileInfo.faultyCount1 ++;
         if(rushDay && peakHour){
             fileInfo.faultyCount1RP ++;
@@ -512,7 +512,7 @@ function processLine(lineArray, lineIndex, fileInfo) {
 
     if(faulty) {
         fileInfo.faultyCount2 ++;
-        fileInfo.faults.push(new Fault(line.measurementStart, reason));
+        fileInfo.faults.push(new Fault(new Date(line.measurementStart), reason));
 
         if(rushDay && peakHour){
             fileInfo.faultyCount2RP ++;
@@ -540,7 +540,7 @@ function processLine(lineArray, lineIndex, fileInfo) {
 
     if(!zone0 && !zone1 && !zone2 && !zone3 && !zone4) { // faulty data
         fileInfo.faultyCount3 ++;
-        fileInfo.faults.push(new Fault(line.measurementStart, "Stage 3, data does not fit any zone"));
+        fileInfo.faults.push(new Fault(new Date(line.measurementStart), "Stage 3, data does not fit any zone"));
 
         if(rushDay && peakHour){
             fileInfo.faultyCount3RP ++;
