@@ -317,44 +317,32 @@ function processText(fileText, fileInfoArr, document) {
 		eval_res.innerText += " the sensor should be replaced.\n";
     }
     else if (missingRate >= 0.05 || faultyRate >= 0.05) {
-        let flag = true;
         if((info.faultyCount1RP + info.faultyCount1NP)/(info.numDataPointsRP + info.numDataPointsNP) >= 0.25) {
-            //content.innerText += " Criterion 1: Many missing data points from the peak hour.\n";
-            flag = false;
+            eval_res.innerText += " Criterion 1: Many missing data points from the peak hour.\n";
         }
-        if((info.faultyCount1RN + info.faultyCount1NN)/(info.numDataPointsRN + info.numDataPointsNN) >= 0.25) {
-            //content.innerText += " Criterion 2: Many missing data points from the off-peak hour.\n";
-            flag = false;
+        else if((info.faultyCount1RN + info.faultyCount1NN)/(info.numDataPointsRN + info.numDataPointsNN) >= 0.25) {
+            eval_res.innerText += " Criterion 2: Many missing data points from the off-peak hour.\n";
         }
-        if((info.faultyCount1RP + info.faultyCount1RN)/(info.numDataPointsRP + info.numDataPointsRN) >= 0.25) {
-            //content.innerText += " Criterion 3: Many missing data points from the congested day.\n";
-            flag = false;
+        else if((info.faultyCount1RP + info.faultyCount1RN)/(info.numDataPointsRP + info.numDataPointsRN) >= 0.25) {
+            eval_res.innerText += " Criterion 3: Many missing data points from the congested day.\n";
         }
-        if((info.faultyCount1NP + info.faultyCount1NN)/(info.numDataPointsNP + info.numDataPointsNN) >= 0.25) {
-            //content.innerText += " Criterion 4: Many missing data points from the non-congested day.\n";
-            flag = false;
+        else if((info.faultyCount1NP + info.faultyCount1NN)/(info.numDataPointsNP + info.numDataPointsNN) >= 0.25) {
+            eval_res.innerText += " Criterion 4: Many missing data points from the non-congested day.\n";
         }
-        if((info.faultyCount2RP + info.faultyCount2NP + info.faultyCount3RP + info.faultyCount3NP)/(info.numDataPointsRP + info.numDataPointsNP - info.faultyCount1RP - info.faultyCount1NP - info.zeroCount3RP - info.zeroCount3NP - info.oneCount3RP - info.oneCount3NP) >= 0.25) {
-            //content.innerText += " Criterion 1: Many faulty data points from the peak hour.\n";
-            flag = false;
+        else if((info.faultyCount2RP + info.faultyCount2NP + info.faultyCount3RP + info.faultyCount3NP)/(info.numDataPointsRP + info.numDataPointsNP - info.faultyCount1RP - info.faultyCount1NP - info.zeroCount3RP - info.zeroCount3NP - info.oneCount3RP - info.oneCount3NP) >= 0.25) {
+            eval_res.innerText += " Criterion 1: Many faulty data points from the peak hour.\n";
         }
-        if((info.faultyCount2RN + info.faultyCount2NN + info.faultyCount3RN + info.faultyCount3NN)/(info.numDataPointsRN + info.numDataPointsNN - info.faultyCount1RN - info.faultyCount1NN - info.zeroCount3RN - info.zeroCount3NN - info.oneCount3RN - info.oneCount3NN) >= 0.25) {
-            //content.innerText += " Criterion 2: Many faulty data points from the off-peak hour.\n";
-            flag = false;
+        else if((info.faultyCount2RN + info.faultyCount2NN + info.faultyCount3RN + info.faultyCount3NN)/(info.numDataPointsRN + info.numDataPointsNN - info.faultyCount1RN - info.faultyCount1NN - info.zeroCount3RN - info.zeroCount3NN - info.oneCount3RN - info.oneCount3NN) >= 0.25) {
+            eval_res.innerText += " Criterion 2: Many faulty data points from the off-peak hour.\n";
         }
-        if((info.faultyCount2RP + info.faultyCount2RN + info.faultyCount3RP + info.faultyCount3RN)/(info.numDataPointsRP + info.numDataPointsRN - info.faultyCount1RP - info.faultyCount1RN - info.zeroCount3RP - info.zeroCount3RN - info.oneCount3RP - info.oneCount3RN) >= 0.25) {
-            //content.innerText += " Criterion 3: Many faulty data points from the congested day.\n";
-            flag = false;
+        else if((info.faultyCount2RP + info.faultyCount2RN + info.faultyCount3RP + info.faultyCount3RN)/(info.numDataPointsRP + info.numDataPointsRN - info.faultyCount1RP - info.faultyCount1RN - info.zeroCount3RP - info.zeroCount3RN - info.oneCount3RP - info.oneCount3RN) >= 0.25) {
+            eval_res.innerText += " Criterion 3: Many faulty data points from the congested day.\n";
         }
-        if((info.faultyCount2NP + info.faultyCount2NN + info.faultyCount3NP + info.faultyCount3NN)/(info.numDataPointsNP + info.numDataPointsNN - info.faultyCount1NP - info.faultyCount1NN - info.zeroCount3NP - info.zeroCount3NN - info.oneCount3NP - info.oneCount3NN) >= 0.25) {
-            //content.innerText += " Criterion 4: Many faulty data points from the non-congested day.\n";
-            flag = false;
+        else if((info.faultyCount2NP + info.faultyCount2NN + info.faultyCount3NP + info.faultyCount3NN)/(info.numDataPointsNP + info.numDataPointsNN - info.faultyCount1NP - info.faultyCount1NN - info.zeroCount3NP - info.zeroCount3NN - info.oneCount3NP - info.oneCount3NN) >= 0.25) {
+            eval_res.innerText += " Criterion 4: Many faulty data points from the non-congested day.\n";
         }
-        if(flag) {
+        else  {
             eval_res.innerText += " the sensor should be replaced.\n";
-        }
-        else{
-            eval_res.innerText += " the sensor is in good condition.\n";
         }
     }
     else{
