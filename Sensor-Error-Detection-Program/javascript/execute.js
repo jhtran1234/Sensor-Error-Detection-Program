@@ -314,7 +314,7 @@ function processText(fileText, fileInfoArr, document) {
 	}
 
     if(missingRate >= 0.25 || faultyRate >= 0.3){
-		eval_res.innerText += " the sensor should be replaced.\n";
+		eval_res.innerText += " the sensor should be replaced/maintained.\n";
     }
     else if (missingRate >= 0.05 || faultyRate >= 0.05) {
         if((info.faultyCount1RP + info.faultyCount1NP)/(info.numDataPointsRP + info.numDataPointsNP) >= 0.25) {
@@ -342,7 +342,7 @@ function processText(fileText, fileInfoArr, document) {
             eval_res.innerText += " Many faulty data points from the non-congested day.\n";
         }
         else  {
-            eval_res.innerText += " the sensor should be replaced.\n";
+            eval_res.innerText += " the sensor should be replaced/maintained.\n";
         }
     }
     else{
