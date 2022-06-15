@@ -281,7 +281,7 @@ function processText(fileText, fileInfoArr, document) {
     let info = fileInfoArr[0];
     let exclusionCount = (info.zeroCount3 + info.oneCount3);
     let missingRate = info.faultyCount1/info.numDataPoints;
-    let faultyRate = (info.faultyCount2 + info.faultyCount3)/(info.numDataPoints - info.faultyCount1 - exclusionCount);
+    let faultyRate = (info.faultyCount2 + info.faultyCount3)/(info.numDataPoints - info.faultyCount1);
 
     let eval_res = document.querySelector('#evaluation');
     let file_info = document.querySelector('#file_info');
