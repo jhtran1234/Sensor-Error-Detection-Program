@@ -313,33 +313,46 @@ function processText(fileText, fileInfoArr, document) {
 		file_info.innerHTML = "<b>Zone ID</b>: " + info.zoneId + ", <b>Lane number</b>: " + info.laneNumber + ", <b>Time frame</b>: to " + end_time + ", <b>Number of time intervals</b>: " + info.numDataPoints;
 	}
 
-    if(missingRate >= 0.25 || faultyRate >= 0.3){
+    if(info.numDataPoints == 0){
+		eval_res.innerText += " The selected date range is not within the range of data.\n";
+        alert("The selected date range is not within the range of data, please go back and select another date range.");
+        if (start_time != null && end_time != null){
+            file_info.innerHTML = "<b>Time frame</b>: from " + start_time + ' to ' + end_time;
+        }
+        else if (start_time != null){
+            file_info.innerHTML = "<b>Time frame</b>: from " + start_time;
+        }
+        else if (end_time != null){
+            file_info.innerHTML = "<b>Time frame</b>: to " + end_time;
+        }
+    }
+    else if(missingRate >= 0.25 || faultyRate >= 0.3){
 		eval_res.innerText += " the sensor should be replaced/maintained.\n";
     }
     else if (missingRate >= 0.05 || faultyRate >= 0.05) {
         if((info.faultyCount1RP + info.faultyCount1NP)/(info.numDataPointsRP + info.numDataPointsNP) >= 0.25) {
-            eval_res.innerText += " Many missing data points from the peak hour.\n";
+            eval_res.innerText += " the sensor should be replaced/maintained.\n";
         }
         else if((info.faultyCount1RN + info.faultyCount1NN)/(info.numDataPointsRN + info.numDataPointsNN) >= 0.25) {
-            eval_res.innerText += " Many missing data points from the off-peak hour.\n";
+            eval_res.innerText += " the sensor should be replaced/maintained.\n";
         }
         else if((info.faultyCount1RP + info.faultyCount1RN)/(info.numDataPointsRP + info.numDataPointsRN) >= 0.25) {
-            eval_res.innerText += " Many missing data points from the congested day.\n";
+            eval_res.innerText += " the sensor should be replaced/maintained.\n";
         }
         else if((info.faultyCount1NP + info.faultyCount1NN)/(info.numDataPointsNP + info.numDataPointsNN) >= 0.25) {
-            eval_res.innerText += " Many missing data points from the non-congested day.\n";
+            eval_res.innerText += " the sensor should be replaced/maintained.\n";
         }
         else if((info.faultyCount2RP + info.faultyCount2NP + info.faultyCount3RP + info.faultyCount3NP)/(info.numDataPointsRP + info.numDataPointsNP - info.faultyCount1RP - info.faultyCount1NP - info.zeroCount3RP - info.zeroCount3NP - info.oneCount3RP - info.oneCount3NP) >= 0.25) {
-            eval_res.innerText += " Many faulty data points from the peak hour.\n";
+            eval_res.innerText += " the sensor should be replaced/maintained.\n";
         }
         else if((info.faultyCount2RN + info.faultyCount2NN + info.faultyCount3RN + info.faultyCount3NN)/(info.numDataPointsRN + info.numDataPointsNN - info.faultyCount1RN - info.faultyCount1NN - info.zeroCount3RN - info.zeroCount3NN - info.oneCount3RN - info.oneCount3NN) >= 0.25) {
-            eval_res.innerText += " Many faulty data points from the off-peak hour.\n";
+            eval_res.innerText += " the sensor should be replaced/maintained.\n";
         }
         else if((info.faultyCount2RP + info.faultyCount2RN + info.faultyCount3RP + info.faultyCount3RN)/(info.numDataPointsRP + info.numDataPointsRN - info.faultyCount1RP - info.faultyCount1RN - info.zeroCount3RP - info.zeroCount3RN - info.oneCount3RP - info.oneCount3RN) >= 0.25) {
-            eval_res.innerText += " Many faulty data points from the congested day.\n";
+            eval_res.innerText += " the sensor should be replaced/maintained.\n";
         }
         else if((info.faultyCount2NP + info.faultyCount2NN + info.faultyCount3NP + info.faultyCount3NN)/(info.numDataPointsNP + info.numDataPointsNN - info.faultyCount1NP - info.faultyCount1NN - info.zeroCount3NP - info.zeroCount3NN - info.oneCount3NP - info.oneCount3NN) >= 0.25) {
-            eval_res.innerText += " Many faulty data points from the non-congested day.\n";
+            eval_res.innerText += " the sensor should be replaced/maintained.\n";
         }
         else  {
             eval_res.innerText += " the sensor should be replaced/maintained.\n";
