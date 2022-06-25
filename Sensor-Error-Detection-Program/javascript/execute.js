@@ -289,18 +289,18 @@ function processText(fileText, fileInfoArr, document) {
 
     eval_res.innerText = "Evaluation Results: ";
 	// Display percentage of missing datapoints
-	document.querySelector('#m').innerText = "Missing data: " + Math.round(info.faultyCount1 / info.numDataPoints * 10000)/100 + "% (" + info.faultyCount1 + " / " + info.numDataPoints + " recorded datapoints)";
-	document.querySelector('#mpc').innerText = Math.round(info.faultyCount1RP / info.numDataPointsRP * 10000)/100 + '%';
-	document.querySelector('#mnc').innerText = Math.round(info.faultyCount1RN / info.numDataPointsRN * 10000)/100 + '%';
-	document.querySelector('#mpn').innerText = Math.round(info.faultyCount1NP / info.numDataPointsNP * 10000)/100 + '%';
-	document.querySelector('#mnn').innerText = Math.round(info.faultyCount1NN / info.numDataPointsNN * 10000)/100 + '%';
+	document.querySelector('#m').innerText = info.numDataPoints == 0 ? "Missing data: NA" : "Missing data: " + Math.round(info.faultyCount1 / info.numDataPoints * 10000)/100 + "% (" + info.faultyCount1 + " / " + info.numDataPoints + " recorded datapoints)";
+	document.querySelector('#mpc').innerText = info.numDataPointsRP == 0 ? "NA" : Math.round(info.faultyCount1RP / info.numDataPointsRP * 10000)/100 + '%';
+	document.querySelector('#mnc').innerText = info.numDataPointsRN == 0 ? "NA" : Math.round(info.faultyCount1RN / info.numDataPointsRN * 10000)/100 + '%';
+	document.querySelector('#mpn').innerText = info.numDataPointsNP == 0 ? "NA" : Math.round(info.faultyCount1NP / info.numDataPointsNP * 10000)/100 + '%';
+	document.querySelector('#mnn').innerText = info.numDataPointsNN == 0 ? "NA" : Math.round(info.faultyCount1NN / info.numDataPointsNN * 10000)/100 + '%';
 
 	// Display percentage of faults
-	document.querySelector('#f').innerText = "Faulty data: " + Math.round((info.faultyCount2 + info.faultyCount3) / (info.numDataPoints - info.faultyCount1) * 10000)/100 + "% (" + (info.faultyCount2+info.faultyCount3) + " / " + (info.numDataPoints-info.faultyCount1) + " recorded datapoints)";
-	document.querySelector('#fpc').innerText = Math.round((info.faultyCount2RP + info.faultyCount3RP) / (info.numDataPointsRP - info.faultyCount1RP) * 10000)/100 + '%';
-	document.querySelector('#fnc').innerText = Math.round((info.faultyCount2RN + info.faultyCount3RN) / (info.numDataPointsRN - info.faultyCount1RN) * 10000)/100 + '%';
-	document.querySelector('#fpn').innerText = Math.round((info.faultyCount2NP + info.faultyCount3NP) / (info.numDataPointsNP - info.faultyCount1NP) * 10000)/100 + '%';
-	document.querySelector('#fnn').innerText = Math.round((info.faultyCount2NN + info.faultyCount3NN) / (info.numDataPointsNN - info.faultyCount1NN) * 10000)/100 + '%';
+	document.querySelector('#f').innerText = (info.numDataPoints - info.faultyCount1) == 0 ? "Faulty data: NA" : "Faulty data: " + Math.round((info.faultyCount2 + info.faultyCount3) / (info.numDataPoints - info.faultyCount1) * 10000)/100 + "% (" + (info.faultyCount2+info.faultyCount3) + " / " + (info.numDataPoints-info.faultyCount1) + " recorded datapoints)";
+	document.querySelector('#fpc').innerText = (info.numDataPointsRP - info.faultyCount1RP) == 0 ? "NA" : Math.round((info.faultyCount2RP + info.faultyCount3RP) / (info.numDataPointsRP - info.faultyCount1RP) * 10000)/100 + '%';
+	document.querySelector('#fnc').innerText = (info.numDataPointsRN - info.faultyCount1RN) == 0 ? "NA" : Math.round((info.faultyCount2RN + info.faultyCount3RN) / (info.numDataPointsRN - info.faultyCount1RN) * 10000)/100 + '%';
+	document.querySelector('#fpn').innerText = (info.numDataPointsNP - info.faultyCount1NP) == 0 ? "NA" : Math.round((info.faultyCount2NP + info.faultyCount3NP) / (info.numDataPointsNP - info.faultyCount1NP) * 10000)/100 + '%';
+	document.querySelector('#fnn').innerText = (info.numDataPointsNN - info.faultyCount1NN) == 0 ? "NA" : Math.round((info.faultyCount2NN + info.faultyCount3NN) / (info.numDataPointsNN - info.faultyCount1NN) * 10000)/100 + '%';
 
 	file_info.innerHTML = "<b>Zone ID</b>: " + info.zoneId + ", <b>Lane number</b>: " + info.laneNumber + ", <b>Number of time intervals</b>: " + info.numDataPoints;
 	if (start_time != null && end_time != null){
