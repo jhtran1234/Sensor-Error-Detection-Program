@@ -289,7 +289,7 @@ function processText(fileText, fileInfoArr, document) {
 
     eval_res.innerText = "Evaluation Results: ";
 	// Display percentage of missing datapoints
-	document.querySelector('#m').innerText = info.numDataPoints == 0 ? "Missing data: NA" : "Missing data: " + Math.round(info.faultyCount1 / info.numDataPoints * 10000)/100 + "% (" + info.faultyCount1 + " / " + info.numDataPoints + " recorded datapoints)";
+	document.querySelector('#m').innerText = info.numDataPoints == 0 ? "Missing data: NA" : "Missing data: " + Math.round(info.faultyCount1 / info.numDataPoints * 10000)/100 + "% (" + info.faultyCount1 + " / " + info.numDataPoints + " time intervals)";
 	document.querySelector('#mpc').innerText = info.numDataPointsRP == 0 ? "NA" : Math.round(info.faultyCount1RP / info.numDataPointsRP * 10000)/100 + '%';
 	document.querySelector('#mnc').innerText = info.numDataPointsRN == 0 ? "NA" : Math.round(info.faultyCount1RN / info.numDataPointsRN * 10000)/100 + '%';
 	document.querySelector('#mpn').innerText = info.numDataPointsNP == 0 ? "NA" : Math.round(info.faultyCount1NP / info.numDataPointsNP * 10000)/100 + '%';
