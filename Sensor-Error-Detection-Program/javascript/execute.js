@@ -226,7 +226,7 @@ function processText(fileText, fileInfoArr, document) {
     function finished() {
         let finished = true;
         for(let j = 0; j < numFiles; j ++) {
-            finished = finished && (currLine[j]+1 >= fileText[j].length ? true : false);
+            finished = finished && (currLine[j] >= fileText[j].length ? true : false);
         }
         return finished;
     }
@@ -400,7 +400,7 @@ function processLine(lineArray, lineIndex, fileInfo) {
             const peakHour = isPeakHour(i);
             fileInfo.faults.push(new Fault(i.toString(), "Stage 1, Missing Interval"));
             
-            fileInfo.numDataPoints ++;
+            //fileInfo.numDataPoints ++;
             fileInfo.faultyCount1 ++;
             if(rushDay && peakHour){
                 fileInfo.numDataPointsRP ++;
