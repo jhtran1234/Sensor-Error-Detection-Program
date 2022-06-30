@@ -400,7 +400,7 @@ function processLine(lineArray, lineIndex, fileInfo) {
             const peakHour = isPeakHour(i);
             fileInfo.faults.push(new Fault(i.toString(), "Stage 1, Missing Interval"));
             
-            //fileInfo.numDataPoints ++;
+            fileInfo.numDataPoints ++;
             fileInfo.faultyCount1 ++;
             if(rushDay && peakHour){
                 fileInfo.numDataPointsRP ++;
