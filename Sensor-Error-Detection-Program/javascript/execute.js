@@ -1,7 +1,7 @@
 "use strict";
 var start_time = null;
 var end_time = null;
-
+var results = "";
 
 $(document).ready(function(){
 	$("#Save-1").click(function(){
@@ -36,6 +36,11 @@ $(document).ready(function(){
 
 	$("#Back-2").click(function(){
 		$('.ui.menu').find('.item').tab('change tab', '1');
+	});
+
+    
+	$("#Download").click(function(){
+        download("results.txt", results);
 	});
 });
 
@@ -361,9 +366,14 @@ function processText(fileText, fileInfoArr, document) {
     else{
         eval_res.innerText += " the sensor is in good condition.\n";
     }
+
     let faults_out = "";
-	for(let i = 0; i < Math.min(info.faults.length, 2000); i ++) { // Not capping the number of displayed errors significantly increases the runtime of the program
-		faults_out += info.faults[i].toString() + "\n";
+    let display_lines = 2000; // Not capping the number of displayed errors significantly increases the runtime of the program
+	for(let i = 0; i < info.faults.length; i ++) {
+		if (i < display_lines){
+            faults_out += info.faults[i].toString() + "\n";
+        }
+        results += info.faults[i].toString() + "\n";
 	}
     faults.innerText = faults_out;
 }
@@ -681,4 +691,19 @@ function dateInRange(date) {
         }
         return false;
     }
+}
+
+/**
+ * Exports results for download.
+ * @param {String} filename 
+ * @param {String} text 
+ */
+function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
 }
