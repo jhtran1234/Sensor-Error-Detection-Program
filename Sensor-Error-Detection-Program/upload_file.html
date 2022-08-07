@@ -34,13 +34,23 @@
 						<div class="ui form">
 							<p class="tab_label">Data Source Selection</p>
 							<img src="images/md color bar.png" id="color-bar">
-							<p class="text">Select a sensor data CSV file to begin analysis:</p>
-							<p class="text">(Please select Lane Reading files.)</p>
+							<p class="text">Select a sensor data CSV file to begin analysis</p>
+							<p class="text">(Please select a Lane Reading file)</p>
 							<input type="file" id="uploadedfile" name="uploadedfile" accept=".csv" multiple tabindex="1">
-							<p class="text">Optional: Select a start time<p>
-							<input type="datetime-local" id="start_time" name="start_time">
-							<p class="text">Optional: Select an end time</p>
-							<input type="datetime-local" id="end_time" name="end_time">
+							<br>
+							<div style="width: 600px; height: 50px; margin:auto; border:3px solid black;background-color: lightskyblue;">
+								<p class="text" style="line-height: 50px;">Optional</p>
+							</div>
+							<div style="width: 600px; margin:auto; border:3px solid black;">
+								<br>
+								<p class="text" style="width: 50%; display: inline-block;">Select a start time</p>
+								<input type="datetime-local" id="start_time" name="start_time" style="display: inline-block;">
+								<br>
+								<br>
+								<p class="text" style="width: 50%; display: inline-block;">Select an end time</p>
+								<input type="datetime-local" id="end_time" name="end_time" style="display: inline-block;">
+								<br>
+							</div>
 						</div>
 					</div>
 				</div>	
