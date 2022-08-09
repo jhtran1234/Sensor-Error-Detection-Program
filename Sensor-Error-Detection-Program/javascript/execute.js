@@ -33,12 +33,17 @@ $(document).ready(function(){
 		execute();
 		$('.ui.menu').find('.item').tab('change tab', '2');
 	});
+	$("#Next-2").click(function(){
+		$('.ui.menu').find('.item').tab('change tab', '3');
+	});
 
 	$("#Back-2").click(function(){
 		$('.ui.menu').find('.item').tab('change tab', '1');
 	});
+	$("#Back-3").click(function(){
+		$('.ui.menu').find('.item').tab('change tab', '2');
+	});
 
-    
 	$("#Download").click(function(){
         download("results.txt", results);
 	});

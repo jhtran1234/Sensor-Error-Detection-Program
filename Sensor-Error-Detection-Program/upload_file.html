@@ -21,14 +21,17 @@
 	<div class="ui container" id="container">
 		<div class="ui top attached segment incident-info" id="form-size">
 			<div class="ui top attached tabular menu">
-				<div class="item active" data-tab="1" id="data_tab_1" style="padding-left: 110.530px;padding-right: 110.530px;"><b>
+				<div class="item active" data-tab="1" id="data_tab_1" style="padding-left: 46.853px;padding-right: 46.853px;"><b>
 					Data Source Selection
 				</b></div>
-				<div class="item" data-tab="2" id="data_tab_2" style="padding-left: 162.68px;padding-right: 162.68px;"><b>
-					Results
+				<div class="item" data-tab="2" id="data_tab_2" style="padding-left: 31.778px;padding-right: 31.778px;"><b>
+					Basic Data Characteristics
+				</b></div>
+				<div class="item" data-tab="3" id="data_tab_3" style="padding-left: 67.453px;padding-right: 67.453px;"><b>
+					Analysis Results
 				</b></div>
 			</div>
-			<div class="ui bottom attached tab segment active" data-tab="1">
+			<div class="ui bottom attached tab segment" data-tab="1">
 				<div class="ui grid">
 					<div class="one column row" id="checkbox-size">
 						<div class="ui form">
@@ -43,12 +46,13 @@
 							</div>
 							<div style="width: 600px; margin:auto; border:3px solid black;">
 								<br>
-								<p class="text" style="width: 50%; display: inline-block;">Select a start time</p>
+								<p class="text" style="width: 50%; display: inline-block;">Select a start time:</p>
 								<input type="datetime-local" id="start_time" name="start_time" style="display: inline-block;">
 								<br>
 								<br>
-								<p class="text" style="width: 50%; display: inline-block;">Select an end time</p>
+								<p class="text" style="width: 50%; display: inline-block;">Select an end time:</p>
 								<input type="datetime-local" id="end_time" name="end_time" style="display: inline-block;">
+								<br>
 								<br>
 							</div>
 						</div>
@@ -65,7 +69,70 @@
 				</div>
 			</div>
 
-			<div class="ui bottom attached tab segment" data-tab="2">
+			<div class="ui bottom attached tab segment active" data-tab="2">
+				<div class="ui grid">
+					<div class="one column row" id="checkbox-size">
+						<div class="ui form" style="padding: 5px;">
+							<p class="tab_label">Basic Data Characteristics</p>
+							<img src="images/md color bar.png" id="color-bar">
+							<br>
+							<div id="left_div_40">
+								<ul id="info_list">
+									<li>Sensor:</li>
+									<li>Zone ID:</li>
+									<li>Lane:</li>
+									<li>Start time:</li>
+									<li>End time:</li>
+									<li>Total number of time intervals in the entire period:</li>
+								</ul>
+							</div>
+							<div id="right_div_60">
+								<table>
+									<tr>
+										<th></th>
+										<th>Peak hours</th>
+										<th>Off-peak hours</th>
+										<th>Total (days)</th>
+									</tr>
+									<tr>
+										<td><b>Congested day</b></td>
+										<td id="mpc"></td>
+										<td id="mnc"></td>
+										<td id="total_days_congested"></td>
+									</tr>
+									<tr>
+										<td><b>Non-congested day</b></td>
+										<td id="mpn"></td>
+										<td id="mnn"></td>
+										<td id="total_days_non"></td>
+									</tr>
+									<tr>
+										<td><b>Total (hours)</b></td>
+										<td id="total_hours_congested"></td>
+										<td id="total_hours_non"></td>
+										<td></td>
+									</tr>
+								</table>
+							</div>
+							<div id="info_box">
+								
+							</div>
+						</div>
+					</div>
+				</div>	
+				<div class="ui grid">
+					<div class="column" id="button-size">
+						<div class="one column row" id="button-row">
+							<button class="ui right floated blue button" id="Next-2" name="next" tabindex="3">Next</button>
+							<button class="ui right floated blue button" id="Back-2">Back</button>
+							<button class="ui right floated blue button" id="Home" onClick="parent.location='sensor_error.html'">Home</button>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="ui bottom attached tab segment" data-tab="3">
 				<div class="ui grid">
 					<div class="one column row" id="checkbox-size">
 						<div class="ui form" style="padding: 5px;">
@@ -131,12 +198,11 @@
 				<div class="ui grid">
 					<div class="column" id="button-size">
 						<div class="one column row" id="button-row">
-							<button class="ui right floated blue button" id="Back-2">Back</button>
+							<button class="ui right floated blue button" id="Back-3">Back</button>
 							<button class="ui right floated blue button" id="Home" onClick="parent.location='sensor_error.html'">Home</button>
 							<button class="ui right floated blue button" id="Download">Download Results</button>
 						</div>
 					</div>
-
 				</div>
 			</div>
 		</div>
