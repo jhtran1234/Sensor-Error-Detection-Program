@@ -69,7 +69,7 @@
 				</div>
 			</div>
 
-			<div class="ui bottom attached tab segment active" data-tab="2">
+			<div class="ui bottom attached tab segment" data-tab="2">
 				<div class="ui grid">
 					<div class="one column row" id="checkbox-size">
 						<div class="ui form" style="padding: 5px;">
@@ -78,12 +78,12 @@
 							<br>
 							<div id="left_div_40">
 								<ul id="info_list">
-									<li>Sensor:</li>
-									<li>Zone ID:</li>
-									<li>Lane:</li>
-									<li>Start time:</li>
-									<li>End time:</li>
-									<li>Total number of time intervals in the entire period:</li>
+									<li id="info_list_ele">Sensor:</li>
+									<li id="info_list_ele">Zone ID:</li>
+									<li id="info_list_ele">Lane:</li>
+									<li id="info_list_ele">Start time:</li>
+									<li id="info_list_ele">End time:</li>
+									<li id="info_list_ele">Total number of time intervals in the entire period:</li>
 								</ul>
 							</div>
 							<div id="right_div_60">
@@ -115,7 +115,11 @@
 								</table>
 							</div>
 							<div id="info_box">
-								
+								<p id="note_list_label">Note:</p>
+								<ul id="note_list">
+									<li id="note_list_ele"><b>Peak hours</b>: 9am to 6pm</li>
+									<li id="note_list_ele"><b>Congested days</b>: Friday, Saturday, Sunday</li>
+								</ul>
 							</div>
 						</div>
 					</div>
@@ -132,65 +136,55 @@
 				</div>
 			</div>
 
-			<div class="ui bottom attached tab segment" data-tab="3">
+			<div class="ui bottom attached tab segment active" data-tab="3">
 				<div class="ui grid">
 					<div class="one column row" id="checkbox-size">
 						<div class="ui form" style="padding: 5px;">
 							<div id="upper_div">
-								<p class="tab_label" id="evaluation">Evaluation Results</p>
-								<p class="text" id="file_info"><b>File Info</b>: No File Selected</p>
+								<div style="display: inline; float:left; width: 30%">
+									<p class="tab_label" id="evaluation" style="margin-top:14% !important">Evaluation Results</p>
+								</div>
+								<div style="display: inline; float:left; width: 70%">
+									<br>
+									<input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+									<label for="vehicle1">Sensor should be replaced/maintained</label><br>
+									<input type="checkbox" id="vehicle2" name="vehicle2" value="Car">
+									<label for="vehicle2">Sensor should be calibrated</label><br>
+									<input type="checkbox" id="vehicle3" name="vehicle3" value="Boat">
+									<label for="vehicle3">Sensor is in a good condition</label><br><br>								  
+								</div>
 							</div>
 							<br>
 							<img src="images/md color bar.png" id="color-bar">
 							<br>
-							<div id="left_div">
-								<div id="left_div_upper">
-									<p class="text" id="m" style="font-weight: bold;">Missing data:</p>
-									<table>
-										<tr>
-											<th></th>
-											<th>Peak hour</th>
-											<th>Off-peak hour</th>
-										</tr>
-										<tr>
-											<td><b>Congested day</b></td>
-											<td id="mpc"></td>
-											<td id="mnc"></td>
-										</tr>
-										<tr>
-											<td><b>Non-congested day</b></td>
-											<td id="mpn"></td>
-											<td id="mnn"></td>
-										</tr>
-									</table>
-								</div>
-								<div id="left_div_lower">
-									<p class="text" id="f" style="font-weight: bold;">Faulty data:</p>
-									<table>
-										<tr>
-											<th></th>
-											<th>Peak hour</th>
-											<th>Off-peak hour</th>
-										</tr>
-										<tr>
-											<td><b>Congested day</b></td>
-											<td id="fpc"></td>
-											<td id="fnc"></td>
-										</tr>
-										<tr>
-											<td><b>Non-congested day</b></td>
-											<td id="fpn"></td>
-											<td id="fnn"></td>
-										</tr>
-									</table>
-								</div>
-							</div>
-							<div id="right_div">
-								<p class="text" style="margin-bottom: 0px;font-size: 17px;"><b>Intervals with missing or faulty data:</b></p>
-								<p class="text" style="margin-bottom: 0px;font-size: 13px;"><b>Click "Download Results" for full report</b></p>
-								<div id="right_div_scroll">
-									<p id="faults"></p>
-								</div>
+							<div>
+								<p class="text" id="m" style="font-weight: bold;float: left;">Total Missing/Faulty rate:</p>
+								<table>
+									<tr>
+										<th></th>
+										<th>Peak hours</th>
+										<th>Off-peak hours</th>
+										<th>Total (days)</th>
+									</tr>
+									<tr>
+										<td><b>Congested day</b></td>
+										<td id="mpc"></td>
+										<td id="mnc"></td>
+										<td id="total_days_congested"></td>
+									</tr>
+									<tr>
+										<td><b>Non-congested day</b></td>
+										<td id="mpn"></td>
+										<td id="mnn"></td>
+										<td id="total_days_non"></td>
+									</tr>
+									<tr>
+										<td><b>Total (hours)</b></td>
+										<td id="total_hours_congested"></td>
+										<td id="total_hours_non"></td>
+										<td></td>
+									</tr>
+								</table>
 							</div>
 						</div>
 					</div>

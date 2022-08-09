@@ -293,9 +293,9 @@ function processText(fileText, fileInfoArr, document) {
     let missingRate = info.faultyCount1/info.numDataPoints;
     let faultyRate = (info.faultyCount2 + info.faultyCount3)/(info.numDataPoints - info.faultyCount1);
 
-    let eval_res = document.querySelector('#evaluation');
-    let file_info = document.querySelector('#file_info');
-    let faults = document.querySelector('#faults');
+    let eval_res = document.querySelector('#evaluation'); //changed
+    //let file_info = document.querySelector('#file_info'); Depreciated
+    //let faults = document.querySelector('#faults'); depreciated
 
     eval_res.innerText = "Evaluation Results: ";
 	// Display percentage of missing datapoints
