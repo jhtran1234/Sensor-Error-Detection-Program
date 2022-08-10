@@ -29,7 +29,6 @@ $(document).ready(function(){
 	});
 
 	$("#Next-1").click(function(){
-		document.getElementById("file_info").innerHTML = "<b>File Info</b>: Analysis in progress..."
 		execute();
 		$('.ui.menu').find('.item').tab('change tab', '2');
 	});
@@ -43,9 +42,13 @@ $(document).ready(function(){
 	$("#Back-3").click(function(){
 		$('.ui.menu').find('.item').tab('change tab', '2');
 	});
+	$("#Back-4").click(function(){
+		$('.ui.menu').find('.item').tab('change tab', '3');
+	});
 
 	$("#Download").click(function(){
-        download("results.txt", results);
+		$('.ui.menu').find('.item').tab('change tab', '3-1');
+        //download("results.txt", results);
 	});
 });
 
@@ -298,8 +301,9 @@ function processText(fileText, fileInfoArr, document) {
     //let faults = document.querySelector('#faults'); depreciated
 
     eval_res.innerText = "Evaluation Results: ";
-	// Display percentage of missing datapoints
-	document.querySelector('#m').innerText = info.numDataPoints == 0 ? "Missing data: NA" : "Missing data: " + Math.round(info.faultyCount1 / info.numDataPoints * 10000)/100 + "% (" + info.faultyCount1 + " / " + info.numDataPoints + " time intervals)";
+	// Display percentage of missing 
+    // TODO: change formula for missing/f rate
+	document.querySelector('#m').innerText = info.numDataPoints == 0 ? "Total Missing/Faulty Rate: NA" : "Total Missing/Faulty Rate: " + Math.round(info.faultyCount1 / info.numDataPoints * 10000)/100 + "% (" + info.faultyCount1 + " / " + info.numDataPoints + " time intervals)";
 	document.querySelector('#mpc').innerText = info.numDataPointsRP == 0 ? "NA" : Math.round(info.faultyCount1RP / info.numDataPointsRP * 10000)/100 + '%';
 	document.querySelector('#mnc').innerText = info.numDataPointsRN == 0 ? "NA" : Math.round(info.faultyCount1RN / info.numDataPointsRN * 10000)/100 + '%';
 	document.querySelector('#mpn').innerText = info.numDataPointsNP == 0 ? "NA" : Math.round(info.faultyCount1NP / info.numDataPointsNP * 10000)/100 + '%';

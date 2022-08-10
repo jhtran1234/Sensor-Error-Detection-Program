@@ -96,14 +96,14 @@
 									</tr>
 									<tr>
 										<td><b>Congested day</b></td>
-										<td id="mpc"></td>
-										<td id="mnc"></td>
+										<td id="tpc"></td>
+										<td id="tnc"></td>
 										<td id="total_days_congested"></td>
 									</tr>
 									<tr>
 										<td><b>Non-congested day</b></td>
-										<td id="mpn"></td>
-										<td id="mnn"></td>
+										<td id="tpn"></td>
+										<td id="tnn"></td>
 										<td id="total_days_non"></td>
 									</tr>
 									<tr>
@@ -144,13 +144,13 @@
 								<div style="display: inline; float:left; width: 30%">
 									<p class="tab_label" id="evaluation" style="margin-top:14% !important">Evaluation Results</p>
 								</div>
-								<div style="display: inline; float:left; width: 70%">
+								<div style="display: inline; float:left; width: 70%; pointer-events: none;">
 									<br>
-									<input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+									<input type="checkbox" id="replace_box" name="replace" value="Bike">
 									<label for="vehicle1">Sensor should be replaced/maintained</label><br>
-									<input type="checkbox" id="vehicle2" name="vehicle2" value="Car">
+									<input type="checkbox" id="calibrate_box" name="calibrate" value="Car">
 									<label for="vehicle2">Sensor should be calibrated</label><br>
-									<input type="checkbox" id="vehicle3" name="vehicle3" value="Boat">
+									<input type="checkbox" id="good_box" name="good" value="Boat">
 									<label for="vehicle3">Sensor is in a good condition</label><br><br>								  
 								</div>
 							</div>
@@ -158,7 +158,7 @@
 							<img src="images/md color bar.png" id="color-bar">
 							<br>
 							<div>
-								<p class="text" id="m" style="font-weight: bold;float: left;">Total Missing/Faulty rate:</p>
+								<p class="text" id="m" style="font-weight: bold;float: left;">Total Missing/Faulty Rate:</p>
 								<table>
 									<tr>
 										<th></th>
@@ -188,11 +188,27 @@
 							</div>
 						</div>
 					</div>
-				</div>	
+				</div>
 				<div class="ui grid">
 					<div class="column" id="button-size">
 						<div class="one column row" id="button-row">
 							<button class="ui right floated blue button" id="Back-3">Back</button>
+							<button class="ui right floated blue button" id="Home" onClick="parent.location='sensor_error.html'">Home</button>
+							<button class="ui right floated blue button" id="Download">Download Results</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="ui bottom attached tab segment" data-tab="3-1">
+				<div class="ui grid">
+					<div class="one column row" id="checkbox-size">
+					</div>
+				</div>
+				<div class="ui grid">
+					<div class="column" id="button-size">
+						<div class="one column row" id="button-row">
+							<button class="ui right floated blue button" id="Back-4">Back</button>
 							<button class="ui right floated blue button" id="Home" onClick="parent.location='sensor_error.html'">Home</button>
 							<button class="ui right floated blue button" id="Download">Download Results</button>
 						</div>

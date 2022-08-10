@@ -1,4 +1,4 @@
-body{
+body {
     background-color: #d1d2d3;
 }
 #container {
@@ -46,14 +46,14 @@ label.type {
 #file_info {
     font-size: 16px;
 }
-input{
+input {
     display: block;
     margin: auto !important;
     font-size: 18px;
     width: 250px !important;
     background: transparent !important;
 }
-#uploadedfile{
+#uploadedfile {
     width: 400px !important;
 }
 #optional_top {
@@ -133,13 +133,10 @@ tr {
 #note_list_label {
     margin: 0px;
 }
-#replaced, #calibrated, #good {
-    width: 100px;
-}
 label {
     font-size: 18px;
 }
-#vehicle1, #vehicle2, #vehicle3 {
+#replace_box, #calibrate_box, #good_box {
     display: inline;
     width: 70px !important;
     height: 16px;
