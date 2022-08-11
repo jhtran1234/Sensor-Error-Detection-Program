@@ -144,3 +144,13 @@ label {
 #m, #f {
     margin: 0px;
 }
+.download_L, .download_M, .download_R {
+    background-color: aqua;
+    border: 2px solid black;
+    display: inline-block;
+    width: 243.33px;
+    height: 200px;
+    margin: 5px;
+    margin-top: 50px;
+    float: left;
+}
