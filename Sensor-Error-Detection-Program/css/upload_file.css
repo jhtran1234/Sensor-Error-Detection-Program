@@ -75,7 +75,7 @@ label.type {
 #upper_div {
     background-color: rgba(255, 251, 0, 0.25);
     border: 2px solid black;
-    height: 100px;
+    height: 90px;
 }
 #left_div_40 {
     background-color: rgba(255, 162, 0, 0.25);
@@ -120,7 +120,6 @@ tr {
 #info_list {
     padding-left: 20px;
     font-size: 16px;
-    font-weight: bold;
 }
 #info_list_ele {
     margin-top: 8px;

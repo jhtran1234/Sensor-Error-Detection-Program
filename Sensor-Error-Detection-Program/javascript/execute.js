@@ -123,24 +123,6 @@ class FileInfo {
         this.faultyCount2NP = 0;
         this.faultyCount2RN = 0;
         this.faultyCount2NN = 0;
-        
-        this.faultyCount3 = 0;
-        this.faultyCount3RP = 0;
-        this.faultyCount3NP = 0;
-        this.faultyCount3RN = 0;
-        this.faultyCount3NN = 0;
-
-        this.zeroCount3 = 0;
-        this.zeroCount3RP = 0;
-        this.zeroCount3NP = 0;
-        this.zeroCount3RN = 0;
-        this.zeroCount3NN = 0;
-        
-        this.oneCount3 = 0;
-        this.oneCount3RP = 0;
-        this.oneCount3NP = 0;
-        this.oneCount3RN = 0;
-        this.oneCount3NN = 0;
 
         this.faults = new Array();
         this.error = undefined;
@@ -328,29 +310,36 @@ function processText(fileText, fileInfoArr, document) {
     }
 
     let info = fileInfoArr[0];
-    let exclusionCount = (info.zeroCount3 + info.oneCount3);
-    let missingRate = info.faultyCount1/info.numDataPoints;
-    let faultyRate = (info.faultyCount2 + info.faultyCount3)/(info.numDataPoints - info.faultyCount1);
+    let missingRate = info.faultyCount1 / info.numDataPoints;
+    let faultyRate = (info.faultyCount2) / (info.numDataPoints - info.faultyCount1);
 
-    let eval_res = document.querySelector('#evaluation'); //changed
-    //let file_info = document.querySelector('#file_info'); Depreciated
-    //let faults = document.querySelector('#faults'); depreciated
+    document.getElementById('info_list_ele_sensor').innerHTML = "<b>Sensor:</b> " + info.fileName;
+    document.getElementById('info_list_ele_zone').innerHTML = "<b>Zone ID:</b> " + info.zoneId;
+    document.getElementById('info_list_ele_lane').innerHTML = "<b>Lane:</b> " + info.laneNumber;
+    document.getElementById('info_list_ele_start').innerHTML = "<b>Start time:</b> " + info.fileStartTime;
+    document.getElementById('info_list_ele_end').innerHTML = "<b>End time:</b> " + "In-progress"; // TODO
+    document.getElementById('info_list_ele_intervals').innerHTML = "<b>Total number of time intervals in the entire period:</b> " + info.numDataPoints;
 
-    eval_res.innerText = "Evaluation Results: ";
+
+	document.querySelector('#tpc').innerText = info.numDataPointsRP == 0 ? "NA" : Math.round(info.numDataPointsRP / 60) + ' hours';
+	document.querySelector('#tnc').innerText = info.numDataPointsRN == 0 ? "NA" : Math.round(info.numDataPointsRN / 60) + ' hours';
+	document.querySelector('#tpn').innerText = info.numDataPointsNP == 0 ? "NA" : Math.round(info.numDataPointsNP / 60) + ' hours';
+	document.querySelector('#tnn').innerText = info.numDataPointsNN == 0 ? "NA" : Math.round(info.numDataPointsNN / 60) + ' hours';
+	document.querySelector('#tpx').innerText = Math.round((info.numDataPointsRP + info.numDataPointsNP) / 60) + ' hours';
+	document.querySelector('#tnx').innerText = Math.round((info.numDataPointsRN + info.numDataPointsNN) / 60) + ' hours';
+    
+	document.querySelector('#txc').innerText = Math.round((info.numDataPointsRP + info.numDataPointsRN) / 60) + ' hours';
+	document.querySelector('#txn').innerText = Math.round((info.numDataPointsNP + info.numDataPointsNN) / 60) + ' hours';
+	document.querySelector('#t').innerText = Math.round((info.numDataPoints) / 60) + ' hours';
+
 	// Display percentage of missing 
-    // TODO: change formula for missing/f rate
-	document.querySelector('#m').innerText = info.numDataPoints == 0 ? "Total Missing/Faulty Rate: NA" : "Total Missing/Faulty Rate: " + Math.round(info.faultyCount1 / info.numDataPoints * 10000)/100 + "% (" + info.faultyCount1 + " / " + info.numDataPoints + " time intervals)";
-	document.querySelector('#mpc').innerText = info.numDataPointsRP == 0 ? "NA" : Math.round(info.faultyCount1RP / info.numDataPointsRP * 10000)/100 + '%';
-	document.querySelector('#mnc').innerText = info.numDataPointsRN == 0 ? "NA" : Math.round(info.faultyCount1RN / info.numDataPointsRN * 10000)/100 + '%';
-	document.querySelector('#mpn').innerText = info.numDataPointsNP == 0 ? "NA" : Math.round(info.faultyCount1NP / info.numDataPointsNP * 10000)/100 + '%';
-	document.querySelector('#mnn').innerText = info.numDataPointsNN == 0 ? "NA" : Math.round(info.faultyCount1NN / info.numDataPointsNN * 10000)/100 + '%';
-
-	// Display percentage of faults
-	document.querySelector('#f').innerText = (info.numDataPoints - info.faultyCount1) == 0 ? "Faulty data: NA" : "Faulty data: " + Math.round((info.faultyCount2 + info.faultyCount3) / (info.numDataPoints - info.faultyCount1) * 10000)/100 + "% (" + (info.faultyCount2+info.faultyCount3) + " / " + (info.numDataPoints-info.faultyCount1) + " recorded datapoints)";
-	document.querySelector('#fpc').innerText = (info.numDataPointsRP - info.faultyCount1RP) == 0 ? "NA" : Math.round((info.faultyCount2RP + info.faultyCount3RP) / (info.numDataPointsRP - info.faultyCount1RP) * 10000)/100 + '%';
-	document.querySelector('#fnc').innerText = (info.numDataPointsRN - info.faultyCount1RN) == 0 ? "NA" : Math.round((info.faultyCount2RN + info.faultyCount3RN) / (info.numDataPointsRN - info.faultyCount1RN) * 10000)/100 + '%';
-	document.querySelector('#fpn').innerText = (info.numDataPointsNP - info.faultyCount1NP) == 0 ? "NA" : Math.round((info.faultyCount2NP + info.faultyCount3NP) / (info.numDataPointsNP - info.faultyCount1NP) * 10000)/100 + '%';
-	document.querySelector('#fnn').innerText = (info.numDataPointsNN - info.faultyCount1NN) == 0 ? "NA" : Math.round((info.faultyCount2NN + info.faultyCount3NN) / (info.numDataPointsNN - info.faultyCount1NN) * 10000)/100 + '%';
+	document.querySelector('#total_faulty').innerText = info.numDataPoints == 0 ? "Total Missing/Faulty Rate: NA" : "Total Missing/Faulty Rate: " 
+        + Math.round((info.faultyCount1 + info.faultyCount2) / info.numDataPoints * 10000) / 100 
+        + "% (" + (info.faultyCount1 + info.faultyCount2) + " / " + info.numDataPoints + " time intervals)";
+	document.querySelector('#mpc').innerText = info.numDataPointsRP == 0 ? "NA" : Math.round((info.faultyCount1RP + info.faultyCount2RP) / info.numDataPointsRP * 10000) / 100 + '%';
+	document.querySelector('#mnc').innerText = info.numDataPointsRN == 0 ? "NA" : Math.round((info.faultyCount1RN + info.faultyCount2RN) / info.numDataPointsRN * 10000) / 100 + '%';
+	document.querySelector('#mpn').innerText = info.numDataPointsNP == 0 ? "NA" : Math.round((info.faultyCount1NP + info.faultyCount2NP) / info.numDataPointsNP * 10000) / 100 + '%';
+	document.querySelector('#mnn').innerText = info.numDataPointsNN == 0 ? "NA" : Math.round((info.faultyCount1NN + info.faultyCount2NN) / info.numDataPointsNN * 10000) / 100 + '%';
 
 	file_info.innerHTML = "<b>Zone ID</b>: " + info.zoneId + ", <b>Lane number</b>: " + info.laneNumber + ", <b>Number of time intervals</b>: " + info.numDataPoints;
 	if (start_time != null && end_time != null) {
@@ -392,16 +381,16 @@ function processText(fileText, fileInfoArr, document) {
         else if ((info.faultyCount1NP + info.faultyCount1NN)/(info.numDataPointsNP + info.numDataPointsNN) >= 0.25) {
             eval_res.innerText += " the sensor should be replaced/maintained.\n";
         }
-        else if ((info.faultyCount2RP + info.faultyCount2NP + info.faultyCount3RP + info.faultyCount3NP)/(info.numDataPointsRP + info.numDataPointsNP - info.faultyCount1RP - info.faultyCount1NP - info.zeroCount3RP - info.zeroCount3NP - info.oneCount3RP - info.oneCount3NP) >= 0.25) {
+        else if ((info.faultyCount2RP + info.faultyCount2NP)/(info.numDataPointsRP + info.numDataPointsNP - info.faultyCount1RP - info.faultyCount1NP) >= 0.25) {
             eval_res.innerText += " the sensor should be replaced/maintained.\n";
         }
-        else if ((info.faultyCount2RN + info.faultyCount2NN + info.faultyCount3RN + info.faultyCount3NN)/(info.numDataPointsRN + info.numDataPointsNN - info.faultyCount1RN - info.faultyCount1NN - info.zeroCount3RN - info.zeroCount3NN - info.oneCount3RN - info.oneCount3NN) >= 0.25) {
+        else if ((info.faultyCount2RN + info.faultyCount2NN)/(info.numDataPointsRN + info.numDataPointsNN - info.faultyCount1RN - info.faultyCount1NN) >= 0.25) {
             eval_res.innerText += " the sensor should be replaced/maintained.\n";
         }
-        else if ((info.faultyCount2RP + info.faultyCount2RN + info.faultyCount3RP + info.faultyCount3RN)/(info.numDataPointsRP + info.numDataPointsRN - info.faultyCount1RP - info.faultyCount1RN - info.zeroCount3RP - info.zeroCount3RN - info.oneCount3RP - info.oneCount3RN) >= 0.25) {
+        else if ((info.faultyCount2RP + info.faultyCount2RN)/(info.numDataPointsRP + info.numDataPointsRN - info.faultyCount1RP - info.faultyCount1RN) >= 0.25) {
             eval_res.innerText += " the sensor should be replaced/maintained.\n";
         }
-        else if ((info.faultyCount2NP + info.faultyCount2NN + info.faultyCount3NP + info.faultyCount3NN)/(info.numDataPointsNP + info.numDataPointsNN - info.faultyCount1NP - info.faultyCount1NN - info.zeroCount3NP - info.zeroCount3NN - info.oneCount3NP - info.oneCount3NN) >= 0.25) {
+        else if ((info.faultyCount2NP + info.faultyCount2NN)/(info.numDataPointsNP + info.numDataPointsNN - info.faultyCount1NP - info.faultyCount1NN) >= 0.25) {
             eval_res.innerText += " the sensor should be replaced/maintained.\n";
         }
         else  {
@@ -598,54 +587,20 @@ function processLine(lineArray, lineIndex, fileInfo) {
     const zone4 = (33.6*speed+408.1-flowRate >= 0) && (-109.1*speed+8778.5-flowRate >= 0) && (17.8*speed+143.1-flowRate <= 0) && (-676.9*speed+29852.3-flowRate <= 0);
 
     if (!zone0 && !zone1 && !zone2 && !zone3 && !zone4) { // faulty data
-        fileInfo.faultyCount3 ++;
+        fileInfo.faultyCount2 ++;
         fileInfo.faults.push(new Fault(new Date(line.measurementStart), "Stage 3, data does not fit any zone"));
 
         if (rushDay && peakHour) {
-            fileInfo.faultyCount3RP ++;
+            fileInfo.faultyCount2RP ++;
         }
         else if (rushDay) {
-            fileInfo.faultyCount3RN ++;
+            fileInfo.faultyCount2RN ++;
         }
         else if (peakHour) {
-            fileInfo.faultyCount3NP ++;
+            fileInfo.faultyCount2NP ++;
         }
         else{
-            fileInfo.faultyCount3NN ++;
-        }
-    }
-    else if (zone0) {
-        if (volume == 0) {
-            fileInfo.zeroCount3 ++;
-
-            if (rushDay && peakHour) {
-                fileInfo.zeroCount3RP ++;
-            }
-            else if (rushDay) {
-                fileInfo.zeroCount3RN ++;
-            }
-            else if (peakHour) {
-                fileInfo.zeroCount3NP ++;
-            }
-            else{
-                fileInfo.zeroCount3NN ++;
-            }
-        }
-        else if (volume == 1) {
-            fileInfo.oneCount3 ++;
-
-            if (rushDay && peakHour) {
-                fileInfo.oneCount3RP ++;
-            }
-            else if (rushDay) {
-                fileInfo.oneCount3RN ++;
-            }
-            else if (peakHour) {
-                fileInfo.oneCount3NP ++;
-            }
-            else{
-                fileInfo.oneCount3NN ++;
-            }
+            fileInfo.faultyCount2NN ++;
         }
     }
 }

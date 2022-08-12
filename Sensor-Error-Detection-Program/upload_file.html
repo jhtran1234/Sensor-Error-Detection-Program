@@ -78,12 +78,12 @@
 							<br>
 							<div id="left_div_40">
 								<ul id="info_list">
-									<li id="info_list_ele_sensor">Sensor:</li>
-									<li id="info_list_ele_zone">Zone ID:</li>
-									<li id="info_list_ele_lane">Lane:</li>
-									<li id="info_list_ele_start">Start time:</li>
-									<li id="info_list_ele_end">End time:</li>
-									<li id="info_list_ele_intervals">Total number of time intervals in the entire period:</li>
+									<li id="info_list_ele_sensor"><b>Sensor:</b></li>
+									<li id="info_list_ele_zone"><b>Zone ID:</b></li>
+									<li id="info_list_ele_lane"><b>Lane:</b></li>
+									<li id="info_list_ele_start"><b>Start time:</b></li>
+									<li id="info_list_ele_end"><b>End time:</b></li>
+									<li id="info_list_ele_intervals"><b>Total number of time intervals in the entire period:</b></li>
 								</ul>
 							</div>
 							<div id="right_div_60">
@@ -92,25 +92,25 @@
 										<th></th>
 										<th>Peak hours</th>
 										<th>Off-peak hours</th>
-										<th>Total (days)</th>
+										<th>Total</th>
 									</tr>
 									<tr>
 										<td><b>Congested day</b></td>
 										<td id="tpc"></td>
 										<td id="tnc"></td>
-										<td id="total_days_congested"></td>
+										<td id="txc"></td>
 									</tr>
 									<tr>
 										<td><b>Non-congested day</b></td>
 										<td id="tpn"></td>
 										<td id="tnn"></td>
-										<td id="total_days_non"></td>
+										<td id="txn"></td>
 									</tr>
 									<tr>
-										<td><b>Total (hours)</b></td>
-										<td id="total_hours_congested"></td>
-										<td id="total_hours_non"></td>
-										<td></td>
+										<td><b>Total</b></td>
+										<td id="tpx"></td>
+										<td id="tnx"></td>
+										<td id="t"></td>
 									</tr>
 								</table>
 							</div>
@@ -142,46 +142,44 @@
 						<div class="ui form" style="padding: 5px;">
 							<div id="upper_div">
 								<div style="display: inline; float:left; width: 30%">
-									<p class="tab_label" id="evaluation" style="margin-top:14% !important">Evaluation Results</p>
+									<p class="tab_label" id="evaluation" style="margin-top:29.29px !important">Evaluation Results</p>
 								</div>
-								<div style="display: inline; float:left; width: 70%; pointer-events: none;">
-									<br>
-									<input type="checkbox" id="replace_box" name="replace" value="Bike">
-									<label for="vehicle1">Sensor should be replaced/maintained</label><br>
-									<input type="checkbox" id="calibrate_box" name="calibrate" value="Car">
-									<label for="vehicle2">Sensor should be calibrated</label><br>
-									<input type="checkbox" id="good_box" name="good" value="Boat">
-									<label for="vehicle3">Sensor is in a good condition</label><br><br>								  
+								<div style="display: inline; float:left; width: 70%; pointer-events: none; padding-top: 12px;">
+									<input type="checkbox" id="replace_box" name="sensor_eval_box" value="replace">
+									<label for="replace_box">Sensor should be replaced/maintained</label><br>
+									<input type="checkbox" id="calibrate_box" name="sensor_eval_box" value="calibrate">
+									<label for="calibrate_box">Sensor should be calibrated</label><br>
+									<input type="checkbox" id="good_box" name="sensor_eval_box" value="good">
+									<label for="good_box">Sensor is in a good condition</label><br><br>								  
 								</div>
 							</div>
-							<br>
-							<img src="images/md color bar.png" id="color-bar">
+							<img src="images/md color bar.png" id="color-bar" style="margin-top: 5px;">
 							<br>
 							<div>
-								<p class="text" id="m" style="font-weight: bold;float: left;">Total Missing/Faulty Rate:</p>
+								<p class="text" id="total_faulty" style="font-weight: bold;float: left;">Total Missing/Faulty Rate:</p>
 								<table>
 									<tr>
 										<th></th>
 										<th>Peak hours</th>
 										<th>Off-peak hours</th>
-										<th>Total (days)</th>
+										<th>Total</th>
 									</tr>
 									<tr>
 										<td><b>Congested day</b></td>
 										<td id="mpc"></td>
 										<td id="mnc"></td>
-										<td id="total_days_congested"></td>
+										<td id="mxc"></td>
 									</tr>
 									<tr>
 										<td><b>Non-congested day</b></td>
 										<td id="mpn"></td>
 										<td id="mnn"></td>
-										<td id="total_days_non"></td>
+										<td id="mxn"></td>
 									</tr>
 									<tr>
-										<td><b>Total (hours)</b></td>
-										<td id="total_hours_congested"></td>
-										<td id="total_hours_non"></td>
+										<td><b>Total</b></td>
+										<td id="mpx"></td>
+										<td id="mnx"></td>
 										<td></td>
 									</tr>
 								</table>
