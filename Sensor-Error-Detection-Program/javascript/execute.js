@@ -290,7 +290,7 @@ function processText(fileText, fileInfoArr, document) {
         // indicesArray: Array to store all file indices with the earliest measurement time
         let indicesArray = new Array();
 
-        while(earliestIndex < numFiles && fileText[earliestIndex][currLine[earliestIndex]] == undefined) {
+        while (earliestIndex < numFiles && fileText[earliestIndex][currLine[earliestIndex]] == undefined) {
             earliestIndex ++;
         }
 
@@ -316,7 +316,7 @@ function processText(fileText, fileInfoArr, document) {
     }
 
     // Line-by-line processing of the files starts here
-    while(!finished()) {
+    while (!finished()) {
         let indicesArray = earliestDate();
 
         for (let i = 0; i < indicesArray.length; i ++) {
