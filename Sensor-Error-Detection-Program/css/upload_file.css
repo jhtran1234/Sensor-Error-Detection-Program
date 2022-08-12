@@ -46,15 +46,17 @@ label.type {
 #file_info {
     font-size: 16px;
 }
-input {
+#uploadedfile {
+    width: 400px !important;
+    display: block;
+    margin: auto !important;
+}
+#start_time, #end_time {
     display: block;
     margin: auto !important;
     font-size: 18px;
     width: 250px !important;
     background: transparent !important;
-}
-#uploadedfile {
-    width: 400px !important;
 }
 #optional_top {
     width: 600px;
@@ -145,12 +147,25 @@ label {
     margin: 0px;
 }
 .download_L, .download_M, .download_R {
-    background-color: aqua;
     border: 2px solid black;
     display: inline-block;
     width: 243.33px;
     height: 200px;
     margin: 5px;
     margin-top: 50px;
+    padding: 10px;
     float: left;
+}
+.download_L {
+    background-color: rgba(255, 251, 0, 0.25);
+}
+.download_M {
+    background-color: rgba(0, 140, 255, 0.25);
+}
+.download_R {
+    background-color: rgba(255, 102, 0, 0.25);
+}
+.download_radio {
+    margin-top: 25px;
+    margin-left: 10px;
 }

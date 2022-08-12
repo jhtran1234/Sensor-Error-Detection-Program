@@ -31,7 +31,7 @@
 					Analysis Results
 				</b></div>
 			</div>
-			<div class="ui bottom attached tab segment" data-tab="1">
+			<div class="ui bottom attached tab segment active" data-tab="1">
 				<div class="ui grid">
 					<div class="one column row" id="checkbox-size">
 						<div class="ui form">
@@ -39,7 +39,7 @@
 							<img src="images/md color bar.png" id="color-bar">
 							<p class="text">Select a sensor data CSV file to begin analysis</p>
 							<p class="text">(Please select a Lane Reading file)</p>
-							<input type="file" id="uploadedfile" name="uploadedfile" accept=".csv" multiple tabindex="1">
+							<input type="file" id="uploadedfile" name="uploadedfile" accept=".csv" tabindex="1">
 							<br>
 							<div id="optional_top">
 								<p class="text" style="line-height: 50px;">Optional</p>
@@ -78,12 +78,12 @@
 							<br>
 							<div id="left_div_40">
 								<ul id="info_list">
-									<li id="info_list_ele">Sensor:</li>
-									<li id="info_list_ele">Zone ID:</li>
-									<li id="info_list_ele">Lane:</li>
-									<li id="info_list_ele">Start time:</li>
-									<li id="info_list_ele">End time:</li>
-									<li id="info_list_ele">Total number of time intervals in the entire period:</li>
+									<li id="info_list_ele_sensor">Sensor:</li>
+									<li id="info_list_ele_zone">Zone ID:</li>
+									<li id="info_list_ele_lane">Lane:</li>
+									<li id="info_list_ele_start">Start time:</li>
+									<li id="info_list_ele_end">End time:</li>
+									<li id="info_list_ele_intervals">Total number of time intervals in the entire period:</li>
 								</ul>
 							</div>
 							<div id="right_div_60">
@@ -194,13 +194,13 @@
 						<div class="one column row" id="button-row">
 							<button class="ui right floated blue button" id="Back-3">Back</button>
 							<button class="ui right floated blue button" id="Home" onClick="parent.location='sensor_error.html'">Home</button>
-							<button class="ui right floated blue button" id="Download">Download Results</button>
+							<button class="ui right floated blue button" id="Download-1">Download Results</button>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<div class="ui bottom attached tab segment active" data-tab="3-1">
+			<div class="ui bottom attached tab segment" data-tab="3-1">
 				<div class="ui grid">
 					<div class="one column row" id="checkbox-size">
 						<div class="ui form">
@@ -208,18 +208,28 @@
 							<img src="images/md color bar.png" id="color-bar">
 							<br>
 							<div class="download_L">
-								<input type="radio" id="html" name="fav_language" value="HTML">
-								<label for="html">HTML</label><br>
-								<input type="radio" id="css" name="fav_language" value="CSS">
-								<label for="css">CSS</label><br>
-								<input type="radio" id="javascript" name="fav_language" value="JavaScript">
-								<label for="javascript">JavaScript</label>
+								<input class="download_radio" type="radio" id="missing" name="data" value="missing">
+								<label for="missing">Missing Data</label><br>
+								<input class="download_radio" type="radio" id="faulty" name="data" value="faulty">
+								<label for="faulty">Faulty Data</label><br>
+								<input class="download_radio" type="radio" id="missing_and_faulty" name="data" value="missing_and_faulty" checked>
+								<label for="missing_and_faulty">Missing and Faulty Data</label>
 							</div>
 							<div class="download_M">
-
+								<input class="download_radio" type="radio" id="congested" name="days" value="congested">
+								<label for="congested">Congested Days</label><br>
+								<input class="download_radio" type="radio" id="non_congested" name="days" value="non_congested">
+								<label for="non_congested">Non-congested Days</label><br>
+								<input class="download_radio" type="radio" id="all_days" name="days" value="all_days" checked>
+								<label for="all_days">All Days</label>
 							</div>
 							<div class="download_R">
-
+								<input class="download_radio" type="radio" id="peak" name="hours" value="peak">
+								<label for="peak">Peak Hours</label><br>
+								<input class="download_radio" type="radio" id="off_peak" name="hours" value="off_peak">
+								<label for="off_peak">Off-Peak Hours</label><br>
+								<input class="download_radio" type="radio" id="all_hours" name="hours" value="all_hours" checked>
+								<label for="all_hours">All Hours</label>
 							</div>
 							<button class="ui right floated blue button" id="Download" style="margin-top: 25px; margin-right: 25px;">Download Results</button>
 						</div>
