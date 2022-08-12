@@ -3,13 +3,13 @@ var start_time = null;
 var end_time = null;
 var results = "";
 
-$(document).ready(function(){
-	$("#Save-1").click(function(){
-		if (document.getElementById('uploadedfile').files.length > 0){
+$(document).ready(function() {
+	$("#Save-1").click(function() {
+		if (document.getElementById('uploadedfile').files.length > 0) {
 			start_time = document.querySelector('#start_time').value.length == 0? null : new Date(document.querySelector('#start_time').value);
 			end_time = document.querySelector('#end_time').value.length == 0? null : new Date(document.querySelector('#end_time').value);
 
-			if (start_time != null && end_time != null){
+			if (start_time != null && end_time != null) {
 				if (start_time >= end_time) {
 					alert("End time cannot be earlier than start time.");
 					document.getElementById("Next-1").disabled = true;
@@ -28,25 +28,25 @@ $(document).ready(function(){
 		}
 	});
 
-	$("#Next-1").click(function(){
+	$("#Next-1").click(function() {
 		execute();
 		$('.ui.menu').find('.item').tab('change tab', '2');
 	});
-	$("#Next-2").click(function(){
+	$("#Next-2").click(function() {
 		$('.ui.menu').find('.item').tab('change tab', '3');
 	});
 
-	$("#Back-2").click(function(){
+	$("#Back-2").click(function() {
 		$('.ui.menu').find('.item').tab('change tab', '1');
 	});
-	$("#Back-3").click(function(){
+	$("#Back-3").click(function() {
 		$('.ui.menu').find('.item').tab('change tab', '2');
 	});
-	$("#Back-4").click(function(){
+	$("#Back-4").click(function() {
 		$('.ui.menu').find('.item').tab('change tab', '3');
 	});
 
-	$("#Download-1").click(function(){
+	$("#Download-1").click(function() {
 		$('.ui.menu').find('.item').tab('change tab', '3-1');
 	});
     
@@ -179,7 +179,7 @@ class Fault {
         this.reason = reason;
     }
 
-	toString(){
+	toString() {
 		return this.timeStamp + ", " + this.reason;
 	}
 }
@@ -216,7 +216,7 @@ function readFileList(fileList, document, _callback) {
 
         var file = fileList[index];
 
-        if (file){
+        if (file) {
             fileInfoArr[index] = new FileInfo();
             fileInfoArr[index].fileName = file.name;
         }
@@ -246,7 +246,7 @@ function readFileList(fileList, document, _callback) {
             readFile(index + 1);
         }
 
-        if (file){
+        if (file) {
             reader.readAsText(file);
         }
     }
@@ -353,30 +353,30 @@ function processText(fileText, fileInfoArr, document) {
 	document.querySelector('#fnn').innerText = (info.numDataPointsNN - info.faultyCount1NN) == 0 ? "NA" : Math.round((info.faultyCount2NN + info.faultyCount3NN) / (info.numDataPointsNN - info.faultyCount1NN) * 10000)/100 + '%';
 
 	file_info.innerHTML = "<b>Zone ID</b>: " + info.zoneId + ", <b>Lane number</b>: " + info.laneNumber + ", <b>Number of time intervals</b>: " + info.numDataPoints;
-	if (start_time != null && end_time != null){
+	if (start_time != null && end_time != null) {
 		file_info.innerHTML = "<b>Zone ID</b>: " + info.zoneId + ", <b>Lane number</b>: " + info.laneNumber + ", <b>Time frame</b>: from " + start_time + ' to ' + end_time + ", <b>Number of time intervals</b>: " + info.numDataPoints;
 	}
-	else if (start_time != null){
+	else if (start_time != null) {
 		file_info.innerHTML = "<b>Zone ID</b>: " + info.zoneId + ", <b>Lane number</b>: " + info.laneNumber + ", <b>Time frame</b>: from " + start_time + ", <b>Number of time intervals</b>: " + info.numDataPoints;
 	}
-	else if (end_time != null){
+	else if (end_time != null) {
 		file_info.innerHTML = "<b>Zone ID</b>: " + info.zoneId + ", <b>Lane number</b>: " + info.laneNumber + ", <b>Time frame</b>: to " + end_time + ", <b>Number of time intervals</b>: " + info.numDataPoints;
 	}
 
-    if (info.numDataPoints == 0){
+    if (info.numDataPoints == 0) {
 		eval_res.innerText += " The selected date range is not within the range of data.\n";
         alert("The selected date range is not within the range of data, please go back and select another date range.");
-        if (start_time != null && end_time != null){
+        if (start_time != null && end_time != null) {
             file_info.innerHTML = "<b>Time frame</b>: from " + start_time + ' to ' + end_time;
         }
-        else if (start_time != null){
+        else if (start_time != null) {
             file_info.innerHTML = "<b>Time frame</b>: from " + start_time;
         }
-        else if (end_time != null){
+        else if (end_time != null) {
             file_info.innerHTML = "<b>Time frame</b>: to " + end_time;
         }
     }
-    else if (missingRate >= 0.25 || faultyRate >= 0.3){
+    else if (missingRate >= 0.25 || faultyRate >= 0.3) {
 		eval_res.innerText += " the sensor should be replaced/maintained.\n";
     }
     else if (missingRate >= 0.05 || faultyRate >= 0.05) {
@@ -415,7 +415,7 @@ function processText(fileText, fileInfoArr, document) {
     let faults_out = "";
     let display_lines = 2000; // Not capping the number of displayed errors significantly increases the runtime of the program
 	for(let i = 0; i < info.faults.length; i ++) {
-		if (i < display_lines){
+		if (i < display_lines) {
             faults_out += info.faults[i].toString() + "\n";
         }
         results += info.faults[i].toString() + "\n";
@@ -433,12 +433,12 @@ function processLine(lineArray, lineIndex, fileInfo) {
     let date = new Date(line.date);
 
     // Quits line processing if it is not in the date range
-    if (!dateInRange(date)){
+    if (!dateInRange(date)) {
         return;
     }
     
     var prevTime = 0;
-    if (lineIndex > 0){
+    if (lineIndex > 0) {
         prevTime = lineArray[lineIndex - 1].date;
     }
 
@@ -457,15 +457,15 @@ function processLine(lineArray, lineIndex, fileInfo) {
             
             fileInfo.numDataPoints ++;
             fileInfo.faultyCount1 ++;
-            if (rushDay && peakHour){
+            if (rushDay && peakHour) {
                 fileInfo.numDataPointsRP ++;
                 fileInfo.faultyCount1RP ++;
             }
-            else if (rushDay){
+            else if (rushDay) {
                 fileInfo.numDataPointsRN ++;
                 fileInfo.faultyCount1RN ++;
             }
-            else if (peakHour){
+            else if (peakHour) {
                 fileInfo.numDataPointsNP ++;
                 fileInfo.faultyCount1NP ++;
             }
@@ -480,13 +480,13 @@ function processLine(lineArray, lineIndex, fileInfo) {
     const peakHour = isPeakHour(date);
 
     fileInfo.numDataPoints ++;
-    if (rushDay && peakHour){
+    if (rushDay && peakHour) {
         fileInfo.numDataPointsRP ++;
     }
-    else if (rushDay){
+    else if (rushDay) {
         fileInfo.numDataPointsRN ++;
     }
-    else if (peakHour){
+    else if (peakHour) {
         fileInfo.numDataPointsNP ++;
     }
     else{
@@ -513,16 +513,16 @@ function processLine(lineArray, lineIndex, fileInfo) {
         reason = "Stage 1, Missing Speed Data";
     }
 
-    if (faulty){
+    if (faulty) {
         fileInfo.faults.push(new Fault(new Date(line.measurementStart), reason));
         fileInfo.faultyCount1 ++;
-        if (rushDay && peakHour){
+        if (rushDay && peakHour) {
             fileInfo.faultyCount1RP ++;
         }
-        else if (rushDay){
+        else if (rushDay) {
             fileInfo.faultyCount1RN ++;
         }
-        else if (peakHour){
+        else if (peakHour) {
             fileInfo.faultyCount1NP ++;
         }
         else{
@@ -573,13 +573,13 @@ function processLine(lineArray, lineIndex, fileInfo) {
         fileInfo.faultyCount2 ++;
         fileInfo.faults.push(new Fault(new Date(line.measurementStart), reason));
 
-        if (rushDay && peakHour){
+        if (rushDay && peakHour) {
             fileInfo.faultyCount2RP ++;
         }
-        else if (rushDay){
+        else if (rushDay) {
             fileInfo.faultyCount2RN ++;
         }
-        else if (peakHour){
+        else if (peakHour) {
             fileInfo.faultyCount2NP ++;
         }
         else{
@@ -601,13 +601,13 @@ function processLine(lineArray, lineIndex, fileInfo) {
         fileInfo.faultyCount3 ++;
         fileInfo.faults.push(new Fault(new Date(line.measurementStart), "Stage 3, data does not fit any zone"));
 
-        if (rushDay && peakHour){
+        if (rushDay && peakHour) {
             fileInfo.faultyCount3RP ++;
         }
-        else if (rushDay){
+        else if (rushDay) {
             fileInfo.faultyCount3RN ++;
         }
-        else if (peakHour){
+        else if (peakHour) {
             fileInfo.faultyCount3NP ++;
         }
         else{
@@ -618,13 +618,13 @@ function processLine(lineArray, lineIndex, fileInfo) {
         if (volume == 0) {
             fileInfo.zeroCount3 ++;
 
-            if (rushDay && peakHour){
+            if (rushDay && peakHour) {
                 fileInfo.zeroCount3RP ++;
             }
-            else if (rushDay){
+            else if (rushDay) {
                 fileInfo.zeroCount3RN ++;
             }
-            else if (peakHour){
+            else if (peakHour) {
                 fileInfo.zeroCount3NP ++;
             }
             else{
@@ -634,13 +634,13 @@ function processLine(lineArray, lineIndex, fileInfo) {
         else if (volume == 1) {
             fileInfo.oneCount3 ++;
 
-            if (rushDay && peakHour){
+            if (rushDay && peakHour) {
                 fileInfo.oneCount3RP ++;
             }
-            else if (rushDay){
+            else if (rushDay) {
                 fileInfo.oneCount3RN ++;
             }
-            else if (peakHour){
+            else if (peakHour) {
                 fileInfo.oneCount3NP ++;
             }
             else{
@@ -661,21 +661,21 @@ function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
     if (fileInfo.zoneId == 0) {
         fileInfo.zoneId = lineZoneId;
     }
-    else if (fileInfo.zoneId != lineZoneId){
+    else if (fileInfo.zoneId != lineZoneId) {
         fileInfo.error = "Error: zone_id changed mid-file";
         return false;
     }
     if (fileInfo.laneNumber == 0) {
         fileInfo.laneNumber = lineLaneNumber;
     }
-    else if (fileInfo.laneNumber != lineLaneNumber){
+    else if (fileInfo.laneNumber != lineLaneNumber) {
         fileInfo.error = "Error: lane_number changed mid-file";
         return false;
     }
     if (fileInfo.laneId == 0) {
         fileInfo.laneId = lineLaneId;
     }
-    else if (fileInfo.laneId != lineLaneId){
+    else if (fileInfo.laneId != lineLaneId) {
         fileInfo.error = "Error: lane_id changed mid-file";
         return false;
     }
@@ -715,23 +715,23 @@ function isRushDay(date) {
  * @returns boolean for if the date is within specified time range
  */
 function dateInRange(date) {
-    if (start_time == null && end_time == null){
+    if (start_time == null && end_time == null) {
         return true;
     }
-    else if (start_time == null){
-        if (date <= end_time){
+    else if (start_time == null) {
+        if (date <= end_time) {
             return true;
         }
         return false;
     }
-    else if (end_time == null){
-        if (date >= start_time){
+    else if (end_time == null) {
+        if (date >= start_time) {
             return true;
         }
         return false;
     }
     else{
-        if (date >= start_time && date <= end_time){
+        if (date >= start_time && date <= end_time) {
             return true;
         }
         return false;
