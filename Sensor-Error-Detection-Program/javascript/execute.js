@@ -65,7 +65,7 @@ $(document).ready(function() {
         }
 
 		let days_ele = document.getElementsByName('days');
-		for(let i = 0; i < days_ele.length; i++) {
+		for (let i = 0; i < days_ele.length; i++) {
 			if (days_ele[i].checked) {
 				days_ele = days_ele[i].value;
 				break;
@@ -76,7 +76,7 @@ $(document).ready(function() {
         }
         
 		let hours_ele = document.getElementsByName('hours');
-		for(let i = 0; i < hours_ele.length; i++) {
+		for (let i = 0; i < hours_ele.length; i++) {
 			if (hours_ele[i].checked) {
 				hours_ele = hours_ele[i].value;
 				break;
@@ -265,7 +265,7 @@ function processText(fileText, fileInfoArr, document) {
     var currLine = new Array();
     let numFiles = fileText.length;
 
-    for(let i = 0; i < numFiles; i ++) {
+    for (let i = 0; i < numFiles; i ++) {
         currLine[i] = 0;
     }
 
@@ -274,7 +274,7 @@ function processText(fileText, fileInfoArr, document) {
     */
     function finished() {
         let finished = true;
-        for(let j = 0; j < numFiles; j ++) {
+        for (let j = 0; j < numFiles; j ++) {
             finished = finished && (currLine[j] >= fileText[j].length ? true : false);
         }
         return finished;
@@ -302,7 +302,7 @@ function processText(fileText, fileInfoArr, document) {
         earliestDate = fileText[earliestIndex][currLine[earliestIndex]].date;
 
         // Finding the earliest measurement time out of the remaining files, j represents file index
-        for(let j = earliestIndex + 1; j < numFiles; j ++) {
+        for (let j = earliestIndex + 1; j < numFiles; j ++) {
             if (currLine[j] < fileText[j].length && fileText[j][currLine[j]].date < earliestDate) {
                 earliestDate = fileText[j].date;
                 indicesArray = [j];
@@ -319,7 +319,7 @@ function processText(fileText, fileInfoArr, document) {
     while(!finished()) {
         let indicesArray = earliestDate();
 
-        for(let i = 0; i < indicesArray.length; i ++) {
+        for (let i = 0; i < indicesArray.length; i ++) {
             let fileIndex = indicesArray[i];
 
             processLine(fileText[fileIndex], currLine[fileIndex], fileInfoArr[fileIndex]);
@@ -414,7 +414,7 @@ function processText(fileText, fileInfoArr, document) {
 
     let faults_out = "";
     let display_lines = 2000; // Not capping the number of displayed errors significantly increases the runtime of the program
-	for(let i = 0; i < info.faults.length; i ++) {
+	for (let i = 0; i < info.faults.length; i ++) {
 		if (i < display_lines) {
             faults_out += info.faults[i].toString() + "\n";
         }
@@ -450,7 +450,7 @@ function processLine(lineArray, lineIndex, fileInfo) {
         let i = new Date(prevTime);
         i = new Date(i.setMinutes(i.getMinutes() + 1));
 
-        for(i; i < date; i = new Date(i.setMinutes(i.getMinutes() + 1))) {
+        for (i; i < date; i = new Date(i.setMinutes(i.getMinutes() + 1))) {
             const rushDay = isRushDay(i);
             const peakHour = isPeakHour(i);
             fileInfo.faults.push(new Fault(i.toString(), "Stage 1, Missing Interval"));
