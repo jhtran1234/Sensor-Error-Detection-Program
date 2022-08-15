@@ -178,8 +178,7 @@ function execute() {
 
 function readFile(file, document) {
     let reader = new FileReader();
-    let fileInfoArr = new FileInfo();
-
+    let info = new FileInfo();
     let fileText = new Array();
 
     reader.readAsText(file);
@@ -196,8 +195,8 @@ function readFile(file, document) {
                 let l = new Line(line);
                 linesArr.push(l);
                 
-                if (fileInfoArr.fileStartTime == 0 || fileInfoArr.fileStartTime === undefined) {
-                    fileInfoArr.fileStartTime = l.date;
+                if (info.fileStartTime == 0 || info.fileStartTime === undefined) {
+                    info.fileStartTime = l.date;
                 }
                 return true;
             }
@@ -206,7 +205,7 @@ function readFile(file, document) {
 
         fileText[0] = linesArr;
         
-        processText(fileText, fileInfoArr, document);
+        processText(fileText, info, document);
     };
 
     reader.onerror = function() {
@@ -218,7 +217,7 @@ function readFile(file, document) {
 /**
  * Function used as a callback to process text after extraction from files.
  * @param {Array} fileText Array of Line Arrays representing the CSV files
- * @param {Array} fileInfoArr Array of FileInfo objects storing document data
+ * @param {FileInfo} info FileInfo object storing document data
  * @param {Document} document HTML Document to write results to
  */ 
 function processText(fileText, info, document) {
