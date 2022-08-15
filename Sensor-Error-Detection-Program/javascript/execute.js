@@ -14,15 +14,15 @@ $(document).ready(function() {
 					alert("End time cannot be earlier than start time.");
 					document.getElementById("Next-1").disabled = true;
 				}
-				else{
+				else {
 					$("#Next-1").removeAttr("disabled");
 				}
 			}
-			else{
+			else {
 				$("#Next-1").removeAttr("disabled");
 			}
 		}
-		else{
+		else {
 			alert("Please select a file for analysis.");
 			document.getElementById("Next-1").disabled = true;
 		}
@@ -106,6 +106,7 @@ class FileInfo {
     
         // Measurements
         this.fileStartTime = 0;
+        this.fileLastTime = 0;
 
         // Outcomes
         this.missingData = 0;
@@ -247,7 +248,7 @@ function processText(fileText, fileInfoArr, document) {
     var currLine = new Array();
     let numFiles = fileText.length;
 
-    for (let i = 0; i < numFiles; i ++) {
+    for (let i = 0; i < numFiles; i++) {
         currLine[i] = 0;
     }
 
@@ -256,7 +257,7 @@ function processText(fileText, fileInfoArr, document) {
     */
     function finished() {
         let finished = true;
-        for (let j = 0; j < numFiles; j ++) {
+        for (let j = 0; j < numFiles; j++) {
             finished = finished && (currLine[j] >= fileText[j].length ? true : false);
         }
         return finished;
@@ -273,7 +274,7 @@ function processText(fileText, fileInfoArr, document) {
         let indicesArray = new Array();
 
         while (earliestIndex < numFiles && fileText[earliestIndex][currLine[earliestIndex]] == undefined) {
-            earliestIndex ++;
+            earliestIndex++;
         }
 
         if (earliestIndex > numFiles) {
@@ -284,7 +285,7 @@ function processText(fileText, fileInfoArr, document) {
         earliestDate = fileText[earliestIndex][currLine[earliestIndex]].date;
 
         // Finding the earliest measurement time out of the remaining files, j represents file index
-        for (let j = earliestIndex + 1; j < numFiles; j ++) {
+        for (let j = earliestIndex + 1; j < numFiles; j++) {
             if (currLine[j] < fileText[j].length && fileText[j][currLine[j]].date < earliestDate) {
                 earliestDate = fileText[j].date;
                 indicesArray = [j];
@@ -301,7 +302,7 @@ function processText(fileText, fileInfoArr, document) {
     while (!finished()) {
         let indicesArray = earliestDate();
 
-        for (let i = 0; i < indicesArray.length; i ++) {
+        for (let i = 0; i < indicesArray.length; i++) {
             let fileIndex = indicesArray[i];
 
             processLine(fileText[fileIndex], currLine[fileIndex], fileInfoArr[fileIndex]);
@@ -315,24 +316,24 @@ function processText(fileText, fileInfoArr, document) {
 
     writeToHTML(document, info, missingRate, faultyRate);
 
-	for (let i = 0; i < info.faults.length; i ++) {
+	for (let i = 0; i < info.faults.length; i++) {
         results += info.faults[i].toString() + "\n";
 	}
 }
 
 /**
  * Writes results to HTML display screen.
- * @param {*} document 
- * @param {*} info 
- * @param {*} missingRate 
- * @param {*} faultyRate 
+ * @param {Document} document 
+ * @param {FileInfo} info 
+ * @param {Number} missingRate 
+ * @param {Number} faultyRate 
  */
 function writeToHTML(document, info, missingRate, faultyRate) {
     document.getElementById('info_list_ele_sensor').innerHTML = "<b>Sensor:</b> " + info.fileName;
     document.getElementById('info_list_ele_zone').innerHTML = "<b>Zone ID:</b> " + info.zoneId;
     document.getElementById('info_list_ele_lane').innerHTML = "<b>Lane:</b> " + info.laneNumber;
     document.getElementById('info_list_ele_start').innerHTML = "<b>Start time:</b> " + info.fileStartTime;
-    document.getElementById('info_list_ele_end').innerHTML = "<b>End time:</b> " + "Feature In Progress"; // TODO
+    document.getElementById('info_list_ele_end').innerHTML = "<b>End time:</b> " + info.fileLastTime;
     document.getElementById('info_list_ele_intervals').innerHTML = "<b>Total number of time intervals in the entire period:</b> " + info.numDataPoints;
 
     document.querySelector('#tpc').innerText = info.numDataPointsPC == 0 ? "NA" : Math.round(info.numDataPointsPC / 60) + ' hours';
@@ -398,6 +399,8 @@ function processLine(lineArray, lineIndex, fileInfo) {
     if (!dateInRange(date)) {
         return;
     }
+
+    fileInfo.fileLastTime = date;
     
     var prevTime = 0;
     if (lineIndex > 0) {
@@ -417,23 +420,23 @@ function processLine(lineArray, lineIndex, fileInfo) {
             const peakHour = isPeakHour(i);
             fileInfo.faults.push(new Fault(i.toString(), "Stage 1, Missing Interval"));
             
-            fileInfo.numDataPoints ++;
-            fileInfo.faultyCount1 ++;
+            fileInfo.numDataPoints++;
+            fileInfo.faultyCount1++;
             if (rushDay && peakHour) {
-                fileInfo.numDataPointsPC ++;
-                fileInfo.faultyCount1PC ++;
+                fileInfo.numDataPointsPC++;
+                fileInfo.faultyCount1PC++;
             }
             else if (rushDay) {
-                fileInfo.numDataPointsNC ++;
-                fileInfo.faultyCount1NC ++;
+                fileInfo.numDataPointsNC++;
+                fileInfo.faultyCount1NC++;
             }
             else if (peakHour) {
-                fileInfo.numDataPointsPN ++;
-                fileInfo.faultyCount1PN ++;
+                fileInfo.numDataPointsPN++;
+                fileInfo.faultyCount1PN++;
             }
-            else{
-                fileInfo.numDataPointsNN ++;
-                fileInfo.faultyCount1NN ++;
+            else {
+                fileInfo.numDataPointsNN++;
+                fileInfo.faultyCount1NN++;
             }
         }
     }
@@ -441,18 +444,18 @@ function processLine(lineArray, lineIndex, fileInfo) {
     const rushDay = isRushDay(date);
     const peakHour = isPeakHour(date);
 
-    fileInfo.numDataPoints ++;
+    fileInfo.numDataPoints++;
     if (rushDay && peakHour) {
-        fileInfo.numDataPointsPC ++;
+        fileInfo.numDataPointsPC++;
     }
     else if (rushDay) {
-        fileInfo.numDataPointsNC ++;
+        fileInfo.numDataPointsNC++;
     }
     else if (peakHour) {
-        fileInfo.numDataPointsPN ++;
+        fileInfo.numDataPointsPN++;
     }
-    else{
-        fileInfo.numDataPointsNN ++;
+    else {
+        fileInfo.numDataPointsNN++;
     }
     
     // prevent zoneId, laneNumber, laneId from changing mid-file
@@ -465,30 +468,30 @@ function processLine(lineArray, lineIndex, fileInfo) {
 
     // check to ensure all sppeed and volume data is present
     if (line.volume === undefined) {
-        fileInfo.missingVol ++;
+        fileInfo.missingVol++;
         faulty = true;
         reason = "Stage 1, Missing Volume Data";
     }
     else if (line.speed === undefined && line.volume != 0) {
-        fileInfo.missingSpeed ++;
+        fileInfo.missingSpeed++;
         faulty = true;
         reason = "Stage 1, Missing Speed Data";
     }
 
     if (faulty) {
         fileInfo.faults.push(new Fault(new Date(line.measurementStart), reason));
-        fileInfo.faultyCount1 ++;
+        fileInfo.faultyCount1++;
         if (rushDay && peakHour) {
-            fileInfo.faultyCount1PC ++;
+            fileInfo.faultyCount1PC++;
         }
         else if (rushDay) {
-            fileInfo.faultyCount1NC ++;
+            fileInfo.faultyCount1NC++;
         }
         else if (peakHour) {
-            fileInfo.faultyCount1PN ++;
+            fileInfo.faultyCount1PN++;
         }
-        else{
-            fileInfo.faultyCount1NN ++;
+        else {
+            fileInfo.faultyCount1NN++;
         }
         return;
     }
@@ -532,20 +535,20 @@ function processLine(lineArray, lineIndex, fileInfo) {
     }
 
     if (faulty) {
-        fileInfo.faultyCount2 ++;
+        fileInfo.faultyCount2++;
         fileInfo.faults.push(new Fault(new Date(line.measurementStart), reason));
 
         if (rushDay && peakHour) {
-            fileInfo.faultyCount2PC ++;
+            fileInfo.faultyCount2PC++;
         }
         else if (rushDay) {
-            fileInfo.faultyCount2NC ++;
+            fileInfo.faultyCount2NC++;
         }
         else if (peakHour) {
-            fileInfo.faultyCount2PN ++;
+            fileInfo.faultyCount2PN++;
         }
-        else{
-            fileInfo.faultyCount2NN ++;
+        else {
+            fileInfo.faultyCount2NN++;
         }
         return;
     }
@@ -560,20 +563,20 @@ function processLine(lineArray, lineIndex, fileInfo) {
     const zone4 = (33.6*speed+408.1-flowRate >= 0) && (-109.1*speed+8778.5-flowRate >= 0) && (17.8*speed+143.1-flowRate <= 0) && (-676.9*speed+29852.3-flowRate <= 0);
 
     if (!zone0 && !zone1 && !zone2 && !zone3 && !zone4) { // faulty data
-        fileInfo.faultyCount2 ++;
+        fileInfo.faultyCount2++;
         fileInfo.faults.push(new Fault(new Date(line.measurementStart), "Stage 3, data does not fit any zone"));
 
         if (rushDay && peakHour) {
-            fileInfo.faultyCount2PC ++;
+            fileInfo.faultyCount2PC++;
         }
         else if (rushDay) {
-            fileInfo.faultyCount2NC ++;
+            fileInfo.faultyCount2NC++;
         }
         else if (peakHour) {
-            fileInfo.faultyCount2PN ++;
+            fileInfo.faultyCount2PN++;
         }
-        else{
-            fileInfo.faultyCount2NN ++;
+        else {
+            fileInfo.faultyCount2NN++;
         }
     }
 }
@@ -658,7 +661,7 @@ function dateInRange(date) {
         }
         return false;
     }
-    else{
+    else {
         if (date >= start_time && date <= end_time) {
             return true;
         }
