@@ -172,69 +172,49 @@ class Fault {
  */
 function execute() {
     const fileList = document.getElementById('uploadedfile').files;
-	readFileList(fileList, document, processText);
+    readFile(fileList[0], document);
 }
 
-/**
- * Function to begin reading the list of files and converting them to Arrays of Line objects for processing.
- * @param {Array} fileList Array of files from the HTML uploadedfile element 
- * @param {Document} document HTML Document to write results to
- * @param {Function} _callback processText function is passed here to continue after async file read
- */
-function readFileList(fileList, document, _callback) {
-    var reader = new FileReader();
-    // fileText: Array of Line Arrays representing the CSV files
-    // fileInfoArr: Array of FileInfo objects storing document data
+
+function readFile(file, document) {
+    let reader = new FileReader();
+    let fileInfoArr = new FileInfo();
+
     var fileText = new Array();
-    var fileInfoArr = new Array();
 
-    /**
-     * Recursive function to read in files in the file list one-by-one, before being processed async by the callback function.
-     * @param {Number} index Index of the file on the file array being read
-     */
-    function readFile(index) {
-        if (index >= fileList.length) {
-            _callback(fileText, fileInfoArr, document);
-        }
+    reader.readAsText(file);
 
-        var file = fileList[index];
+    reader.onload = function() {
+        console.log(reader.result);
+        alert(reader.result);
+        var text = reader.result;
+        var linesArr = new Array();
+        
+        var fileLines = text.split(/\r\n|\n/);
+        fileLines.splice(0, 1);
 
-        if (file) {
-            fileInfoArr[index] = new FileInfo();
-            fileInfoArr[index].fileName = file.name;
-        }
-
-        reader.onloadend = function(event) {
-            var text = event.target.result;
-            var linesArr = new Array();
-            
-            var fileLines = text.split(/\r\n|\n/);
-            fileLines.splice(0, 1);
-
-            fileLines.every(line => {
-                if (line != "") {
-                    let l = new Line(line);
-                    linesArr.push(l);
-                    
-                    if (fileInfoArr[index].fileStartTime == 0 || fileInfoArr[index].fileStartTime === undefined) {
-                        fileInfoArr[index].fileStartTime = l.date;
-                    }
-                    return true;
+        fileLines.every(line => {
+            if (line != "") {
+                let l = new Line(line);
+                linesArr.push(l);
+                
+                if (fileInfoArr.fileStartTime == 0 || fileInfoArr.fileStartTime === undefined) {
+                    fileInfoArr.fileStartTime = l.date;
                 }
-                return false;
-            });
+                return true;
+            }
+            return false;
+        });
 
-            fileText[index] = linesArr;
-            
-            readFile(index + 1);
-        }
+        fileText[0] = linesArr;
+        
+        processText(fileText, new Array(fileInfoArr), document);
+    };
 
-        if (file) {
-            reader.readAsText(file);
-        }
-    }
+    reader.onerror = function() {
+        console.log(reader.error);
+    };
 
-    readFile(0);
 }
 
 /**
