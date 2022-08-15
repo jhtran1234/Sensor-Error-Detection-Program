@@ -306,7 +306,7 @@ function processLine(line) {
     }
     
     // prevent zoneId, laneNumber, laneId from changing mid-file
-    if (!checkIdError(info, line.zoneId, line.laneNumber, line.laneId)) {
+    if (!checkIdError(line.zoneId, line.laneNumber, line.laneId)) {
         return;
     }
 
@@ -431,8 +431,8 @@ function processLine(line) {
 /**
  * Writes results to HTML display screen.
  * @param {Document} document
- * @param {Number} missingRate 
- * @param {Number} faultyRate 
+ * @param {number} missingRate 
+ * @param {number} faultyRate 
  */
 function writeToHTML(document, missingRate, faultyRate) {
     document.getElementById('info_list_ele_sensor').innerHTML = "<b>Sensor:</b> " + info.fileName;
@@ -494,31 +494,30 @@ function writeToHTML(document, missingRate, faultyRate) {
 
 /**
  * Function to detect a change in zone_id, lane_number, and lane_id midway through a file.
- * @param {FileInfo} fileInfo The object holding the current file's info
  * @param {number} lineZoneId The current line's zone_id to be compared against the file's zone_id
  * @param {number} lineLaneNumber The current line's lane_number to be compared against the file's lane_number
  * @param {number} lineLaneId The current line's lane_id to be compared against the file's lane_id
  */
-function checkIdError(fileInfo, lineZoneId, lineLaneNumber, lineLaneId) {
-    if (fileInfo.zoneId == 0) {
-        fileInfo.zoneId = lineZoneId;
+function checkIdError(lineZoneId, lineLaneNumber, lineLaneId) {
+    if (info.zoneId == 0) {
+        info.zoneId = lineZoneId;
     }
-    else if (fileInfo.zoneId != lineZoneId) {
-        fileInfo.error = "Error: zone_id changed mid-file";
+    else if (info.zoneId != lineZoneId) {
+        info.error = "Error: zone_id changed mid-file";
         return false;
     }
-    if (fileInfo.laneNumber == 0) {
-        fileInfo.laneNumber = lineLaneNumber;
+    if (info.laneNumber == 0) {
+        info.laneNumber = lineLaneNumber;
     }
-    else if (fileInfo.laneNumber != lineLaneNumber) {
-        fileInfo.error = "Error: lane_number changed mid-file";
+    else if (info.laneNumber != lineLaneNumber) {
+        info.error = "Error: lane_number changed mid-file";
         return false;
     }
-    if (fileInfo.laneId == 0) {
-        fileInfo.laneId = lineLaneId;
+    if (info.laneId == 0) {
+        info.laneId = lineLaneId;
     }
-    else if (fileInfo.laneId != lineLaneId) {
-        fileInfo.error = "Error: lane_id changed mid-file";
+    else if (info.laneId != lineLaneId) {
+        info.error = "Error: lane_id changed mid-file";
         return false;
     }
 
