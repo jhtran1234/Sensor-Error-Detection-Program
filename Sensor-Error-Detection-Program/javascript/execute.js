@@ -179,7 +179,6 @@ function execute() {
 function readFile(file, document) {
     let reader = new FileReader();
     let info = new FileInfo();
-    let fileText = new Array();
 
     reader.readAsText(file);
 
@@ -202,10 +201,8 @@ function readFile(file, document) {
             }
             return false;
         });
-
-        fileText[0] = linesArr;
         
-        processText(fileText, info, document);
+        processText(linesArr, info, document);
     };
 
     reader.onerror = function() {
@@ -216,75 +213,25 @@ function readFile(file, document) {
 
 /**
  * Function used as a callback to process text after extraction from files.
- * @param {Array} fileText Array of Line Arrays representing the CSV files
+ * @param {Array} fileText Line Array representing the CSV file lines
  * @param {FileInfo} info FileInfo object storing document data
  * @param {Document} document HTML Document to write results to
  */ 
 function processText(fileText, info, document) {
     // currLine: stores the line that is currently being processed in each file, used for concurrent time processing across multiple files
     let currLine = new Array();
-    let numFiles = fileText.length;
+    let numFiles = 1;
 
     for (let i = 0; i < numFiles; i++) {
         currLine[i] = 0;
     }
 
-    /* 
-    * Function to determine if all file lines have been processed and the line-by-line processing can terminate.
-    */
-    function finished() {
-        let finished = true;
-        for (let j = 0; j < numFiles; j++) {
-            finished = finished && (currLine[j] >= fileText[j].length ? true : false);
-        }
-        return finished;
-    }
-
-    /**
-    * Function to return an Array with the indices of the files with the earliest measurement times for immediate processing.
-    */     
-    function earliestDate() {
-        let earliestDate = undefined;
-        let earliestIndex = 0;
-
-        // indicesArray: Array to store all file indices with the earliest measurement time
-        let indicesArray = new Array();
-
-        while (earliestIndex < numFiles && fileText[earliestIndex][currLine[earliestIndex]] == undefined) {
-            earliestIndex++;
-        }
-
-        if (earliestIndex > numFiles) {
-            alert("Error! Data was not found.");
-        }
-
-        indicesArray = [earliestIndex];
-        earliestDate = fileText[earliestIndex][currLine[earliestIndex]].date;
-
-        // Finding the earliest measurement time out of the remaining files, j represents file index
-        for (let j = earliestIndex + 1; j < numFiles; j++) {
-            if (currLine[j] < fileText[j].length && fileText[j][currLine[j]].date < earliestDate) {
-                earliestDate = fileText[j].date;
-                indicesArray = [j];
-            }
-            else if (currLine[j] < fileText[j].length && fileText[j][currLine[j]].date == earliestDate) {
-                indicesArray.push(j);
-            }
-        }
-
-        return indicesArray;
-    }
-
     // Line-by-line processing of the files starts here
-    while (!finished()) {
-        let indicesArray = earliestDate();
+    for (let i = 0; i < fileText.length; i++) {
+       // let indicesArray = earliestDate();
 
-        for (let i = 0; i < indicesArray.length; i++) {
-            let fileIndex = indicesArray[i];
-
-            processLine(fileText[fileIndex], currLine[fileIndex], info);
-            currLine[fileIndex] += 1;
-        }
+       processLine(fileText, currLine[0], info);
+       currLine[0] += 1;
     }
     
     let missingRate = info.faultyCount1 / info.numDataPoints;
