@@ -50,7 +50,7 @@ $(document).ready(function() {
 	$("#Download").click(function() {
 		$('.ui.menu').find('.item').tab('change tab', '3-1');
 
-		let data_ele = document.getElementsByName('data');
+		const data_ele = document.getElementsByName('data');
 		for (let i = 0; i < data_ele.length; i++) {
 			if (data_ele[i].checked) {
 				data_ele = data_ele[i].value;
@@ -61,7 +61,7 @@ $(document).ready(function() {
             data_ele = "missing_and_faulty";
         }
 
-		let days_ele = document.getElementsByName('days');
+		const days_ele = document.getElementsByName('days');
 		for (let i = 0; i < days_ele.length; i++) {
 			if (days_ele[i].checked) {
 				days_ele = days_ele[i].value;
@@ -72,7 +72,7 @@ $(document).ready(function() {
             days_ele = "all_days";
         }
         
-		let hours_ele = document.getElementsByName('hours');
+		const hours_ele = document.getElementsByName('hours');
 		for (let i = 0; i < hours_ele.length; i++) {
 			if (hours_ele[i].checked) {
 				hours_ele = hours_ele[i].value;
@@ -186,20 +186,20 @@ function execute() {
 
 
 function readFile(file, document) {
-    let reader = new FileReader();
+    const reader = new FileReader();
 
     reader.readAsText(file);
 
     reader.onload = function() {
-        let text = reader.result;
-        let linesArr = new Array();
+        const text = reader.result;
+        const linesArr = new Array();
         
-        let fileLines = text.split(/\r\n|\n/);
+        const fileLines = text.split(/\r\n|\n/);
         fileLines.splice(0, 1);
 
         fileLines.every(line => {
             if (line != "") {
-                let l = new Line(line);
+                const l = new Line(line);
                 linesArr.push(l);
                 
                 if (info.fileStartTime == 0 || info.fileStartTime === undefined) {
@@ -244,15 +244,14 @@ function processText(fileText, document) {
  * @param {Line} line the line being analyzed
  */
 function processLine(line) {
-    let date = new Date(line.date);
+    const date = new Date(line.date);
 
     // Quits line processing if it is not in the date range
     if (!dateInRange(date)) {
         return;
     }
     
-    let prevTime = 0;
-    prevTime = info.fileLastTime;
+    const prevTime = info.fileLastTime;
     info.fileLastTime = date;
 
     // Finds and records number of missing data blocks
@@ -587,7 +586,7 @@ function dateInRange(date) {
  * @param {String} text 
  */
 function download(filename, text) {
-    let element = document.createElement('a');
+    const element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
     element.setAttribute('download', filename);
     element.style.display = 'none';
