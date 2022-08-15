@@ -135,41 +135,75 @@ $(document).ready(function() {
     
 	$("#Download").click(function() {
 		$('.ui.menu').find('.item').tab('change tab', '3-1');
+        let m, f, p, np, c, nc;
 
-		const data_ele = document.getElementsByName('data');
+		let data_ele = document.getElementsByName('data');
 		for (let i = 0; i < data_ele.length; i++) {
 			if (data_ele[i].checked) {
 				data_ele = data_ele[i].value;
 				break;
 			}
 		}
-        if (typeof(data_ele) == "object") {
-            data_ele = "missing_and_faulty";
+        if (data_ele == "missing") {
+            m = true;
+            f = false;
+        } else if (data_ele == "faulty") {
+            m = false;
+            f = true;
+        } else {
+            m = true;
+            f = true;
         }
 
-		const days_ele = document.getElementsByName('days');
+		let days_ele = document.getElementsByName('days');
 		for (let i = 0; i < days_ele.length; i++) {
 			if (days_ele[i].checked) {
 				days_ele = days_ele[i].value;
 				break;
 			}
 		}
-        if (typeof(days_ele) == "object") {
-            days_ele = "all_days";
+        if (days_ele == "congested") {
+            c = true;
+            nc = false;
+        } else if (days_ele == "non_congested") {
+            c = false;
+            nc = true;
+        } else {
+            c = true;
+            nc = true;
         }
         
-		const hours_ele = document.getElementsByName('hours');
+		let hours_ele = document.getElementsByName('hours');
 		for (let i = 0; i < hours_ele.length; i++) {
 			if (hours_ele[i].checked) {
 				hours_ele = hours_ele[i].value;
 				break;
 			}
 		}
-        if (typeof(hours_ele) == "object") {
-            hours_ele = "all_hours";
+        if (hours_ele == "peak") {
+            p = true;
+            np = false;
+        } else if (hours_ele == "off_peak") {
+            p = false;
+            np = true;
+        } else {
+            p = true;
+            np = true;
         }
 
+        let faults = "";
 
+        info.faults.forEach((fault) => {
+            const missing = fault.missing;
+            const congested = isCongestedDay(fault.timeStamp);
+            const peak = isPeakHour(fault.timeStamp);
+
+            if ((missing == m || !missing == f) && (congested == c || !congested == nc) && (peak == p || !peak == np)) {
+                faults += fault.toString() + '\n';
+            }
+        });
+
+        download("Report.txt", faults);
 	});
 });
 
@@ -279,16 +313,13 @@ function processLine(line) {
             if (rushDay && peakHour) {
                 info.numDataPointsPC++;
                 info.faultyCount1PC++;
-            }
-            else if (rushDay) {
+            } else if (rushDay) {
                 info.numDataPointsNC++;
                 info.faultyCount1NC++;
-            }
-            else if (peakHour) {
+            } else if (peakHour) {
                 info.numDataPointsPN++;
                 info.faultyCount1PN++;
-            }
-            else {
+            } else {
                 info.numDataPointsNN++;
                 info.faultyCount1NN++;
             }
@@ -301,14 +332,11 @@ function processLine(line) {
     info.numDataPoints++;
     if (rushDay && peakHour) {
         info.numDataPointsPC++;
-    }
-    else if (rushDay) {
+    } else if (rushDay) {
         info.numDataPointsNC++;
-    }
-    else if (peakHour) {
+    } else if (peakHour) {
         info.numDataPointsPN++;
-    }
-    else {
+    } else {
         info.numDataPointsNN++;
     }
     
@@ -325,8 +353,7 @@ function processLine(line) {
         info.missingVol++;
         faulty = true;
         reason = "Stage 1, Missing Volume Data";
-    }
-    else if (line.speed === undefined && line.volume != 0) {
+    } else if (line.speed === undefined && line.volume != 0) {
         info.missingSpeed++;
         faulty = true;
         reason = "Stage 1, Missing Speed Data";
@@ -337,14 +364,11 @@ function processLine(line) {
         info.faultyCount1++;
         if (rushDay && peakHour) {
             info.faultyCount1PC++;
-        }
-        else if (rushDay) {
+        } else if (rushDay) {
             info.faultyCount1NC++;
-        }
-        else if (peakHour) {
+        } else if (peakHour) {
             info.faultyCount1PN++;
-        }
-        else {
+        } else {
             info.faultyCount1NN++;
         }
         return;
@@ -394,14 +418,11 @@ function processLine(line) {
 
         if (rushDay && peakHour) {
             info.faultyCount2PC++;
-        }
-        else if (rushDay) {
+        } else if (rushDay) {
             info.faultyCount2NC++;
-        }
-        else if (peakHour) {
+        } else if (peakHour) {
             info.faultyCount2PN++;
-        }
-        else {
+        } else {
             info.faultyCount2NN++;
         }
         return;
@@ -422,14 +443,11 @@ function processLine(line) {
 
         if (rushDay && peakHour) {
             info.faultyCount2PC++;
-        }
-        else if (rushDay) {
+        } else if (rushDay) {
             info.faultyCount2NC++;
-        }
-        else if (peakHour) {
+        } else if (peakHour) {
             info.faultyCount2PN++;
-        }
-        else {
+        } else {
             info.faultyCount2NN++;
         }
     }
@@ -478,20 +496,17 @@ function writeToHTML(document, missingRate, faultyRate) {
 
     if (info.numDataPoints == 0) {
         alert("The selected date range is not within the range of data, please go back and select another date range.");
-    }
-    else if (missingRate >= 0.25 || faultyRate >= 0.3) {
+    } else if (missingRate >= 0.25 || faultyRate >= 0.3) {
         document.querySelector('#replace_box').checked = true;
         document.querySelector('#calibrate_box').checked = false;
         document.querySelector('#good_box').checked = false;
         document.querySelector('#replace_label').style.fontWeight = "bold";
-    }
-    else if (missingRate >= 0.05 || faultyRate >= 0.05) {
+    } else if (missingRate >= 0.05 || faultyRate >= 0.05) {
         document.querySelector('#replace_box').checked = false;
         document.querySelector('#calibrate_box').checked = true;
         document.querySelector('#good_box').checked = false;
         document.querySelector('#calibrate_label').style.fontWeight = "bold";
-    }
-    else {
+    } else {
         document.querySelector('#replace_box').checked = false;
         document.querySelector('#calibrate_box').checked = false;
         document.querySelector('#good_box').checked = true;
@@ -508,22 +523,19 @@ function writeToHTML(document, missingRate, faultyRate) {
 function checkIdError(lineZoneId, lineLaneNumber, lineLaneId) {
     if (info.zoneId == 0) {
         info.zoneId = lineZoneId;
-    }
-    else if (info.zoneId != lineZoneId) {
+    } else if (info.zoneId != lineZoneId) {
         info.error = "Error: zone_id changed mid-file";
         return false;
     }
     if (info.laneNumber == 0) {
         info.laneNumber = lineLaneNumber;
-    }
-    else if (info.laneNumber != lineLaneNumber) {
+    } else if (info.laneNumber != lineLaneNumber) {
         info.error = "Error: lane_number changed mid-file";
         return false;
     }
     if (info.laneId == 0) {
         info.laneId = lineLaneId;
-    }
-    else if (info.laneId != lineLaneId) {
+    } else if (info.laneId != lineLaneId) {
         info.error = "Error: lane_id changed mid-file";
         return false;
     }
@@ -565,20 +577,17 @@ function isCongestedDay(date) {
 function dateInRange(date) {
     if (start_time == null && end_time == null) {
         return true;
-    }
-    else if (start_time == null) {
+    } else if (start_time == null) {
         if (date <= end_time) {
             return true;
         }
         return false;
-    }
-    else if (end_time == null) {
+    } else if (end_time == null) {
         if (date >= start_time) {
             return true;
         }
         return false;
-    }
-    else {
+    } else {
         if (date >= start_time && date <= end_time) {
             return true;
         }
