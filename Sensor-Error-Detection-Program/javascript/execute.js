@@ -482,17 +482,17 @@ function writeToHTML(document, missingRate, faultyRate) {
     document.querySelector('#total_faulty').innerText = info.numDataPoints == 0 ? "Total Missing/Faulty Rate: NA" : "Total Missing/Faulty Rate: "
         + Math.round(faultyRate * 10000) / 100
         + "% (" + (info.faultyCount1 + info.faultyCount2) + " / " + info.numDataPoints + " time intervals)";
-    document.querySelector('#mpc').innerText = info.numDataPointsPC == 0 ? "NA" : Math.round((info.faultyCount1PC + info.faultyCount2PC) / info.numDataPointsPC * 10000) / 100 + '%';
-    document.querySelector('#mnc').innerText = info.numDataPointsNC == 0 ? "NA" : Math.round((info.faultyCount1NC + info.faultyCount2NC) / info.numDataPointsNC * 10000) / 100 + '%';
-    document.querySelector('#mpn').innerText = info.numDataPointsPN == 0 ? "NA" : Math.round((info.faultyCount1PN + info.faultyCount2PN) / info.numDataPointsPN * 10000) / 100 + '%';
-    document.querySelector('#mnn').innerText = info.numDataPointsNN == 0 ? "NA" : Math.round((info.faultyCount1NN + info.faultyCount2NN) / info.numDataPointsNN * 10000) / 100 + '%';
+    document.querySelector('#mpc').innerText = displayFaultRate(info.faultyCount1PC + info.faultyCount2PC, info.numDataPointsPC);
+    document.querySelector('#mnc').innerText = displayFaultRate(info.faultyCount1NC + info.faultyCount2NC, info.numDataPointsNC);
+    document.querySelector('#mpn').innerText = displayFaultRate(info.faultyCount1PN + info.faultyCount2PN, info.numDataPointsPN);
+    document.querySelector('#mnn').innerText = displayFaultRate(info.faultyCount1NN + info.faultyCount2NN, info.numDataPointsNN);
     
-    document.querySelector('#mxc').innerText = info.numDataPointsPC + info.numDataPointsNC == 0 ? "NA" : Math.round((info.faultyCount1PC + info.faultyCount2PC + info.faultyCount1NC + info.faultyCount2NC) / (info.numDataPointsPC + info.numDataPointsNC) * 10000) / 100 + '%';
-    document.querySelector('#mxn').innerText = info.numDataPointsPN + info.numDataPointsNN == 0 ? "NA" : Math.round((info.faultyCount1PN + info.faultyCount2PN + info.faultyCount1NN + info.faultyCount2NN) / (info.numDataPointsPN + info.numDataPointsNN) * 10000) / 100 + '%';
-    document.querySelector('#mpx').innerText = info.numDataPointsPN + info.numDataPointsPC == 0 ? "NA" : Math.round((info.faultyCount1PN + info.faultyCount2PN + info.faultyCount1PC + info.faultyCount2PC) / (info.numDataPointsPN + info.numDataPointsPC) * 10000) / 100 + '%';
-    document.querySelector('#mnx').innerText = info.numDataPointsNN + info.numDataPointsNC == 0 ? "NA" : Math.round((info.faultyCount1NN + info.faultyCount2NN + info.faultyCount1NC + info.faultyCount2NC) / (info.numDataPointsNN + info.numDataPointsNC) * 10000) / 100 + '%';
+    document.querySelector('#mxc').innerText = displayFaultRate(info.faultyCount1PC + info.faultyCount2PC + info.faultyCount1NC + info.faultyCount2NC, info.numDataPointsPC + info.numDataPointsNC);
+    document.querySelector('#mxn').innerText = displayFaultRate(info.faultyCount1PN + info.faultyCount2PN + info.faultyCount1NN + info.faultyCount2NN, info.numDataPointsPN + info.numDataPointsNN);
+    document.querySelector('#mpx').innerText = displayFaultRate(info.faultyCount1PN + info.faultyCount2PN + info.faultyCount1PC + info.faultyCount2PC, info.numDataPointsPN + info.numDataPointsPC);
+    document.querySelector('#mnx').innerText = displayFaultRate(info.faultyCount1NN + info.faultyCount2NN + info.faultyCount1NC + info.faultyCount2NC, info.numDataPointsNN + info.numDataPointsNC);
     
-    document.querySelector('#m').innerText = info.numDataPoints == 0 ? "NA" : Math.round(faultyRate * 10000) / 100 + '%';
+    document.querySelector('#m').innerText = displayFaultRate(info.faultyCount1 + info.faultyCount2, info.numDataPoints);
 
     if (info.numDataPoints == 0) {
         alert("The selected date range is not within the range of data, please go back and select another date range.");
@@ -512,6 +512,20 @@ function writeToHTML(document, missingRate, faultyRate) {
         document.querySelector('#good_box').checked = true;
         document.querySelector('#good_label').style.fontWeight = "bold";
     }
+}
+
+/**
+ * Function to format the text in the fault rate table.
+ * @param {number} numerator 
+ * @param {number} denominator 
+ * @returns string
+ */
+function displayFaultRate(numerator, denominator) {
+    if (numerator == 0 || denominator == 0) {
+        return "NA";
+    }
+
+    return Math.round(numerator * 10000 / denominator) / 100 + '% (' + numerator + " / " + denominator + " time intervals)";
 }
 
 /**
