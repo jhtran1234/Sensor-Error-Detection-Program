@@ -180,6 +180,7 @@ function execute() {
     end_time = null;
     results = "";
     
+    info.fileName = fileList[0].name;
     readFile(fileList[0], document);
 }
 
@@ -209,7 +210,7 @@ function readFile(file, document) {
             return false;
         });
         
-        processText(linesArr, info, document);
+        processText(linesArr, document);
     };
 
     reader.onerror = function() {
@@ -221,10 +222,9 @@ function readFile(file, document) {
 /**
  * Function used as a callback to process text after extraction from files.
  * @param {Array} fileText Line Array representing the CSV file lines
- * @param {FileInfo} info object storing document data
  * @param {Document} document HTML Document to write results to
  */ 
-function processText(fileText, info, document) {
+function processText(fileText, document) {
     // Line-by-line processing of the files starts here
     for (let i = 0; i < fileText.length; i++) {
        processLine(fileText[i], info);
@@ -242,9 +242,8 @@ function processText(fileText, info, document) {
 
 /**
  * @param {Line} line the line being analyzed
- * @param {FileInfo} fileInfo FileInfo object storing document data
  */
-function processLine(line, fileInfo) {
+function processLine(line) {
     let date = new Date(line.date);
 
     // Quits line processing if it is not in the date range
@@ -253,8 +252,8 @@ function processLine(line, fileInfo) {
     }
     
     let prevTime = 0;
-    prevTime = fileInfo.fileLastTime;
-    fileInfo.fileLastTime = date;
+    prevTime = info.fileLastTime;
+    info.fileLastTime = date;
 
     // Finds and records number of missing data blocks
     // Does not count Daylight Savings Data Override as an error
@@ -267,25 +266,25 @@ function processLine(line, fileInfo) {
         for (i; i < date; i = new Date(i.setMinutes(i.getMinutes() + 1))) {
             const rushDay = isRushDay(i);
             const peakHour = isPeakHour(i);
-            fileInfo.faults.push(new Fault(i.toString(), "Stage 1, Missing Interval"));
+            info.faults.push(new Fault(i.toString(), "Stage 1, Missing Interval"));
             
-            fileInfo.numDataPoints++;
-            fileInfo.faultyCount1++;
+            info.numDataPoints++;
+            info.faultyCount1++;
             if (rushDay && peakHour) {
-                fileInfo.numDataPointsPC++;
-                fileInfo.faultyCount1PC++;
+                info.numDataPointsPC++;
+                info.faultyCount1PC++;
             }
             else if (rushDay) {
-                fileInfo.numDataPointsNC++;
-                fileInfo.faultyCount1NC++;
+                info.numDataPointsNC++;
+                info.faultyCount1NC++;
             }
             else if (peakHour) {
-                fileInfo.numDataPointsPN++;
-                fileInfo.faultyCount1PN++;
+                info.numDataPointsPN++;
+                info.faultyCount1PN++;
             }
             else {
-                fileInfo.numDataPointsNN++;
-                fileInfo.faultyCount1NN++;
+                info.numDataPointsNN++;
+                info.faultyCount1NN++;
             }
         }
     }
@@ -293,22 +292,22 @@ function processLine(line, fileInfo) {
     const rushDay = isRushDay(date);
     const peakHour = isPeakHour(date);
 
-    fileInfo.numDataPoints++;
+    info.numDataPoints++;
     if (rushDay && peakHour) {
-        fileInfo.numDataPointsPC++;
+        info.numDataPointsPC++;
     }
     else if (rushDay) {
-        fileInfo.numDataPointsNC++;
+        info.numDataPointsNC++;
     }
     else if (peakHour) {
-        fileInfo.numDataPointsPN++;
+        info.numDataPointsPN++;
     }
     else {
-        fileInfo.numDataPointsNN++;
+        info.numDataPointsNN++;
     }
     
     // prevent zoneId, laneNumber, laneId from changing mid-file
-    if (!checkIdError(fileInfo, line.zoneId, line.laneNumber, line.laneId)) {
+    if (!checkIdError(info, line.zoneId, line.laneNumber, line.laneId)) {
         return;
     }
 
@@ -317,30 +316,30 @@ function processLine(line, fileInfo) {
 
     // check to ensure all sppeed and volume data is present
     if (line.volume === undefined) {
-        fileInfo.missingVol++;
+        info.missingVol++;
         faulty = true;
         reason = "Stage 1, Missing Volume Data";
     }
     else if (line.speed === undefined && line.volume != 0) {
-        fileInfo.missingSpeed++;
+        info.missingSpeed++;
         faulty = true;
         reason = "Stage 1, Missing Speed Data";
     }
 
     if (faulty) {
-        fileInfo.faults.push(new Fault(new Date(line.measurementStart), reason));
-        fileInfo.faultyCount1++;
+        info.faults.push(new Fault(new Date(line.measurementStart), reason));
+        info.faultyCount1++;
         if (rushDay && peakHour) {
-            fileInfo.faultyCount1PC++;
+            info.faultyCount1PC++;
         }
         else if (rushDay) {
-            fileInfo.faultyCount1NC++;
+            info.faultyCount1NC++;
         }
         else if (peakHour) {
-            fileInfo.faultyCount1PN++;
+            info.faultyCount1PN++;
         }
         else {
-            fileInfo.faultyCount1NN++;
+            info.faultyCount1NN++;
         }
         return;
     }
@@ -384,20 +383,20 @@ function processLine(line, fileInfo) {
     }
 
     if (faulty) {
-        fileInfo.faultyCount2++;
-        fileInfo.faults.push(new Fault(new Date(line.measurementStart), reason));
+        info.faultyCount2++;
+        info.faults.push(new Fault(new Date(line.measurementStart), reason));
 
         if (rushDay && peakHour) {
-            fileInfo.faultyCount2PC++;
+            info.faultyCount2PC++;
         }
         else if (rushDay) {
-            fileInfo.faultyCount2NC++;
+            info.faultyCount2NC++;
         }
         else if (peakHour) {
-            fileInfo.faultyCount2PN++;
+            info.faultyCount2PN++;
         }
         else {
-            fileInfo.faultyCount2NN++;
+            info.faultyCount2NN++;
         }
         return;
     }
@@ -412,20 +411,20 @@ function processLine(line, fileInfo) {
     const zone4 = (33.6*speed+408.1-flowRate >= 0) && (-109.1*speed+8778.5-flowRate >= 0) && (17.8*speed+143.1-flowRate <= 0) && (-676.9*speed+29852.3-flowRate <= 0);
 
     if (!zone0 && !zone1 && !zone2 && !zone3 && !zone4) { // faulty data
-        fileInfo.faultyCount2++;
-        fileInfo.faults.push(new Fault(new Date(line.measurementStart), "Stage 3, data does not fit any zone"));
+        info.faultyCount2++;
+        info.faults.push(new Fault(new Date(line.measurementStart), "Stage 3, data does not fit any zone"));
 
         if (rushDay && peakHour) {
-            fileInfo.faultyCount2PC++;
+            info.faultyCount2PC++;
         }
         else if (rushDay) {
-            fileInfo.faultyCount2NC++;
+            info.faultyCount2NC++;
         }
         else if (peakHour) {
-            fileInfo.faultyCount2PN++;
+            info.faultyCount2PN++;
         }
         else {
-            fileInfo.faultyCount2NN++;
+            info.faultyCount2NN++;
         }
     }
 }
