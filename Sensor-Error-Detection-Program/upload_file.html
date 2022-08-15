@@ -146,11 +146,11 @@
 								</div>
 								<div style="display: inline; float:left; width: 70%; pointer-events: none; padding-top: 12px;">
 									<input type="checkbox" id="replace_box" name="sensor_eval_box" value="replace">
-									<label for="replace_box">Sensor should be replaced/maintained</label><br>
+									<label for="replace_box" id="replace_label">Sensor should be replaced/maintained</label><br>
 									<input type="checkbox" id="calibrate_box" name="sensor_eval_box" value="calibrate">
-									<label for="calibrate_box">Sensor should be calibrated</label><br>
+									<label for="calibrate_box" id="calibrate_label">Sensor should be calibrated</label><br>
 									<input type="checkbox" id="good_box" name="sensor_eval_box" value="good">
-									<label for="good_box">Sensor is in a good condition</label><br><br>								  
+									<label for="good_box" id="good_label">Sensor is in a good condition</label><br><br>								  
 								</div>
 							</div>
 							<img src="images/md color bar.png" id="color-bar" style="margin-top: 5px;">
@@ -180,7 +180,7 @@
 										<td><b>Total</b></td>
 										<td id="mpx"></td>
 										<td id="mnx"></td>
-										<td></td>
+										<td id="m"></td>
 									</tr>
 								</table>
 							</div>
