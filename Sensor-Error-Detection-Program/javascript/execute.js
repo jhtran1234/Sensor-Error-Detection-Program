@@ -1,7 +1,7 @@
 "use strict";
-var start_time = null;
-var end_time = null;
-var results = "";
+let start_time = null;
+let end_time = null;
+let results = "";
 
 $(document).ready(function() {
 	$("#Save-1").click(function() {
@@ -180,17 +180,15 @@ function readFile(file, document) {
     let reader = new FileReader();
     let fileInfoArr = new FileInfo();
 
-    var fileText = new Array();
+    let fileText = new Array();
 
     reader.readAsText(file);
 
     reader.onload = function() {
-        console.log(reader.result);
-        alert(reader.result);
-        var text = reader.result;
-        var linesArr = new Array();
+        let text = reader.result;
+        let linesArr = new Array();
         
-        var fileLines = text.split(/\r\n|\n/);
+        let fileLines = text.split(/\r\n|\n/);
         fileLines.splice(0, 1);
 
         fileLines.every(line => {
@@ -208,7 +206,7 @@ function readFile(file, document) {
 
         fileText[0] = linesArr;
         
-        processText(fileText, new Array(fileInfoArr), document);
+        processText(fileText, fileInfoArr, document);
     };
 
     reader.onerror = function() {
@@ -223,9 +221,9 @@ function readFile(file, document) {
  * @param {Array} fileInfoArr Array of FileInfo objects storing document data
  * @param {Document} document HTML Document to write results to
  */ 
-function processText(fileText, fileInfoArr, document) {
+function processText(fileText, info, document) {
     // currLine: stores the line that is currently being processed in each file, used for concurrent time processing across multiple files
-    var currLine = new Array();
+    let currLine = new Array();
     let numFiles = fileText.length;
 
     for (let i = 0; i < numFiles; i++) {
@@ -285,12 +283,11 @@ function processText(fileText, fileInfoArr, document) {
         for (let i = 0; i < indicesArray.length; i++) {
             let fileIndex = indicesArray[i];
 
-            processLine(fileText[fileIndex], currLine[fileIndex], fileInfoArr[fileIndex]);
+            processLine(fileText[fileIndex], currLine[fileIndex], info);
             currLine[fileIndex] += 1;
         }
     }
-
-    let info = fileInfoArr[0];
+    
     let missingRate = info.faultyCount1 / info.numDataPoints;
     let faultyRate = (info.faultyCount1 + info.faultyCount2) / (info.numDataPoints);
 
@@ -382,7 +379,7 @@ function processLine(lineArray, lineIndex, fileInfo) {
 
     fileInfo.fileLastTime = date;
     
-    var prevTime = 0;
+    let prevTime = 0;
     if (lineIndex > 0) {
         prevTime = lineArray[lineIndex - 1].date;
     }
@@ -443,8 +440,8 @@ function processLine(lineArray, lineIndex, fileInfo) {
         return;
     }
 
-    var faulty = false;
-    var reason = "";
+    let faulty = false;
+    let reason = "";
 
     // check to ensure all sppeed and volume data is present
     if (line.volume === undefined) {
