@@ -233,7 +233,7 @@ function processText(fileText, document) {
     const missingRate = info.faultyCount1 / info.numDataPoints;
     const faultyRate = (info.faultyCount1 + info.faultyCount2) / (info.numDataPoints);
 
-    writeToHTML(document, info, missingRate, faultyRate);
+    writeToHTML(document, missingRate, faultyRate);
 
 	for (let i = 0; i < info.faults.length; i++) {
         results += info.faults[i].toString() + "\n";
@@ -431,12 +431,11 @@ function processLine(line) {
 
 /**
  * Writes results to HTML display screen.
- * @param {Document} document 
- * @param {FileInfo} info 
+ * @param {Document} document
  * @param {Number} missingRate 
  * @param {Number} faultyRate 
  */
-function writeToHTML(document, info, missingRate, faultyRate) {
+function writeToHTML(document, missingRate, faultyRate) {
     document.getElementById('info_list_ele_sensor').innerHTML = "<b>Sensor:</b> " + info.fileName;
     document.getElementById('info_list_ele_zone').innerHTML = "<b>Zone ID:</b> " + info.zoneId;
     document.getElementById('info_list_ele_lane').innerHTML = "<b>Lane:</b> " + info.laneNumber;
