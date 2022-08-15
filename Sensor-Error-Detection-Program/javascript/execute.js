@@ -1,5 +1,91 @@
 "use strict";
 
+/**
+ * Class to represent the entire CSV file.
+ */
+class FileInfo {
+    constructor() {
+        // Constants
+        this.fileName =  undefined;
+        this.numDataPoints = 0;
+        this.numDataPointsPC = 0; // rush, peak hour
+        this.numDataPointsPN = 0; // non-rush, peak hour
+        this.numDataPointsNC = 0; // rush, non-peak hour
+        this.numDataPointsNN = 0; // non-rush, non-peak hour
+        this.zoneId = 0;
+        this.laneNumber = 0;
+        this.laneId = 0;
+    
+        // Measurements
+        this.fileStartTime = 0;
+        this.fileLastTime = 0;
+
+        // Outcomes
+        this.missingData = 0;
+        this.missingSpeed = 0;
+        this.missingVol = 0;
+        
+        this.faultyCount1 = 0;
+        this.faultyCount1PC = 0;
+        this.faultyCount1PN = 0;
+        this.faultyCount1NC = 0;
+        this.faultyCount1NN = 0;
+  
+        this.faultyCount2 = 0;
+        this.faultyCount2PC = 0;
+        this.faultyCount2PN = 0;
+        this.faultyCount2NC = 0;
+        this.faultyCount2NN = 0;
+
+        this.faults = new Array();
+        this.error = undefined;
+    }
+}
+
+/**
+ * Class to represent a CSV line, which is also an individual lane sensor data point.
+ */
+class Line {
+    constructor(lineSplit) {
+        if (typeof(lineSplit) === 'string') {
+            lineSplit = lineSplit.split(",");
+        }
+
+        this.zoneId = Number(lineSplit[0]);
+        this.laneNumber = Number(lineSplit[1]);
+        this.laneId = Number(lineSplit[2]);
+        this.measurementStart = lineSplit[3];
+        this.date = new Date(lineSplit[3]);
+        this.volume = lineSplit[5] === "" ? undefined : Number(lineSplit[5]);
+        this.speed = lineSplit[4] === "" ? undefined : Number(lineSplit[4]);
+        this.occupancy = Number(lineSplit[6]);
+        this.quality = lineSplit[7];
+
+        this.flowRate = this.volume * 60.0;
+    }
+}
+
+/**
+ * Class to store faults found in the sensor.
+ */
+class Fault {
+    constructor(timeStamp, reason, missing) {
+        this.timeStamp = timeStamp;
+        this.reason = reason;
+        this.missing = missing;
+    }
+
+	toString() {
+		return this.timeStamp + ", " + this.reason;
+	}
+}
+
+// Globally scoped
+let start_time = null;
+let end_time = null;
+let results = "";
+let info = new FileInfo();
+
 $(document).ready(function() {
 	$("#Save-1").click(function() {
 		if (document.getElementById('uploadedfile').files.length > 0) {
@@ -82,93 +168,10 @@ $(document).ready(function() {
         if (typeof(hours_ele) == "object") {
             hours_ele = "all_hours";
         }
+
+
 	});
 });
-
-/**
- * Class to represent the entire CSV file.
- */
-class FileInfo {
-    constructor() {
-        // Constants
-        this.fileName =  undefined;
-        this.numDataPoints = 0;
-        this.numDataPointsPC = 0; // rush, peak hour
-        this.numDataPointsPN = 0; // non-rush, peak hour
-        this.numDataPointsNC = 0; // rush, non-peak hour
-        this.numDataPointsNN = 0; // non-rush, non-peak hour
-        this.zoneId = 0;
-        this.laneNumber = 0;
-        this.laneId = 0;
-    
-        // Measurements
-        this.fileStartTime = 0;
-        this.fileLastTime = 0;
-
-        // Outcomes
-        this.missingData = 0;
-        this.missingSpeed = 0;
-        this.missingVol = 0;
-        
-        this.faultyCount1 = 0;
-        this.faultyCount1PC = 0;
-        this.faultyCount1PN = 0;
-        this.faultyCount1NC = 0;
-        this.faultyCount1NN = 0;
-  
-        this.faultyCount2 = 0;
-        this.faultyCount2PC = 0;
-        this.faultyCount2PN = 0;
-        this.faultyCount2NC = 0;
-        this.faultyCount2NN = 0;
-
-        this.faults = new Array();
-        this.error = undefined;
-    }
-}
-
-/**
- * Class to represent a CSV line, which is also an individual lane sensor data point.
- */
-class Line {
-    constructor(lineSplit) {
-        if (typeof(lineSplit) === 'string') {
-            lineSplit = lineSplit.split(",");
-        }
-
-        this.zoneId = Number(lineSplit[0]);
-        this.laneNumber = Number(lineSplit[1]);
-        this.laneId = Number(lineSplit[2]);
-        this.measurementStart = lineSplit[3];
-        this.date = new Date(lineSplit[3]);
-        this.volume = lineSplit[5] === "" ? undefined : Number(lineSplit[5]);
-        this.speed = lineSplit[4] === "" ? undefined : Number(lineSplit[4]);
-        this.occupancy = Number(lineSplit[6]);
-        this.quality = lineSplit[7];
-
-        this.flowRate = this.volume * 60.0;
-    }
-}
-
-/**
- * Class to store faults found in the sensor.
- */
-class Fault {
-    constructor(timeStamp, reason) {
-        this.timeStamp = timeStamp;
-        this.reason = reason;
-    }
-
-	toString() {
-		return this.timeStamp + ", " + this.reason;
-	}
-}
-
-// Globally scoped
-let start_time = null;
-let end_time = null;
-let results = "";
-let info = new FileInfo();
 
 /**
  * Function that is executed upon "Next" HTML button click.
@@ -184,7 +187,11 @@ function execute() {
     readFile(fileList[0], document);
 }
 
-
+/**
+ * Reads file and starts processing
+ * @param {File} file 
+ * @param {Document} document 
+ */
 function readFile(file, document) {
     const reader = new FileReader();
 
@@ -263,9 +270,9 @@ function processLine(line) {
         i = new Date(i.setMinutes(i.getMinutes() + 1));
 
         for (i; i < date; i = new Date(i.setMinutes(i.getMinutes() + 1))) {
-            const rushDay = isRushDay(i);
+            const rushDay = isCongestedDay(i);
             const peakHour = isPeakHour(i);
-            info.faults.push(new Fault(i.toString(), "Stage 1, Missing Interval"));
+            info.faults.push(new Fault(i, "Stage 1, Missing Interval", true));
             
             info.numDataPoints++;
             info.faultyCount1++;
@@ -288,7 +295,7 @@ function processLine(line) {
         }
     }
 
-    const rushDay = isRushDay(date);
+    const rushDay = isCongestedDay(date);
     const peakHour = isPeakHour(date);
 
     info.numDataPoints++;
@@ -326,7 +333,7 @@ function processLine(line) {
     }
 
     if (faulty) {
-        info.faults.push(new Fault(new Date(line.measurementStart), reason));
+        info.faults.push(new Fault(new Date(line.measurementStart), reason, true));
         info.faultyCount1++;
         if (rushDay && peakHour) {
             info.faultyCount1PC++;
@@ -383,7 +390,7 @@ function processLine(line) {
 
     if (faulty) {
         info.faultyCount2++;
-        info.faults.push(new Fault(new Date(line.measurementStart), reason));
+        info.faults.push(new Fault(new Date(line.measurementStart), reason, false));
 
         if (rushDay && peakHour) {
             info.faultyCount2PC++;
@@ -411,7 +418,7 @@ function processLine(line) {
 
     if (!zone0 && !zone1 && !zone2 && !zone3 && !zone4) { // faulty data
         info.faultyCount2++;
-        info.faults.push(new Fault(new Date(line.measurementStart), "Stage 3, data does not fit any zone"));
+        info.faults.push(new Fault(new Date(line.measurementStart), "Stage 3, data does not fit any zone", false));
 
         if (rushDay && peakHour) {
             info.faultyCount2PC++;
@@ -542,7 +549,7 @@ function isPeakHour(date) {
  * @param {Date} date 
  * @returns boolean for if it is a rush day on the highway. 
  */
-function isRushDay(date) {
+function isCongestedDay(date) {
     const weekday = date.getDay();
 
     if ([5, 6, 0].includes(weekday)) {
