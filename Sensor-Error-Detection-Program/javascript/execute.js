@@ -1,7 +1,4 @@
 "use strict";
-let start_time = null;
-let end_time = null;
-let results = "";
 
 $(document).ready(function() {
 	$("#Save-1").click(function() {
@@ -167,18 +164,28 @@ class Fault {
 	}
 }
 
+// Globally scoped
+let start_time = null;
+let end_time = null;
+let results = "";
+let info = new FileInfo();
+
 /**
  * Function that is executed upon "Next" HTML button click.
  */
 function execute() {
     const fileList = document.getElementById('uploadedfile').files;
+    info = new FileInfo();
+    start_time = null;
+    end_time = null;
+    results = "";
+    
     readFile(fileList[0], document);
 }
 
 
 function readFile(file, document) {
     let reader = new FileReader();
-    let info = new FileInfo();
 
     reader.readAsText(file);
 
