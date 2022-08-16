@@ -18,6 +18,7 @@ class FileInfo {
     
         // Measurements
         this.fileStartTime = 0;
+        this.fileFirstTime = 0; // Specified by the processing start time
         this.fileLastTime = 0;
 
         // Outcomes
@@ -286,6 +287,9 @@ function processText(fileText, document) {
  */
 function processLine(line) {
     const date = new Date(line.date);
+    if (info.fileFirstTime == 0 || info.fileFirstTime == null) {
+        info.fileFirstTime = date;
+    }
 
     // Quits line processing if it is not in the date range
     if (!dateInRange(date)) {
@@ -463,7 +467,7 @@ function writeToHTML(document, missingRate, faultyRate) {
     document.getElementById('info_list_ele_sensor').innerHTML = "<b>Sensor:</b> " + info.fileName;
     document.getElementById('info_list_ele_zone').innerHTML = "<b>Zone ID:</b> " + info.zoneId;
     document.getElementById('info_list_ele_lane').innerHTML = "<b>Lane:</b> " + info.laneNumber;
-    document.getElementById('info_list_ele_start').innerHTML = "<b>Start time:</b> " + dateFormatter(info.fileStartTime);
+    document.getElementById('info_list_ele_start').innerHTML = "<b>Start time:</b> " + dateFormatter(info.fileFirstTime);
     document.getElementById('info_list_ele_end').innerHTML = "<b>End time:</b> " + dateFormatter(info.fileLastTime);
     document.getElementById('info_list_ele_intervals').innerHTML = "<b>Total number of time intervals in the entire period:</b> " + info.numDataPoints;
 
