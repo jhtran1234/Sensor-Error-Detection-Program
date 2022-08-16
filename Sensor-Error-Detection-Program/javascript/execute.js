@@ -212,10 +212,11 @@ $(document).ready(function() {
  * Function that is executed upon "Next" HTML button click.
  */
 function execute() {
+    start_time = document.querySelector('#start_time').value.length == 0? null : new Date(document.querySelector('#start_time').value);
+    end_time = document.querySelector('#end_time').value.length == 0? null : new Date(document.querySelector('#end_time').value);
+
     const fileList = document.getElementById('uploadedfile').files;
     info = new FileInfo();
-    start_time = null;
-    end_time = null;
     results = "";
     
     info.fileName = fileList[0].name;
