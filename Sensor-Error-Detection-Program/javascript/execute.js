@@ -463,20 +463,19 @@ function writeToHTML(document, missingRate, faultyRate) {
     document.getElementById('info_list_ele_sensor').innerHTML = "<b>Sensor:</b> " + info.fileName;
     document.getElementById('info_list_ele_zone').innerHTML = "<b>Zone ID:</b> " + info.zoneId;
     document.getElementById('info_list_ele_lane').innerHTML = "<b>Lane:</b> " + info.laneNumber;
-    document.getElementById('info_list_ele_start').innerHTML = "<b>Start time:</b> " + info.fileStartTime;
-    document.getElementById('info_list_ele_end').innerHTML = "<b>End time:</b> " + info.fileLastTime;
+    document.getElementById('info_list_ele_start').innerHTML = "<b>Start time:</b> " + dateFormatter(info.fileStartTime);
+    document.getElementById('info_list_ele_end').innerHTML = "<b>End time:</b> " + dateFormatter(info.fileLastTime);
     document.getElementById('info_list_ele_intervals').innerHTML = "<b>Total number of time intervals in the entire period:</b> " + info.numDataPoints;
 
-    document.querySelector('#tpc').innerText = info.numDataPointsPC == 0 ? "NA" : Math.round(info.numDataPointsPC / 60) + ' hours';
-    document.querySelector('#tnc').innerText = info.numDataPointsNC == 0 ? "NA" : Math.round(info.numDataPointsNC / 60) + ' hours';
-    document.querySelector('#tpn').innerText = info.numDataPointsPN == 0 ? "NA" : Math.round(info.numDataPointsPN / 60) + ' hours';
-    document.querySelector('#tnn').innerText = info.numDataPointsNN == 0 ? "NA" : Math.round(info.numDataPointsNN / 60) + ' hours';
+    document.querySelector('#tpc').innerText = info.numDataPointsPC == 0 ? "NA" : info.numDataPointsPC + ' intervals';
+    document.querySelector('#tnc').innerText = info.numDataPointsNC == 0 ? "NA" : info.numDataPointsNC + ' intervals';
+    document.querySelector('#tpn').innerText = info.numDataPointsPN == 0 ? "NA" : info.numDataPointsPN + ' intervals';
+    document.querySelector('#tnn').innerText = info.numDataPointsNN == 0 ? "NA" : info.numDataPointsNN + ' intervals';
     document.querySelector('#tpx').innerText = Math.round((info.numDataPointsPC + info.numDataPointsPN) / 60) + ' hours';
     document.querySelector('#tnx').innerText = Math.round((info.numDataPointsNC + info.numDataPointsNN) / 60) + ' hours';
 
     document.querySelector('#txc').innerText = Math.round((info.numDataPointsPC + info.numDataPointsNC) / 60) + ' hours';
     document.querySelector('#txn').innerText = Math.round((info.numDataPointsPN + info.numDataPointsNN) / 60) + ' hours';
-    document.querySelector('#t').innerText = Math.round((info.numDataPoints) / 60) + ' hours';
 
     // Display percentage of missing 
     document.querySelector('#total_faulty').innerText = info.numDataPoints == 0 ? "Total Missing/Faulty Rate: NA" : "Total Missing/Faulty Rate: "
@@ -622,4 +621,14 @@ function download(filename, text) {
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
+}
+
+function dateFormatter(date) {
+    try{
+        const regexDateExtract = /([A-Za-z]+ [A-Za-z]+ \d\d \d{4} \d\d:\d\d:\d\d) [\w-]+ (\([\w ]+\))/;
+        const matches = date.toString().match(regexDateExtract);
+        return matches[1] + " " + matches[2];
+    } catch {
+        return date.toString();
+    }
 }

@@ -46,11 +46,11 @@
 							</div>
 							<div id="optional_bottom">
 								<br>
-								<p class="text" style="width: 50%; display: inline-block;">Select a start time:</p>
+								<p class="text" style="width: 50%; display: inline-block; margin-top: 10px">Select a start time:</p>
 								<input type="datetime-local" id="start_time" name="start_time" style="display: inline-block;">
 								<br>
 								<br>
-								<p class="text" style="width: 50%; display: inline-block;">Select an end time:</p>
+								<p class="text" style="width: 50%; display: inline-block; margin-top: 10px; margin-bottom: 0px;">Select an end time:</p>
 								<input type="datetime-local" id="end_time" name="end_time" style="display: inline-block;">
 								<br>
 								<br>
@@ -78,7 +78,7 @@
 							<br>
 							<div id="left_div_40">
 								<ul id="info_list">
-									<li id="info_list_ele_sensor"><b>Sensor:</b></li>
+									<li id="info_list_ele_sensor"><b>File:</b></li>
 									<li id="info_list_ele_zone"><b>Zone ID:</b></li>
 									<li id="info_list_ele_lane"><b>Lane:</b></li>
 									<li id="info_list_ele_start"><b>Start time:</b></li>
@@ -95,13 +95,13 @@
 										<th>Total</th>
 									</tr>
 									<tr>
-										<td><b>Congested day</b></td>
+										<td><b>Congested days</b></td>
 										<td id="tpc"></td>
 										<td id="tnc"></td>
 										<td id="txc"></td>
 									</tr>
 									<tr>
-										<td><b>Non-congested day</b></td>
+										<td><b>Non-congested days</b></td>
 										<td id="tpn"></td>
 										<td id="tnn"></td>
 										<td id="txn"></td>
@@ -115,7 +115,7 @@
 								</table>
 							</div>
 							<div id="info_box">
-								<p id="note_list_label">Note:</p>
+								<p id="note_list_label"><b>Note:</b></p>
 								<ul id="note_list">
 									<li id="note_list_ele"><b>Peak hours</b>: 9am to 6pm</li>
 									<li id="note_list_ele"><b>Congested days</b>: Friday, Saturday, Sunday</li>
@@ -157,7 +157,7 @@
 							<br>
 							<div>
 								<p class="text" id="total_faulty" style="font-weight: bold;float: left;">Total Missing/Faulty Rate:</p>
-								<table>
+								<table style="background-color: rgba(255, 162, 0, 0.25);">
 									<tr>
 										<th></th>
 										<th>Peak hours</th>
@@ -165,13 +165,13 @@
 										<th>Total</th>
 									</tr>
 									<tr>
-										<td><b>Congested day</b></td>
+										<td><b>Congested days</b></td>
 										<td id="mpc"></td>
 										<td id="mnc"></td>
 										<td id="mxc"></td>
 									</tr>
 									<tr>
-										<td><b>Non-congested day</b></td>
+										<td><b>Non-congested days</b></td>
 										<td id="mpn"></td>
 										<td id="mnn"></td>
 										<td id="mxn"></td>
