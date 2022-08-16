@@ -288,13 +288,14 @@ function processText(fileText, document) {
  */
 function processLine(line) {
     const date = new Date(line.date);
-    if (info.fileFirstTime == 0 || info.fileFirstTime == null) {
-        info.fileFirstTime = date;
-    }
 
     // Quits line processing if it is not in the date range
     if (!dateInRange(date)) {
         return;
+    }
+    
+    if (info.fileFirstTime == 0 || info.fileFirstTime == null) {
+        info.fileFirstTime = date;
     }
     
     const prevTime = info.fileLastTime;
