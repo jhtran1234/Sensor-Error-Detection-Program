@@ -141,10 +141,11 @@
 					<div class="one column row" id="checkbox-size">
 						<div class="ui form" style="padding: 5px;">
 							<div id="upper_div">
-								<div style="display: inline; float:left; width: 30%">
-									<p class="tab_label" id="evaluation" style="margin-top:29.29px !important">Evaluation Results</p>
+								<p class="text" id="total_faulty" style="font-weight: bold; margin-bottom: 0px;">Total Missing/Faulty Rate:</p>
+								<div style="display: inline; float:left; width: 40%">
+									<p class="tab_label" id="evaluation">Recommendation:</p>
 								</div>
-								<div style="display: inline; float:left; width: 70%; pointer-events: none; padding-top: 12px;">
+								<div style="display: inline; float:left; width: 60%; pointer-events: none; padding-top: 12px;">
 									<input type="checkbox" id="replace_box" name="sensor_eval_box" value="replace">
 									<label for="replace_box" id="replace_label">Sensor should be replaced/maintained</label><br>
 									<input type="checkbox" id="calibrate_box" name="sensor_eval_box" value="calibrate">
@@ -156,7 +157,6 @@
 							<img src="images/md color bar.png" id="color-bar" style="margin-top: 5px;">
 							<br>
 							<div>
-								<p class="text" id="total_faulty" style="font-weight: bold;float: left;">Total Missing/Faulty Rate:</p>
 								<table style="background-color: rgba(255, 162, 0, 0.25);">
 									<tr>
 										<th></th>
