@@ -214,11 +214,10 @@ $(document).ready(function() {
 function execute() {
     start_time = document.querySelector('#start_time').value.length == 0? null : new Date(document.querySelector('#start_time').value);
     end_time = document.querySelector('#end_time').value.length == 0? null : new Date(document.querySelector('#end_time').value);
-
-    const fileList = document.getElementById('uploadedfile').files;
     info = new FileInfo();
     results = "";
-    
+
+    const fileList = document.getElementById('uploadedfile').files;
     info.fileName = fileList[0].name;
     readFile(fileList[0], document);
 }
