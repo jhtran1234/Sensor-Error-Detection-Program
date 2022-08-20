@@ -303,8 +303,7 @@ function processLine(line) {
     if (dateExtract(info.fileLastTime) != dateExtract(date)) {
         if (isCongestedDay(date)) {
             info.numDaysCongested++;
-        }
-        else {
+        } else {
             info.numDaysNonCongested++;
         }
     }
