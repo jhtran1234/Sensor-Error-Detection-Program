@@ -659,6 +659,10 @@ function dateFormatter(date) {
     }
 }
 
+/**
+ * @param {Date} date 
+ * @returns String with month, day, and year
+ */
 function dateExtract(date) {
     try{
         const regexDateExtract = /[A-Za-z]+ [A-Za-z]+ \d\d \d{4}/;
