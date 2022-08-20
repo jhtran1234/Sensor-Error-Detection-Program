@@ -20,6 +20,8 @@ class FileInfo {
         this.fileStartTime = 0;
         this.fileFirstTime = 0; // Specified by the processing start time
         this.fileLastTime = 0;
+        this.numDaysCongested = 0;
+        this.numDaysNonCongested = 0;
 
         // Outcomes
         this.missingData = 0;
@@ -296,6 +298,16 @@ function processLine(line) {
     if (info.fileFirstTime == 0 || info.fileFirstTime == null) {
         info.fileFirstTime = date;
     }
+
+    
+    if (dateExtract(info.fileLastTime) != dateExtract(date)) {
+        if (isCongestedDay(date)) {
+            info.numDaysCongested++;
+        }
+        else {
+            info.numDaysNonCongested++;
+        }
+    }
     
     const prevTime = info.fileLastTime;
     info.fileLastTime = date;
@@ -479,8 +491,8 @@ function writeToHTML(document, missingRate, faultyRate) {
     document.querySelector('#tpx').innerText = Math.round((info.numDataPointsPC + info.numDataPointsPN) / 60) + ' hours';
     document.querySelector('#tnx').innerText = Math.round((info.numDataPointsNC + info.numDataPointsNN) / 60) + ' hours';
 
-    document.querySelector('#txc').innerText = Math.round((info.numDataPointsPC + info.numDataPointsNC) / 60) + ' hours';
-    document.querySelector('#txn').innerText = Math.round((info.numDataPointsPN + info.numDataPointsNN) / 60) + ' hours';
+    document.querySelector('#txc').innerText = info.numDaysCongested + ' days';
+    document.querySelector('#txn').innerText = info.numDaysNonCongested + ' days';
 
     // Display percentage of missing 
     document.querySelector('#total_faulty').innerText = info.numDataPoints == 0 ? "Total Missing/Faulty Rate: NA" : "Total Missing/Faulty Rate: "
@@ -505,15 +517,21 @@ function writeToHTML(document, missingRate, faultyRate) {
         document.querySelector('#calibrate_box').checked = false;
         document.querySelector('#good_box').checked = false;
         document.querySelector('#replace_label').style.fontWeight = "bold";
+        document.querySelector('#calibrate_label').style.fontWeight = "";
+        document.querySelector('#good_label').style.fontWeight = "";
     } else if (missingRate >= 0.05 || faultyRate >= 0.05) {
         document.querySelector('#replace_box').checked = false;
         document.querySelector('#calibrate_box').checked = true;
         document.querySelector('#good_box').checked = false;
+        document.querySelector('#replace_label').style.fontWeight = "";
         document.querySelector('#calibrate_label').style.fontWeight = "bold";
+        document.querySelector('#good_label').style.fontWeight = "";
     } else {
         document.querySelector('#replace_box').checked = false;
         document.querySelector('#calibrate_box').checked = false;
         document.querySelector('#good_box').checked = true;
+        document.querySelector('#replace_label').style.fontWeight = "";
+        document.querySelector('#calibrate_label').style.fontWeight = "";
         document.querySelector('#good_label').style.fontWeight = "bold";
     }
 }
@@ -628,11 +646,25 @@ function download(filename, text) {
     document.body.removeChild(element);
 }
 
+/**
+ * @param {Date} date object
+ * @returns String of a date object without the timezone text
+ */
 function dateFormatter(date) {
     try{
         const regexDateExtract = /([A-Za-z]+ [A-Za-z]+ \d\d \d{4} \d\d:\d\d:\d\d) [\w-]+ (\([\w ]+\))/;
         const matches = date.toString().match(regexDateExtract);
         return matches[1] + " " + matches[2];
+    } catch {
+        return date.toString();
+    }
+}
+
+function dateExtract(date) {
+    try{
+        const regexDateExtract = /[A-Za-z]+ [A-Za-z]+ \d\d \d{4}/;
+        const matches = date.toString().match(regexDateExtract);
+        return matches[0];
     } catch {
         return date.toString();
     }
