@@ -481,7 +481,7 @@ function writeToHTML(document, missingRate, faultyRate) {
     document.getElementById('info_list_ele_lane').innerHTML = "<b>Lane:</b> " + info.laneNumber;
     document.getElementById('info_list_ele_start').innerHTML = "<b>Start time:</b> " + dateFormatter(info.fileFirstTime);
     document.getElementById('info_list_ele_end').innerHTML = "<b>End time:</b> " + dateFormatter(info.fileLastTime);
-    document.getElementById('info_list_ele_intervals').innerHTML = "<b>Total number of time intervals in the entire period:</b> " + info.numDataPoints;
+    document.getElementById('info_list_ele_intervals').innerHTML = "<b>Total number of intervals in the entire period:</b> " + info.numDataPoints;
 
     document.querySelector('#tpc').innerText = info.numDataPointsPC == 0 ? "NA" : info.numDataPointsPC + ' intervals';
     document.querySelector('#tnc').innerText = info.numDataPointsNC == 0 ? "NA" : info.numDataPointsNC + ' intervals';
@@ -496,7 +496,7 @@ function writeToHTML(document, missingRate, faultyRate) {
     // Display percentage of missing 
     document.querySelector('#total_faulty').innerText = info.numDataPoints == 0 ? "Total Missing/Faulty Rate: NA" : "Total Missing/Faulty Rate: "
         + Math.round(faultyRate * 10000) / 100
-        + "% (" + (info.faultyCount1 + info.faultyCount2) + " / " + info.numDataPoints + " time intervals)";
+        + "% (" + (info.faultyCount1 + info.faultyCount2) + " / " + info.numDataPoints + " intervals)";
     document.querySelector('#mpc').innerText = displayFaultRate(info.faultyCount1PC + info.faultyCount2PC, info.numDataPointsPC);
     document.querySelector('#mnc').innerText = displayFaultRate(info.faultyCount1NC + info.faultyCount2NC, info.numDataPointsNC);
     document.querySelector('#mpn').innerText = displayFaultRate(info.faultyCount1PN + info.faultyCount2PN, info.numDataPointsPN);
@@ -546,7 +546,7 @@ function displayFaultRate(numerator, denominator) {
         return "NA";
     }
 
-    return Math.round(numerator * 10000 / denominator) / 100 + '% (' + numerator + " / " + denominator + " time intervals)";
+    return Math.round(numerator * 10000 / denominator) / 100 + '%\n(' + numerator + " / " + denominator + " intervals)";
 }
 
 /**
