@@ -448,12 +448,13 @@ function processLine(line) {
     const flowRate = line.flowRate;
     const volume = line.volume;
     const zone0 = (volume < 2);
-    const zone1 = (15.2*speed-242-flowRate >= 0) && (-176.8*speed+12913.3-flowRate >= 0) && (-72*speed+4063.2-flowRate <= 0);
-    const zone2 = (15.8*speed+263.4-flowRate >= 0) && (-167.4*speed+12247.8-flowRate >= 0) && (14.9*speed-219.5-flowRate <= 0) && (-133*speed+7248-flowRate <= 0) && (247*speed-11386.9-flowRate >= 0);
-    const zone3 = (15.7*speed+1215.2-flowRate >= 0) && (-259.5*speed+12309.4-flowRate >= 0) && (17.2*speed+270-flowRate <= 0) && (59.1*speed+217.7-flowRate >= 0);
-    const zone4 = (33.6*speed+408.1-flowRate >= 0) && (-109.1*speed+8778.5-flowRate >= 0) && (17.8*speed+143.1-flowRate <= 0) && (-676.9*speed+29852.3-flowRate <= 0);
+    const zone1 = (90*speed+142-flowRate >= 0) && (500-flowRate <= 0) && (28*speed-50-flowRate <= 0) && (42-speed >= 0) && (1755-flowRate >= 0);
+    const zone2 = (42-speed <= 0) && (740-flowRate <= 0) && (65-speed >= 0) && (2200-flowRate >= 0);
+    const zone3 = (53-speed <= 0) && (420-flowRate <= 0) && (66-speed >= 0) && (1080-flowRate >= 0);
+    const zone4 = (53-speed <= 0) && (0-flowRate <= 0) && (69-speed >= 0) && (500-flowRate >= 0);
 
-    if (!zone0 && !zone1 && !zone2 && !zone3 && !zone4) { // faulty data
+    // Test to find data outside of all zones, which indicates faulty data
+    if (!zone0 && !zone1 && !zone2 && !zone3 && !zone4) { 
         info.faultyCount2++;
         info.faults.push(new Fault(new Date(line.measurementStart), "Stage 3, data does not fit any zone", false));
 
