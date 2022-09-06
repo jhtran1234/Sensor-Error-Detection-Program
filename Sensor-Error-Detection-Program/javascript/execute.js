@@ -322,7 +322,7 @@ function processLine(line) {
         for (i; i < date; i = new Date(i.setMinutes(i.getMinutes() + 1))) {
             const rushDay = isCongestedDay(i);
             const peakHour = isPeakHour(i);
-            info.faults.push(new Fault(i, "Stage 1, Missing Interval", true));
+            info.faults.push(new Fault(i, "Stage 1, data missing interval", true));
             
             info.numDataPoints++;
             info.faultyCount1++;
@@ -368,11 +368,11 @@ function processLine(line) {
     if (line.volume === undefined) {
         info.missingVol++;
         faulty = true;
-        reason = "Stage 1, Missing Volume Data";
+        reason = "Stage 1, data missing volume data";
     } else if (line.speed === undefined && line.volume != 0) {
         info.missingSpeed++;
         faulty = true;
-        reason = "Stage 1, Missing Speed Data";
+        reason = "Stage 1, data missing speed data";
     }
 
     if (faulty) {
@@ -397,35 +397,35 @@ function processLine(line) {
     if (rushDay && peakHour) { 
         if (line.flowRate > 2300) {
             faulty = true;
-            reason = "Stage 2, rule1";
+            reason = "Stage 1, data fails rule 1";
         }
     }
     // Rule 2
     else if (rushDay && !peakHour) { 
         if (line.flowRate > 1120) {
             faulty = true;
-            reason = "Stage 2, rule2";
+            reason = "Stage 1, data fails rule 2";
         }
     }
     // Rule 3
     else if (!rushDay && peakHour) { 
         if (line.flowRate > 1910) {
             faulty = true;
-            reason = "Stage 2, rule3";
+            reason = "Stage 1, data fails rule 3";
         }
     }
     // Rule 4
     else { 
         if (line.flowRate > 975) {
             faulty = true;
-            reason = "Stage 2, rule4";
+            reason = "Stage 1, data fails rule 4";
         }
     }
 
     // Rule 5
     if (line.speed > 110) { 
         faulty = true;
-        reason += "Stage 2, rule5";
+        reason += "Stage 1, data fails rule 5";
     }
 
     if (faulty) {
@@ -456,7 +456,7 @@ function processLine(line) {
     // Test to find data outside of all zones, which indicates faulty data
     if (!zone0 && !zone1 && !zone2 && !zone3 && !zone4) { 
         info.faultyCount2++;
-        info.faults.push(new Fault(new Date(line.measurementStart), "Stage 3, data does not fit any zone", false));
+        info.faults.push(new Fault(new Date(line.measurementStart), "Stage 2a, data does not fit any zone", false));
 
         if (rushDay && peakHour) {
             info.faultyCount2PC++;
