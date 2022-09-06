@@ -485,20 +485,20 @@ function writeToHTML(document, missingRate, faultyRate) {
     document.getElementById('info_list_ele_end').innerHTML = "<b>End time:</b> " + dateFormatter(info.fileLastTime);
     document.getElementById('info_list_ele_intervals').innerHTML = "<b>Total number of intervals in the entire period:</b> " + info.numDataPoints;
 
-    document.querySelector('#tpc').innerText = info.numDataPointsPC == 0 ? "NA" : info.numDataPointsPC + ' intervals';
-    document.querySelector('#tnc').innerText = info.numDataPointsNC == 0 ? "NA" : info.numDataPointsNC + ' intervals';
-    document.querySelector('#tpn').innerText = info.numDataPointsPN == 0 ? "NA" : info.numDataPointsPN + ' intervals';
-    document.querySelector('#tnn').innerText = info.numDataPointsNN == 0 ? "NA" : info.numDataPointsNN + ' intervals';
-    document.querySelector('#tpx').innerText = Math.round((info.numDataPointsPC + info.numDataPointsPN) / 60) + ' hours';
-    document.querySelector('#tnx').innerText = Math.round((info.numDataPointsNC + info.numDataPointsNN) / 60) + ' hours';
+    document.querySelector('#tpc').innerHTML = info.numDataPointsPC == 0 ? "NA" : '<span class=\'numbers_color\'>' + info.numDataPointsPC + '</span><br> intervals';
+    document.querySelector('#tnc').innerHTML = info.numDataPointsNC == 0 ? "NA" : '<span class=\'numbers_color\'>' + info.numDataPointsNC + '</span><br> intervals';
+    document.querySelector('#tpn').innerHTML = info.numDataPointsPN == 0 ? "NA" : '<span class=\'numbers_color\'>' + info.numDataPointsPN + '</span><br> intervals';
+    document.querySelector('#tnn').innerHTML = info.numDataPointsNN == 0 ? "NA" : '<span class=\'numbers_color\'>' + info.numDataPointsNN + '</span><br> intervals';
+    document.querySelector('#tpx').innerHTML = '<span class=\'numbers_color\'>' + Math.round((info.numDataPointsPC + info.numDataPointsPN) / 60) + '</span><br> hours';
+    document.querySelector('#tnx').innerHTML = '<span class=\'numbers_color\'>' + Math.round((info.numDataPointsNC + info.numDataPointsNN) / 60) + '</span><br> hours';
 
-    document.querySelector('#txc').innerText = info.numDaysCongested + ' days';
-    document.querySelector('#txn').innerText = info.numDaysNonCongested + ' days';
+    document.querySelector('#txc').innerHTML = '<span class=\'numbers_color\'>' + info.numDaysCongested + '</span><br> days';
+    document.querySelector('#txn').innerHTML = '<span class=\'numbers_color\'>' + info.numDaysNonCongested + '</span><br> days';
 
     // Display percentage of missing 
-    document.querySelector('#total_faulty').innerText = info.numDataPoints == 0 ? "Total Missing/Faulty Rate: NA" : "Total Missing/Faulty Rate: "
+    document.querySelector('#total_faulty').innerHTML = info.numDataPoints == 0 ? "Total Missing/Faulty Rate: NA" : "Total Missing/Faulty Rate: <span class=\'numbers_color\'>"
         + Math.round(faultyRate * 10000) / 100
-        + "% (" + (info.faultyCount1 + info.faultyCount2) + " / " + info.numDataPoints + " intervals)";
+        + "%</span> (<span class=\'numbers_color\'>" + (info.faultyCount1 + info.faultyCount2) + "</span> / <span class=\'numbers_color\'>" + info.numDataPoints + "</span> intervals)";
     document.querySelector('#mpc').innerHTML = displayFaultRate(info.faultyCount1PC + info.faultyCount2PC, info.numDataPointsPC);
     document.querySelector('#mnc').innerHTML = displayFaultRate(info.faultyCount1NC + info.faultyCount2NC, info.numDataPointsNC);
     document.querySelector('#mpn').innerHTML = displayFaultRate(info.faultyCount1PN + info.faultyCount2PN, info.numDataPointsPN);
@@ -548,7 +548,7 @@ function displayFaultRate(numerator, denominator) {
         return "NA";
     }
 
-    return '<b>' + Math.round(numerator * 10000 / denominator) / 100 + '%</b><br>(' + numerator + " / " + denominator + " intervals)";
+    return '<span class=\'numbers_color\'><b>' + Math.round(numerator * 10000 / denominator) / 100 + '%</b></span><br>(<span class=\'numbers_color\'>' + numerator + "</span> / <span class=\'numbers_color\'>" + denominator + "</span> intervals)";
 }
 
 /**
