@@ -453,6 +453,7 @@ function processLine(line) {
     const zone3 = (53-speed <= 0) && (420-flowRate <= 0) && (66-speed >= 0) && (1080-flowRate >= 0);
     const zone4 = (53-speed <= 0) && (0-flowRate <= 0) && (69-speed >= 0) && (500-flowRate >= 0);
 
+    // Stage 2a
     // Test to find data outside of all zones, which indicates faulty data
     if (!zone0 && !zone1 && !zone2 && !zone3 && !zone4) { 
         info.faultyCount2++;
