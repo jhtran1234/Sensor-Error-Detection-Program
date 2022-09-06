@@ -499,17 +499,17 @@ function writeToHTML(document, missingRate, faultyRate) {
     document.querySelector('#total_faulty').innerText = info.numDataPoints == 0 ? "Total Missing/Faulty Rate: NA" : "Total Missing/Faulty Rate: "
         + Math.round(faultyRate * 10000) / 100
         + "% (" + (info.faultyCount1 + info.faultyCount2) + " / " + info.numDataPoints + " intervals)";
-    document.querySelector('#mpc').innerText = displayFaultRate(info.faultyCount1PC + info.faultyCount2PC, info.numDataPointsPC);
-    document.querySelector('#mnc').innerText = displayFaultRate(info.faultyCount1NC + info.faultyCount2NC, info.numDataPointsNC);
-    document.querySelector('#mpn').innerText = displayFaultRate(info.faultyCount1PN + info.faultyCount2PN, info.numDataPointsPN);
-    document.querySelector('#mnn').innerText = displayFaultRate(info.faultyCount1NN + info.faultyCount2NN, info.numDataPointsNN);
+    document.querySelector('#mpc').innerHTML = displayFaultRate(info.faultyCount1PC + info.faultyCount2PC, info.numDataPointsPC);
+    document.querySelector('#mnc').innerHTML = displayFaultRate(info.faultyCount1NC + info.faultyCount2NC, info.numDataPointsNC);
+    document.querySelector('#mpn').innerHTML = displayFaultRate(info.faultyCount1PN + info.faultyCount2PN, info.numDataPointsPN);
+    document.querySelector('#mnn').innerHTML = displayFaultRate(info.faultyCount1NN + info.faultyCount2NN, info.numDataPointsNN);
     
-    document.querySelector('#mxc').innerText = displayFaultRate(info.faultyCount1PC + info.faultyCount2PC + info.faultyCount1NC + info.faultyCount2NC, info.numDataPointsPC + info.numDataPointsNC);
-    document.querySelector('#mxn').innerText = displayFaultRate(info.faultyCount1PN + info.faultyCount2PN + info.faultyCount1NN + info.faultyCount2NN, info.numDataPointsPN + info.numDataPointsNN);
-    document.querySelector('#mpx').innerText = displayFaultRate(info.faultyCount1PN + info.faultyCount2PN + info.faultyCount1PC + info.faultyCount2PC, info.numDataPointsPN + info.numDataPointsPC);
-    document.querySelector('#mnx').innerText = displayFaultRate(info.faultyCount1NN + info.faultyCount2NN + info.faultyCount1NC + info.faultyCount2NC, info.numDataPointsNN + info.numDataPointsNC);
+    document.querySelector('#mxc').innerHTML = displayFaultRate(info.faultyCount1PC + info.faultyCount2PC + info.faultyCount1NC + info.faultyCount2NC, info.numDataPointsPC + info.numDataPointsNC);
+    document.querySelector('#mxn').innerHTML = displayFaultRate(info.faultyCount1PN + info.faultyCount2PN + info.faultyCount1NN + info.faultyCount2NN, info.numDataPointsPN + info.numDataPointsNN);
+    document.querySelector('#mpx').innerHTML = displayFaultRate(info.faultyCount1PN + info.faultyCount2PN + info.faultyCount1PC + info.faultyCount2PC, info.numDataPointsPN + info.numDataPointsPC);
+    document.querySelector('#mnx').innerHTML = displayFaultRate(info.faultyCount1NN + info.faultyCount2NN + info.faultyCount1NC + info.faultyCount2NC, info.numDataPointsNN + info.numDataPointsNC);
     
-    document.querySelector('#m').innerText = displayFaultRate(info.faultyCount1 + info.faultyCount2, info.numDataPoints);
+    document.querySelector('#m').innerHTML = displayFaultRate(info.faultyCount1 + info.faultyCount2, info.numDataPoints);
 
     if (info.numDataPoints == 0) {
         alert("The selected date range is not within the range of data, please go back and select another date range.");
@@ -548,7 +548,7 @@ function displayFaultRate(numerator, denominator) {
         return "NA";
     }
 
-    return Math.round(numerator * 10000 / denominator) / 100 + '%\n(' + numerator + " / " + denominator + " intervals)";
+    return '<b>' + Math.round(numerator * 10000 / denominator) / 100 + '%</b><br>(' + numerator + " / " + denominator + " intervals)";
 }
 
 /**
