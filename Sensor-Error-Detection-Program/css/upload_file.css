@@ -47,14 +47,14 @@ label.type {
     font-size: 16px;
 }
 #uploadedfile {
-    width: 400px !important;
+    width: 600px !important;
     display: block;
     margin: auto !important;
 }
 #start_time, #end_time {
     display: block;
     margin: auto !important;
-    font-size: 18px;
+    font-size: 16px;
     width: 250px !important;
     background: transparent !important;
 }
@@ -78,7 +78,7 @@ label.type {
     height: 110px;
 }
 #left_div_40 {
-    background-color: rgba(26, 255, 0, 0.25);
+    background-color: rgba(235, 244, 229, 255);
     border: 2px solid black;
     width: 39%;
     height: 260px;
@@ -87,7 +87,7 @@ label.type {
     padding-right: 5px;
 }
 #right_div_60 {
-    background-color: rgba(26, 255, 0, 0.25);
+    background-color: rgba(235, 244, 229, 255);
     border: 2px solid black;
     width: 59%;
     height: 350px;
@@ -170,13 +170,13 @@ label {
     float: left;
 }
 .download_L {
-    background-color: rgba(255, 251, 0, 0.25);
+    background-color: rgba(208, 206, 206, 255);
 }
 .download_M {
-    background-color: rgba(0, 140, 255, 0.25);
+    background-color: rgba(216, 226, 243, 255);
 }
 .download_R {
-    background-color: rgba(255, 102, 0, 0.25);
+    background-color: rgba(168, 208, 140, 255);
 }
 .download_radio {
     margin-top: 25px;
