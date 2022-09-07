@@ -485,15 +485,15 @@ function writeToHTML(document, missingRate, faultyRate) {
     document.getElementById('info_list_ele_end').innerHTML = "<b>End time:</b> " + dateFormatter(info.fileLastTime);
     document.getElementById('info_list_ele_intervals').innerHTML = "<b>Total number of intervals in the entire period:</b> " + info.numDataPoints;
 
-    document.querySelector('#tpc').innerHTML = info.numDataPointsPC == 0 ? "NA" : '<span class=\'numbers_color\'>' + info.numDataPointsPC + '</span><br> intervals';
-    document.querySelector('#tnc').innerHTML = info.numDataPointsNC == 0 ? "NA" : '<span class=\'numbers_color\'>' + info.numDataPointsNC + '</span><br> intervals';
-    document.querySelector('#tpn').innerHTML = info.numDataPointsPN == 0 ? "NA" : '<span class=\'numbers_color\'>' + info.numDataPointsPN + '</span><br> intervals';
-    document.querySelector('#tnn').innerHTML = info.numDataPointsNN == 0 ? "NA" : '<span class=\'numbers_color\'>' + info.numDataPointsNN + '</span><br> intervals';
-    document.querySelector('#tpx').innerHTML = '<span class=\'numbers_color\'>' + Math.round((info.numDataPointsPC + info.numDataPointsPN) / 60) + '</span><br> hours';
-    document.querySelector('#tnx').innerHTML = '<span class=\'numbers_color\'>' + Math.round((info.numDataPointsNC + info.numDataPointsNN) / 60) + '</span><br> hours';
+    document.querySelector('#tpc').innerHTML = info.numDataPointsPC == 0 ? "NA" : '<span class=\'numbers_color\'><b>' + info.numDataPointsPC + '</b></span><br> intervals';
+    document.querySelector('#tnc').innerHTML = info.numDataPointsNC == 0 ? "NA" : '<span class=\'numbers_color\'><b>' + info.numDataPointsNC + '</b></span><br> intervals';
+    document.querySelector('#tpn').innerHTML = info.numDataPointsPN == 0 ? "NA" : '<span class=\'numbers_color\'><b>' + info.numDataPointsPN + '</b></span><br> intervals';
+    document.querySelector('#tnn').innerHTML = info.numDataPointsNN == 0 ? "NA" : '<span class=\'numbers_color\'><b>' + info.numDataPointsNN + '</b></span><br> intervals';
+    document.querySelector('#tpx').innerHTML = '<span class=\'numbers_color\'><b>' + Math.round((info.numDataPointsPC + info.numDataPointsPN) / 60) + '</b></span><br> hours';
+    document.querySelector('#tnx').innerHTML = '<span class=\'numbers_color\'><b>' + Math.round((info.numDataPointsNC + info.numDataPointsNN) / 60) + '</b></span><br> hours';
 
-    document.querySelector('#txc').innerHTML = '<span class=\'numbers_color\'>' + info.numDaysCongested + '</span><br> days';
-    document.querySelector('#txn').innerHTML = '<span class=\'numbers_color\'>' + info.numDaysNonCongested + '</span><br> days';
+    document.querySelector('#txc').innerHTML = '<span class=\'numbers_color\'><b>' + info.numDaysCongested + '</b></span><br> days';
+    document.querySelector('#txn').innerHTML = '<span class=\'numbers_color\'><b>' + info.numDaysNonCongested + '</b></span><br> days';
 
     // Display percentage of missing 
     document.querySelector('#total_faulty').innerHTML = info.numDataPoints == 0 ? "Total Missing/Faulty Rate: NA" : "Total Missing/Faulty Rate: <span class=\'numbers_color\'>"
